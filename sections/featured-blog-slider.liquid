@@ -1,0 +1,206 @@
+{% comment %} Settings {% endcomment %}
+{%- assign blogArticlesDefault = blogs[section.settings.blogName].articles -%}
+{%- assign blogArticles = blogs[section.settings.blogName].articles -%}
+{%- assign blogLink = blogs[section.settings.blogName].url -%}
+
+{%- assign title = section.settings.heading -%}
+{%- assign cta = section.settings.cta -%}
+
+{%- assign articleRows = section.settings.article_rows | plus: 0 -%}
+{%- assign articleColumns = section.settings.article_columns | plus: 0 -%}
+{% comment %} {%- assign articlesCount = articleColumns | times: articleRows -%} {% endcomment %}
+{%- assign articlesCount = 8 -%}
+{%- assign columnsSize = articleColumns | replace: '1', '' -%}
+
+<style>
+  
+  @media only screen and (max-width: 767px){
+  	#shopify-section-{{ section.id}} .swiper-wrapper {
+    	padding-bottom: 0px;
+    	margin-left: 7% !important;
+    	margin-right: 7% !important;
+	}
+  }
+</style>
+
+{%- comment -%} Section {%- endcomment -%}
+<section data-section-type="featured-blog" class="blogModule container-wrap style-default" id="blog-module-{{ section.id }}">
+	<div class="carousel featurd__slider-container">
+      	<div class="container">
+          <div class="row row-lg carousel-title">
+              {%- if title != blank -%}
+            	<div class='block med_s12'>
+                  <h2 id="journal-heading">{{ title }}</h2>
+            	</div>
+            
+            	<div class='block med_s12 blog-button theme-desktop__view'>
+            	  <!--<a id="journal-slider-next"></a>-->
+            	  <a href="/blogs/journal" class="button old_btn">Learn More</a>
+                  
+                  <a href="/blogs/journal" class="button blog__link-btn">Read More {% include 'icon-right-arrow' %}</a>
+            	</div>
+                 
+              {%- endif -%}
+              {%- if section.settings.text != blank -%}
+                  <div class="row row-lg">
+                      <p>{{section.settings.text}}</p>
+                  </div>
+              {%- endif -%}
+          </div>
+      	</div>
+			
+		<div class="blogModule-posts__wrapper">
+          	<div class="featured__blog-post">
+          		<div class="swiper-wrapper">
+                  	
+                  
+                  	{%- if section.settings.blogName == blank -%}
+                        {%- for i in (1..articlesCount) -%}
+                  		<div class="swiper-slide">
+                            <a href="#!" title="Article title" aria-label = "{{ article.title }}" class="blogModule-posts__post block s1 med_s12 lg_s1{{ columnsSize }} onboarding-blog-content">
+                                <div class="carousel-slide-image svg-placeholder">
+                                    {{ 'image' | placeholder_svg_tag }}
+                                </div>
+                                <div class="carousel-slide-info">
+                                    <p class="post-date">Feb. 15, {{ 'now' | date: '%Y' }}</p>
+                                    <p class="h6">Blog post title</p>
+
+                                    {%- comment -%}<p class="excerpt">Once you create a blog post, the content will appear here.</p>{%- endcomment -%}
+
+                                    {%- if section.settings.tags -%}
+                                        <p class="post-tags">tag, tag</p>
+                                    {%- endif -%}
+
+                                    {%- if section.settings.author -%}
+                                        <p class="post-author">Author Name</p>
+                                    {%- endif -%}
+                                </div>
+                            </a>
+                          </div>
+                        {%- endfor -%}
+                    {%- else -%}
+                        {%- for article in blogArticles limit: articlesCount -%}
+                  		<div class="swiper-slide">
+                            {%- include 'blog-post' -%}
+                  		</div>
+                        {%- endfor -%}
+                    {%- endif -%}
+              	</div>          
+            </div>          
+          	{%- comment -%}
+			<div class="blogModule-posts row collection-slider js-collection-slider">
+				{%- if section.settings.blogName == blank -%}
+					{%- for i in (1..articlesCount) -%}
+						<a href="#!" title="Article title" aria-label = "{{ article.title }}" class="blogModule-posts__post block s1 med_s12 lg_s1{{ columnsSize }} onboarding-blog-content">
+							<div class="carousel-slide-image svg-placeholder">
+								{{ 'image' | placeholder_svg_tag }}
+							</div>
+							<div class="carousel-slide-info">
+								<p class="post-date">Feb. 15, {{ 'now' | date: '%Y' }}</p>
+								<p class="h6">Blog post title</p>
+								
+								{%- comment -%}<p class="excerpt">Once you create a blog post, the content will appear here.</p>{%- endcomment -%}
+
+								{%- if section.settings.tags -%}
+									<p class="post-tags">tag, tag</p>
+								{%- endif -%}
+
+								{%- if section.settings.author -%}
+									<p class="post-author">Author Name</p>
+								{%- endif -%}
+							</div>
+						</a>
+					{%- endfor -%}
+				{%- else -%}
+					{%- for article in blogArticles limit: articlesCount -%}
+						{%- include 'blog-post' -%}
+					{%- endfor -%}
+				{%- endif -%}
+			</div>
+          	{%- endcomment -%}
+          
+          
+          	{% comment %}
+          	<div class="blogGrid-header row row-lg bottom__header">
+			
+                  <div class="block med_s12 theme-mobile__view">
+                      <a href="/blogs/news" class="button">Learn More</a>
+                  </div>
+              </div>
+          	{% endcomment %}
+		</div>
+      
+	</div>
+</section>
+
+{% comment %} Schema {% endcomment %}
+{% schema %}
+	{
+		"name": "Featued Blog Slider",
+		"settings": [ {
+			"type": "header",
+			"content": "Content"
+		},  {
+			"type": "blog",
+			"id": "blogName",
+			"label": "Blog"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text"
+		}, {
+			"type": "text",
+			"id": "cta",
+			"label": "Button label",
+			"info":"Links to blog"
+		},
+		{
+			"type": "header",
+			"content": "Settings"
+		},
+		{
+			"type": "checkbox",
+			"id": "tags",
+			"label": "Show tags",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "author",
+			"label": "Show author",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "article_rows",
+			"label": "Posts rows",
+			"default":1,
+			"min":1,
+			"max":4,
+			"step":1
+		},
+		{
+			"type": "range",
+			"id": "article_columns",
+			"label": "Posts per row",
+			"default":4,
+			"min":1,
+			"max":5,
+			"step":1
+		} ],
+		"presets": [ {
+			"category": "Blog",
+			"name": "Featued Blog Slider",
+			"settings": {
+		    	"blogName": "news",
+		    	"heading": "News"
+		    }
+		} ]
+	}
+{% endschema %}

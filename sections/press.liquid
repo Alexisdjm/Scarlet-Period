@@ -1,0 +1,260 @@
+{% comment %} Settings {% endcomment %}
+{%- assign heading = section.settings.title -%}
+{%- assign html = section.settings.html -%}
+
+{% assign section_class = "" %}
+{% assign section_bg = "" %}
+{% assign section_color = "" %}
+
+<style>
+  	#shopify-section-{{ section.id }} .press_ratting{
+    	display: none;  
+    }
+  
+  	#shopify-section-{{ section.id }} .slick-dots{
+      	display: none !important;
+    }
+  
+  	
+</style>
+
+{% if section.settings.enable_ratting %}
+	{% assign section_class = "star-ratting__block" %}
+	{% assign section_bg = section.settings.section_bg %}
+	{% assign section_color = section.settings.section_color %}
+
+	<style>
+      	#shopify-section-{{ section.id }} .press_ratting{
+        	text-align: center;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 30px;  
+        }
+      
+      	#shopify-section-{{ section.id }} .press_ratting span{
+        	color: {{section_color}}; 
+          	font-size: 22px;
+        }
+       #shopify-section-{{ section.id }} .press_ratting span svg {
+         width: 20px;
+       }
+
+      	
+   		#shopify-section-{{ section.id }} .star-ratting__block{
+          	background-color: {{section_bg}};
+          	color: {{section_color}};
+        }
+      
+      	#shopify-section-{{ section.id }} .authore__info{
+        	color: {{section_color}} !important;
+          	position: relative;
+    		display: inline-block;
+          	margin-top: 30px !important;
+        }
+      
+      	#shopify-section-{{ section.id }} span.authore__info:before {
+            content: "";
+            border-bottom: 1px solid {{section_color}};
+            width: 15px;
+            height: 1px;
+            position: absolute;
+            left: -20px;
+            top: 6px;
+        }
+      
+      	#shopify-section-{{ section.id }} .slick-arrow:after{
+        	color: {{section_color}} !important;	  
+        }
+      
+      	#shopify-section-{{ section.id }} .slick-prev.slick-arrow:after{
+         	right: unset;
+    		left: 0;
+          	position: absolute;
+        }
+      
+        #shopify-section-{{ section.id }} .slick-next.slick-arrow:after{
+          	right: 0;
+    		left: unset;
+          	position: absolute;
+        }
+      
+      	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted{
+          
+          	padding-bottom: 40px
+          	@media screen and (max-width: 768px){
+            	padding-bottom: 40px;
+            }
+        }
+      
+      	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted .slick-dots{
+        	bottom: -20px;  
+          	display: block !important;
+        }
+      
+      	
+  		@media screen and (min-width: 768px){
+          	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted .slick-dots{  
+                display: none !important;
+            }
+        }
+      
+      	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted .slick-dots li{
+        	background: #ff7c97 !important;
+    		border: 1px solid #ff7c97 !important; 
+          	opacity: 0.7;
+        }
+      
+      	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted .slick-dots li.slick-active{
+        	background: {{section_color}} !important;
+    		border: 1px solid {{section_color}} !important;  
+        }
+      
+      	#shopify-section-{{ section.id }} .star-ratting__block .press__button{
+        	margin-top: 25px;  
+        }
+      
+      	#shopify-section-{{ section.id }} .star-ratting__block .press__button a span{
+        	color: #fa0d3d;  
+        }
+      
+      	#shopify-section-{{ section.id }} .star-ratting__block .press__button a:hover span{
+          	color: #fff;
+        }
+      
+      	@media screen and (max-width: 768px){
+          	#shopify-section-{{ section.id }} .js-collection-slider.slick-dotted .slick-dots{
+            	visibility: visible !important;
+              	bottom: 0px;
+            }
+        }
+	</style>
+{% endif %}
+
+<section class="scarlet-press-section {{section_class}}" data-section-id="{{ section.id }}" data-section-type="press-section">
+    <div class="container">
+      <div class="row row-lg">
+	    <div class="subheading-text">{{ section.settings.title }}</div>
+        <div class="js-collection-slider">
+	    {%- if section.blocks.size > 0 -%}
+		    {% for block in section.blocks %}
+		      <div class="quote" {{ block.shopify_attributes }}>
+                  <div class="press_ratting">
+                    	<span> <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90"><defs><style>.cls-1{fill:#ee1e41;}</style></defs><polygon class="cls-1" points="50 2.21 36.1 30.38 5 34.9 27.5 56.83 22.19 87.79 50 73.17 77.81 87.79 72.49 56.83 95 34.9 63.9 30.38 50 2.21"/></svg> </span> 
+                    	<span> <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90"><defs><style>.cls-1{fill:#ee1e41;}</style></defs><polygon class="cls-1" points="50 2.21 36.1 30.38 5 34.9 27.5 56.83 22.19 87.79 50 73.17 77.81 87.79 72.49 56.83 95 34.9 63.9 30.38 50 2.21"/></svg> </span> 
+                    	<span> <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90"><defs><style>.cls-1{fill:#ee1e41;}</style></defs><polygon class="cls-1" points="50 2.21 36.1 30.38 5 34.9 27.5 56.83 22.19 87.79 50 73.17 77.81 87.79 72.49 56.83 95 34.9 63.9 30.38 50 2.21"/></svg> </span> 
+                    	<span> <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90"><defs><style>.cls-1{fill:#ee1e41;}</style></defs><polygon class="cls-1" points="50 2.21 36.1 30.38 5 34.9 27.5 56.83 22.19 87.79 50 73.17 77.81 87.79 72.49 56.83 95 34.9 63.9 30.38 50 2.21"/></svg> </span> 
+                    	<span> <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 90"><defs><style>.cls-1{fill:#ee1e41;}</style></defs><polygon class="cls-1" points="50 2.21 36.1 30.38 5 34.9 27.5 56.83 22.19 87.79 50 73.17 77.81 87.79 72.49 56.83 95 34.9 63.9 30.38 50 2.21"/></svg> </span> 
+                  </div>
+                
+			      {%- if block.settings.quote_copy != blank -%}
+			      	  <div class="content">{{ block.settings.quote_copy }}</div>
+			      {%- endif -%}
+				  {%- if block.settings.press_logo != blank -%}
+				  	{%- if block.settings.link != blank -%}
+				  		<a href="{{ block.settings.link }}" target="_blank">
+				  			<img src="{{ block.settings.press_logo | img_url: 'x100' }}">
+				  		</a>
+				  	{% else %}
+				  		<img src="{{ block.settings.press_logo | img_url: 'x100' }}">
+				  	{%- endif -%}
+				  {%- endif -%}
+				  {%- if block.settings.label != blank -%}
+				  	{%- if block.settings.link != blank -%}
+				  		<a href="{{ block.settings.link }}" target="_blank">
+				  			<span>{{ block.settings.label }}</span>
+				  		</a>
+				  	{% else %}
+				  		<span class="authore__info">{{ block.settings.label }}</span>
+				  	{%- endif -%}
+				  {%- endif -%}
+                
+                  {% if block.settings.button != blank %}
+                	<div class="press__button">
+                		<a href="{{ block.settings.btn_link }}" class="button">
+				  			<span>{{ block.settings.button }}</span>
+				  		</a>
+                	</div>
+                  {% endif %}
+			  </div>
+			{% endfor %}
+	    {%- endif -%}
+        </div>
+      </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Press",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Press"
+    },
+	{
+	  "type": "checkbox",
+	  "id": "enable_ratting",
+	  "label": "Enable Ratting"
+	},
+	{
+	  "type": "color",
+	  "id": "section_bg",
+	  "label": "Background Color",
+	  "default": "#c88a8d"
+	},
+	{
+	  "type": "color",
+	  "id": "section_color",
+	  "label": "Text Color",
+	  "default": "#fff"
+	}
+  ],
+  "blocks": [
+      {
+        "name": "quote",
+        "type": "quote",
+        "settings": [
+          {
+        	"id": "quote_copy",
+			"type": "richtext",
+        	"label": "Quote Copy",
+        	"default": "<p>Quote goes here.</p>"
+		  },{
+            "id": "press_logo",
+            "type": "image_picker",
+	    	"label": "Avatar", 
+	    	"info": "Upload a PNG of the IG quote author"
+          },{
+            "id": "label",
+            "type": "text",
+	    	"label": "Label", 
+	    	"info": "IG Handle"
+          },{
+            "id": "link",
+            "type": "text",
+	    	"label": "Link", 
+	    	"info": "IG Profile Link"
+          },
+		  {
+            "id": "button",
+            "type": "text",
+	    	"label": "Button Label"
+          },
+		  {
+            "id": "btn_link",
+            "type": "url",
+	    	"label": "Button Link"
+          }
+        ]
+      }
+  ],
+  "presets": [
+    {
+      "category": "Advanced",
+      "name": "Press"
+    }
+  ]
+}
+{% endschema %}

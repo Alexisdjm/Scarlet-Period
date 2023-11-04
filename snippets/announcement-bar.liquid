@@ -1,0 +1,163 @@
+<style>
+  
+  	@media (max-width: 540px){
+  		#announcement__bar-slider .swiper-wrapper{
+      		margin: 5px 0 !important;
+    	}
+    }
+      
+  	#announcement__bar-slider .swiper-slide{
+      	background-color: #fa0d3d;
+    }
+  
+  	#Cart .siteAlert{
+      	display: inline-block;
+    	width: 100%;
+    	height: auto;
+      	margin-bottom: 10px;
+    }
+  
+  	#Cart .siteAlert .row{
+    	padding: 0;
+    }
+  	
+  	#Cart .siteAlert .swiper-wrapper{
+    	margin: 0 !important;  
+    }
+  
+  	
+  
+  	#Cart #announcement__bar-slider{
+    	display:none;  
+    }
+  
+  	.site-header .static__bar-annunce{
+      	display:block;
+    }
+  
+  	#Cart .static__bar-annunce{
+    	display:inline-block;  
+    }
+  
+  	#Cart .closediam{
+    	display:inline-block !important;  
+    }
+  
+  	@media screen and (max-width: 767px){
+  		.static__bar-annunce{
+    	    display: inline-block;
+    		height: auto;
+    		vertical-align: middle;
+    		padding-bottom: 2px;  
+    	}
+    }
+  
+  	.site-header .static__bar-annunce{
+    	display: none;  
+    }
+  
+  	.static__bar-annunce .alert-title{
+    	display:none;  
+    }
+  
+  	{% if cart.total_price < 5000 %}
+  		.static__bar-annunce .alert-title.less-price{
+            display:block;  
+        }
+  
+  		.static__bar-annunce .alert-title.grater-pirce{
+            display:none;  
+        }
+  	{% else %}
+  		.static__bar-annunce .alert-title.less-price{
+            display:none;  
+        }
+  
+  		.static__bar-annunce .alert-title.grater-pirce{
+            display:block;  
+        }
+  	{% endif %}
+</style>
+
+<div class="js-siteAlert siteAlert container-wrap" data-status="{{ section.settings.show_announcement }}" data-status-mobile="{{ section.settings.show_announcement_on_mobile }}">
+  <div class="container u-center">
+      <div class="row row-lg u-center" style="width: 100%;">
+        <div class="block u-center" >
+          <div id="announcement__bar-slider">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide theme__home-country hide__nationality">
+                  {%  if section.settings.link != blank %}
+                    <a href = "{{section.settings.link}}">
+                    {%  endif %}
+                        <span class="alert-title h4">{{ section.settings.text }}</span>
+                    {%  if section.settings.link != blank %}
+                    </a>
+                    {%  endif %}
+                </div>
+                
+                <div class="swiper-slide theme__other-country hide__nationality">
+                    {%  if section.settings.link != blank %}
+                    <a href = "{{section.settings.link}}">
+                    {%  endif %}
+                        <span class="alert-title h4">{{ section.settings.text_internation }}</span>
+                    {%  if section.settings.link != blank %}
+                    </a>
+                    {%  endif %}
+                </div>
+                
+                <div class="swiper-slide ">
+                    {%  if section.settings.link != blank %}
+                    <a href = "{{section.settings.link}}">
+                    {%  endif %}
+                        <span class="alert-title h4">{{ section.settings.text_1 }}</span>
+                    {%  if section.settings.link != blank %}
+                    </a>
+                    {%  endif %}
+                </div>
+                
+                {% if section.settings.text_pramo_2 != "" %}
+                <div class="swiper-slide ">
+                    <a href = "{{section.settings.link_pramo_2}}">
+                        <span class="alert-title h4">{{ section.settings.text_pramo_2 }}</span>
+                    </a>
+                </div>
+                {% endif %}
+                
+              </div>
+             
+          </div>
+          
+          <div class="static__bar-annunce" data-cartprice= "{{cart.total_price}}">
+            {% comment %}
+          	{% if cart.total_price < 5000 %}
+              <a href = "{{settings.link}}" >
+                <span class="alert-title "><p>{{ 5000 | minus: cart.total_price | money }} {{ settings.text_2 }} </p></span>
+              </a>
+            {% else %}
+              <a href = "{{settings.link}}">
+                  <span class="alert-title h4">{{ settings.text_3 }}</span>
+              </a>
+            {% endif %}
+			{% endcomment %}  
+            {%  if settings.link != blank  %}
+            <a href = "{{settings.link}}" >
+              {%  endif %}
+              <span class="alert-title less-price" >
+                <p class="theme__home-country hide__nationality">
+                  <span class="ship__remaining">{{ 8500 | minus: cart.total_price | money }}</span> {{ settings.text_2 }} 
+                </p>
+                
+                <p class="theme__other-country hide__nationality">
+                  <span class="ship__remaining">{{ 8500 | minus: cart.total_price | money }}</span> {{ settings.text_2 }} 
+                </p>
+                
+              </span>
+            	<span class="alert-title h4 grater-pirce">{{ settings.text_3 }}</span> 
+            {%  if settings.link != blank  %}
+            </a>
+              {%  endif %}
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<!-- amai_stp-added -->
+{% render 'amai_stp-product-snippet' %}
+<!-- /amai_stp-added -->
+{% include 'product-variantPopover' %}
+
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+	{% assign on_sale = true %}
+	{% assign on_sale_class = ' is-sale' %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+	{% assign sold_out = false %}
+{% endif %}
+
+<div itemscope itemtype="http://schema.org/Product">
+	<meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  	<meta itemprop="description" content="{{ product.description | strip_html | escape | strip_newlines }}">
+	<meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+  	{%- if product.variants.first.barcode -%}
+  		<meta itemprop="gtin8" content="{{ product.variants.first.barcode }}">
+  	{%- endif -%}
+
+  	{%- if product.vendor -%}
+    	<meta itemprop="brand" content="{{ product.vendor | escape }}">
+    {%- endif -%}
+  	{%- if product.first_available_variant.sku != blank -%}
+  		<meta itemprop="sku" content="{{ product.first_available_variant.sku }}">
+    {%- else -%}
+  		<meta itemprop="sku" content="{{ product.first_available_variant.id }}">
+    {%- endif -%}
+
+    {%- if product.first_available_variant.barcode.size == 12 -%}
+  		<meta itemprop="gtin12" content="{{ product.first_available_variant.barcode }}">
+    {%- endif -%}
+    {%- if product.first_available_variant.barcode.size == 13 -%}
+  		<meta itemprop="gtin13" content="{{ product.first_available_variant.barcode }}">
+    {%- endif -%}
+    {%- if product.first_available_variant.barcode.size == 14 -%}
+  		<meta itemprop="gtin14" content="{{ product.first_available_variant.barcode }}">
+    {%- endif -%}
+	 
+		{% section 'product-everyday-template' %}
+
+		{% comment %} {% section 'faq-section__product' %} {% endcomment %}
+		{% comment %}{% section 'related-products' %}{% endcomment %}
+
+	<span id="product-json" hidden>{{ product | json }}</span>
+</div>
+
+{{ 'page-product.js'  | asset_url | script_tag }}{% include 'wiser_related' %}{% include 'wiser_recommended' %}{% include 'wiser_alsobought' %}{% include 'wiser_recentview' %}{% include 'wiser_topselling' %}{% include 'wiser_trending' %}{% include 'wiser_newarrivals' %}{% include 'wiser_featured' %}
+{% include 'wiser_recent_related' %}
+
+
+	
+
+<script>
+  function setupShopifyXr(){
+    if (!window.ShopifyXR) {
+      document.addEventListener('shopify_xr_initialized', function() {
+        setupShopifyXr();
+      });
+    }else{
+      window.ShopifyXR.addModels();
+      window.ShopifyXR.setupXRElements();
+    }
+  }
+
+  window.Shopify.loadFeatures([
+    {
+      name: 'shopify-xr',
+      version: '1.0',
+      onLoad: setupShopifyXr
+    }
+  ]);
+</script>
+<script>
+
+  window.ShopifyXR.launchXR({
+
+    model3dId: [media-id],
+
+    title: "{{ product.title | escape }}",
+
+  });
+
+</script>

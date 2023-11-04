@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<!--[if IE 9]> <html class="ie9 no-js supports-no-cookies" lang="{{ shop.locale }}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js supports-no-cookies" lang="{{ shop.locale }}"> <!--<![endif]-->
+
+<head>
+  <meta charset="utf-8" />
+  <title>
+  {{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if settings.favicon != blank %}
+    <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+  {% endif %}
+  
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' /><![endif]-->
+  <link rel="canonical" href="{{ canonical_url }}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  {% include 'site-social-meta' %}
+
+  {{ 'style.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+
+  <!-- SCRIPTS -->
+  {{ 'head.js'  | asset_url | script_tag }}
+
+  {% if template contains 'customers' %}
+    {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+    {{ 'customer_area.js'  | shopify_asset_url | script_tag }}
+  {% endif %}
+
+  <!-- jQuery Dependent -->
+  {{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+  <script>window.lazySizesConfig = window.lazySizesConfig || {};</script>
+  <script src="{{ 'lazysizes.js' | asset_url }}" async=""></script>
+  <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+ 
+
+  {{ content_for_header  }}
+
+  {% if settings.show_reviews and settings.enable_yotpo and settings.yotpo_ID != '' %}
+    {% include 'yotpo-script' %}
+  {% endif %}
+  <script>
+    
+    $(document).ready(function(){
+
+  		$(".cart-product-desc .icon-plus").click(function(e){
+    		e.preventDefault();
+			$(".fordata").addClass("active");
+  		}); 
+    
+    	$(".cart-product-desc .icon-minus").click(function(e){
+    		e.preventDefault();
+			$(".fordata").addClass("active");
+		});
+      
+      	
+	});
+  
+    $(document).on("click",".js-cartToggle-close", function(){
+     	$(".cart-row").removeClass("open");
+        $("body").removeClass("cart--is-visible");
+        $(".cart-row").addClass("close");
+    });
+ 
+	$(document).on("click",".productForm-submit.js-productForm-submit", function(){
+		$("body").addClass("cart--is-visible");
+        $(".cart-row").addClass("open");
+        $(".cart-row").removeClass("close");
+	});
+ 
+	$(document).ready(function(){
+ 		var data=$(".template-product #rc_container").html();
+ 
+  		if(data == undefined){
+
+  		}else{
+  			$(".subscription-poupdata").addClass("active");
+		}
+      
+      	
+	});
+    
+	$(document).on("click",".subscription-poupdata.active span", function(){
+		$(".subscription-poupdata.active .data").addClass("active");
+    });
+    
+	$(document).on("click",".subscription-poupdata.active .close", function(){
+		$(".subscription-poupdata.active .data").removeClass("active");
+	});
+    
+	$(document).on("click",".subscription-poupdata.active .scnd", function(){
+		$(".subscription-poupdata.active .data").removeClass("active");
+    });
+  </script>
+  <script src="https://kit.fontawesome.com/d419373a9a.js" crossorigin="anonymous"></script>
+  {{ 'jquery.cookieMessage.min.js' | asset_url | script_tag }}
+  
+{% include 'wiser' %}</head>
+{% capture body_class %}{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }} image-hover-light cta-fill-{{settings.cta_button_style}} {% if settings.show_custom_cursor %}custom-cursor{% endif %} {% if settings.transition_images_fade %}enable-fade-in{% endif %} {% if settings.transition_grid_items %}show-grid-items-transition{% endif %}{% endcapture %}
+
+{%- if template contains 'index' -%}
+
+	{%- if settings.show_home_splash -%}
+  		{%- include 'index-splash' -%} 
+	{%- endif -%}
+{%- endif -%} 
+
+<body id="{{ page_title | handle }}" class="{{ body_class }} js-splash" >
+
+  {% section 'popup' %}
+
+  <div class="pageWrap">
+    
+   
+
+  {% section 'header' %}
+    <div class="bodyWrap">
+
+      {{ content_for_layout }}
+
+      {% section 'newsletter' %}
+      {% section 'footer' %}
+
+    <script src="//cdn.codeblackbelt.com/js/modules/also-bought/main.min.js?shop=wearescarlet.myshopify.com"></script>
+
+    </div> <!-- END bodyWrap -->
+  </div> <!-- END pageWrap -->
+
+  <!-- AJAX Mustache Templates -->
+  {% include 'ajax-cart' %}
+  {% include 'cart-popover' %}
+  
+  <!-- plugins -->
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/velocity-animate@1.5/velocity.min.js"></script>
+  
+  <!-- scripts -->
+  {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+  {{ 'shop.js' | asset_url | script_tag }}
+  {{ 'scarlet.js' | asset_url | script_tag }}
+  
+  {{ 'swiper-bundle.min.js' | asset_url | script_tag }}
+ 
+  <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
+  {{ 'jquery.mousewheel.min.js' | asset_url | script_tag }}
+  {% include 'load-spinner' %}
+  {% comment %}{% include 'search-autocomplete' %}{% endcomment %}
+  <script>Shopify.money_format = '{{ shop.money_format }}';</script>
+
+  {% if settings.show_multiple_currencies %}
+    {% include 'currencies' %}
+  {% endif %}
+{% render 'th-bundle-product' %}<!-- Begin ReCharge code -->
+{% include 'subscription-theme-footer' %}
+  
+  
+  
+  
+  <!-- Initialize Swiper -->
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: 1.5,
+      spaceBetween: 10,
+      freeMode: true,
+      freeModeFluid: true,
+      mousewheel: {
+        invert: false,
+        forceToAxis:true,
+      },
+      mousewheelControl: false,
+      scrollbar: {
+        el: '.swiper-scrollbar',
+        hide: false,
+        draggable: true
+      },
+      breakpoints: {  
+      640: {
+        slidesPerView: 4,
+        spaceBetween: 10, },
+      }
+    });
+    
+    document.addEventListener("keydown", function(e){
+      
+      	console.log(e.keyCode);
+        if(e.keyCode == 37) {
+            swiper.slidePrev(); 
+            //Left arrow pressed
+        }
+        if(e.keyCode == 39) {
+            swiper.slideNext();
+            //Right arrow pressed
+        }   
+    });
+    
+    $.cookieMessage({
+        'mainMessage': 'Our website uses cookies to ensure you get the best experience <a href="#">Learn More</a>. ',
+        'acceptButton': '<i class="accept-cookie-btn icon-close"></i>',
+        'fontSize': '16px',
+        'backgroundColor': '#222',
+    });
+    
+    $(document).ready(function(){
+      	
+    	  	
+      
+      
+    });
+  </script>
+  
+<!-- End ReCharge code -->
+<style>
+section.container-wrap.product-banners .row.full-width-banner {
+    position: static;
+}
+  .subscription-poupdata.active .price {
+    color: #000;
+    position: absolute;
+    right: -36px;
+    top: 16px;
+    font-size: 13px;
+}
+  .butoncustom.active:after {
+    position: absolute;
+    content: "";
+    background: #fff;
+    height: 47px;
+        width: 176px;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    bottom: 0;
+        transition: 0.3s all;
+    margin: auto;
+    border-radius: 50px;
+}
+   .butoncustom.active:hover .js-productForm-submit {
+    background: #fa0d3d;
+     color:#fff;
+}
+  .butoncustom.active:hover:after {
+    position: absolute;
+    content: "";
+       background: #fa0d3d;
+    height: 47px;
+       width: 176px;
+        transition: 0.3s all;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border-radius: 50px;
+}
+
+.butoncustom.active {
+    position: relative;
+}
+  .subscription-poupdata.active span {
+        font-size: 12px;
+    display: inline-block;
+    color: #000;
+    line-height: 23px;
+    border: 1px solid #262626;
+        cursor: pointer;
+ border-radius: 50%;
+    height: 25px;
+    top: 56px;
+    width: 25px;
+        z-index: 9;
+    text-align: center;
+    margin-left: 10px;
+    position: absolute;
+    margin-top: -6px;
+}
+  .rc_popup {
+    display: none !important;
+}
+
+
+  .subscription-poupdata.active .data.active .close {
+    text-align: right;
+    font-size: 23px;
+    cursor: pointer;
+}
+.subscription-poupdata.active .data.active {
+    display: inline-block !important;
+    width: 100%;
+    position: fixed;
+      color: #000;
+    background: #ffffffa8;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 999;
+    /* opacity: 0.5; */
+    bottom: 0;
+    height: 100%;
+}
+  .subscription-poupdata.active .data.active .loop p {
+    font-weight: bold;
+}
+  .subscription-poupdata.active .data.active .loop {
+    width: 100%;
+    max-width: 523px;
+    margin: 0 auto;
+    box-shadow: 6px 6px 20px 0px rgba(181,181,181,0.5);
+    padding: 20px;
+    position: fixed;
+    top: 0;
+        background: #fff;
+    bottom: 0;
+    height: 560px;
+    overflow-x: scroll;
+    margin: auto;
+    left: 0;
+        text-align: left;
+    right: 0;
+} 
+  .subscription-poupdata.active .scnd:hover {
+    background: #fa0d3d;
+    color: #fff;
+}
+
+  .subscription-poupdata.active .scnd {
+    cursor: pointer;
+    display: inline-block !important;
+    background: #fff;
+    text-align: center;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+        font-family: "Mattermed";
+    font-weight: 400;
+    border-radius: 50px;
+    color: #fa0d3d;
+    border: 1px solid #fa0d3d;
+}
+ 
+.subscription-poupdata.active {
+    display: inline-block !important;
+    width: 100%;
+    text-align: right;
+    max-width: 167px;
+    position: relative;
+ 
+}
+  .header-cartPopover.is-visible {
+    opacity: 0 !important;
+}
+.cart-row.open .cart-totals-table .flex {
+    display: inline-block;
+    padding: 75px 0 0px;
+}
+ .cart-row.open .checkout-buttons.inline.datafornew .cart-totals-table .flex {
+    padding-top: 0;
+}
+  .rc_popup__hover {
+    color: #000 !important;
+}
+span.extra {
+      text-transform: none;
+    padding-left: 20px;
+}
+div#rc_autodeliver_options {
+    white-space: normal !important;
+}
+div#rc_autodeliver_options select {
+    border: 0;
+    color: #fa0d3d !important;
+    width: auto;
+    display: block;
+    display: inline-block;
+    border-radius: 23px;
+   padding: 7px 18px 10px 10px !important;
+    background-image: url(https://cdn.shopify.com/s/files/1/0049/3964/4963/files/down-arrow_1.png?v=1599731702);
+    background-repeat: no-repeat;
+    background-size: 12px;
+    background-position: center right;
+}
+
+div#rc_autodeliver_options select option {
+      color: #fa0d3d !important;
+}
+.rc_popup__block__content a,
+  .rc_popup__block .rc_popup__block__footer, .rc_popup__block__content a {
+    display: none!important;
+}
+ 
+  div.rc_popup__block__content a.first {
+    display: inline-block !important;
+}
+
+span.rc_label__delivery{
+  position:relative;
+      
+  display: inline-block;
+}
+  div.rc_popup__block {
+    width: 420px!important;
+ }
+div.rc_popup__block__content p {
+    font-weight: bold;
+}
+
+label.rc_label.rc_label__deliver_every {
+    position: relative;
+  width: 100%;
+}
+.template-cart .checkout-buttons.inline .button-holder {
+    display: none;
+}
+
+.template-cart .checkout-buttons.inline.datafornew {
+    position: absolute;
+    right: -569px;
+    top: 11px;
+    left: auto;
+    width: 60%;
+}
+  .template-cart form {
+    position: relative;
+}
+  .template-cart .flex.row.fordata.active label,
+  .template-cart .flex.row.fordata.active .cart-total-price{
+     display: none;
+}
+  .template-cart .flex.row.fordata.active .cart-total-price {
+    display: none;
+}
+ .template-cart .flex.row.fordata.active {
+    margin: 0 0 40px 0;
+}
+   .template-cart .flex.row.order-total {
+    display: none;
+}
+  section.product .productForm-select.quantity {
+    margin-bottom: 20px;
+}
+  
+ 
+  </style>
+  
+	{% render 'flits_snippet' %}
+</body>
+</html>
+

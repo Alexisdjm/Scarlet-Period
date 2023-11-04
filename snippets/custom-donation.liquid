@@ -1,0 +1,902 @@
+{% comment %}
+  See all documentation for this here: https://github.com/carolineschnapp/donation
+  
+  Author: Caroline Schnapp
+
+  Enter below the handle of your link list that contains a first link pointing to your donation product.
+  Then, you're done.
+{% endcomment %}
+
+{% assign linklist_handle = 'donation' %}
+
+{% if linklists[linklist_handle].empty? %}
+  <p class="errors">You don't have a link list with handle <tt>{{ linklist_handle }}</tt>.</p>
+{% elsif linklists[linklist_handle].links.first.type != 'product_link' %}
+  <p class="errors">Your <a href="/admin/link_lists/">{{ linklists[linklist_handle].title }}</a> link list does not contain a link that points to a product.</p>
+{% else %}
+
+{% assign product = linklists[linklist_handle].links.first.object %}
+
+{% comment %}
+  If the product has one variant, we are showing a text box.
+  If the product has more than 1 variant, we show radio buttons for each fixed amount,
+  followed by a text box if we have a variant with price $1.
+{% endcomment %}
+<div class="texts">
+<p>1 in 9 people with periods have<br>
+Endometriosis. Donate & support<br>
+initiatives to raise as much needed<br>
+awareness, diagnosis and treatment.</p>
+
+<div class="img">
+  <img src="//cdn.shopify.com/s/files/1/0049/3964/4963/files/aefbed_c47d6a4267914c3fa8d545bad5553a2b_copy_2_1.png?v=1607488011">
+  </div>
+
+</div>
+
+<div class="clearfix donation_cus">
+  
+  {% comment %}
+    Determining below if we will need an input box for user to type in an amount.
+    Note: variant.price is in cents!
+  {% endcomment %}
+  
+  {% assign has_variable_donation = false %}
+  {% assign variable_donation_index_in_product = 0 %}
+  
+  {% for variant in product.variants %}
+    {% if variant.price == 100 %}
+      {% assign has_variable_donation = true %}
+      {% assign variable_donation_index_in_product = forloop.index0 %}
+    {% endif %}
+  {% endfor %}
+  
+  {% comment %}
+    Examining the content of the cart, looking for a donation.
+  {% endcomment %}
+
+  {% assign donation_amount = 0 %}
+  {% assign donation_index = 0 %}
+  {% assign cart_count = 0 %}
+  {% for item in cart.items %}
+    {% if has_variable_donation and item.id == product.variants[variable_donation_index_in_product].id %}
+      {% assign donation_amount = item.quantity %}
+      {% assign donation_index = forloop.index0 %}
+      {% assign cart_count = cart_count | plus: 1 %}
+    {% else %}
+      {% assign cart_count = cart_count | plus: item.quantity %}
+    {% endif %}
+  {% endfor %}
+
+  {% if product.variants.size > 1 or has_variable_donation == false  %}
+
+    {% assign fixed_amount_in_cart = false %}
+
+    {% for variant in product.variants %}
+      {% unless has_variable_donation and forloop.index0 == variable_donation_index_in_product %}
+      {% assign is_active = false %}
+      {% for item in cart.items %}
+        {% if item.id == variant.id and is_active == false %}
+          {% assign fixed_amount_in_cart = true %}
+          {% assign is_active = true %}
+        {% endif %}
+      {% endfor %}
+  <div class="input-dobate">
+      <input class="hidden{% if is_active %} active{% endif %}" type="radio" name="donation-fixed-amount" value="{{ variant.id }}" id="donation-{{ variant.id }}"{% if is_active %} checked{% endif %} />
+      <label class="donation" for="donation-{{ variant.id }}">{{ variant.price | money }}</label>
+  </div>  
+    {% endunless %}
+    {% endfor %}
+
+    {% if has_variable_donation %}
+    <span class="donation-variable-amount">
+      <input class="hidden{% unless fixed_amount_in_cart or donation_amount == 0 %} active{% endunless %}" type="radio" name="donation-fixed-amount" id="donation-variable" value="" {% unless fixed_amount_in_cart or donation_amount == 0 %}checked{% endunless %} />
+      <label class="donation-variable-amount__label donation" for="donation-variable">Other</label>
+      <input class="donation-variable-amount__input{% if fixed_amount_in_cart %} donation-variable-amount__input--disabled{% endif %}" placeholder="{{ 0 | money }}" {% if fixed_amount_in_cart %}disabled{% endif %}{% unless donation_amount == 0 %} value="{{ donation_amount | times: 100 | money_without_trailing_zeros }}"{% endunless %} type="text" data-variant-id="{{ product.variants.first.id }}" />
+    </span>
+    {% endif %}
+
+  {% else %}
+
+    <input class="donation-variable-amount__input"{% unless donation_amount == 0 %} value="{{ donation_amount | times: 100 | money_without_trailing_zeros }}"{% endunless %} type="text" data-variant-id="{{ product.variants.first.id }}" />
+
+  {% endif %}
+    
+</div>
+<div class="donation-btnn"><a href="#">Donate now</a></div>
+
+
+<script>
+jQuery(function($) {
+  var fixedAmountButtons = $('[name="donation-fixed-amount"]'),
+    donationVariableAmount = $('.donation-variable-amount__input'),
+    cartCountSelector = 'body .cart, #cart-count a:first, #gocart p a, #cart .checkout em, .item-count',
+    cartFormButtons = $('form[action="/cart"]').find('[name="update"], [name="checkout"], [name="goto_pp"], [name="goto_gc"]'),
+    data = { updates: {} },
+    qty = 0,
+    variantId,
+    isFixedAmount = true,
+    updateDonation = function() {
+      isFixedAmount = false;
+      fixedAmountButtons.each(function() {
+        variantId = '37668195172547';
+        if (variantId) {
+          if ($(this).is(':checked')) {
+            data['updates'][variantId] = 1;
+            isFixedAmount = true;
+          }
+          else {
+            data['updates'][variantId] = 0;
+          }
+        }
+      });    
+      if (isFixedAmount) {
+        donationVariableAmount.val('2');
+        data['updates'][{{ product.variants[variable_donation_index_in_product].id }}] = 0;
+      }
+      else {
+        qty = parseInt(donationVariableAmount.val().replace(/[^0-9.,]/,''), 10) || 0;
+        data['updates'][{{ product.variants[variable_donation_index_in_product].id }}] = qty;
+      }
+      $.ajax({
+        type: 'POST',
+        url: '/cart/update.js', 
+        data: $('form[action="/cart"]').serialize(),
+        dataType: 'json',
+        success: function() {
+          $.ajax({
+            type: 'POST',
+            url: '/cart/update.js',
+            data: data,
+            dataType: 'json',
+            success: function() {
+              window.location.href = '/cart';
+            }
+          });
+        }      
+      });
+    };
+  
+  // Hide quantity box in cart form for variable donation amount.
+  // Update cart item count too, so that a variable amount counts as 1 item.
+  {% if donation_amount > 0 %}
+  jQuery('form[action="/cart"] [name^="updates"]:eq({{ donation_index }})').css('visibility', 'hidden');
+  if (cartCountSelector && jQuery(cartCountSelector).size()) {
+    var value = $(cartCountSelector).first().html();
+    $(cartCountSelector).first().html(value.replace(/[0-9]+/, {{ cart_count | json }}));
+  }                                    
+  {% endif %}
+                                   
+  // Automatically add the donation when a button is clicked or variable amount changes.
+  fixedAmountButtons.bind('click', function() {
+    if ($(this).is('.active')) {
+      $(this).prop('checked', false);
+      $(this).removeClass('active');
+      if ($(this).val()) {
+        updateDonation();
+      }
+      else {
+        donationVariableAmount.val('');
+        donationVariableAmount.prop('disabled', true).addClass('donation-variable-amount__input--disabled');
+        updateDonation();
+      }
+    }
+    else {
+      fixedAmountButtons.removeClass('active');
+      $(this).addClass('active');
+      if ($(this).val()) {
+//         updateDonation();
+      }
+      else {
+        donationVariableAmount.prop('disabled', false).removeClass('donation-variable-amount__input--disabled').get(0).focus();
+      }
+    }
+  });
+    
+  // If Enter key is pressed while input box has focus, update donation.
+  donationVariableAmount.bind('keypress', function(e) {
+    if (e.which === 13) {
+      updateDonation();
+      return false;
+    }
+  });
+  
+  // If Donation amount has changed, update donation.
+  donationVariableAmount.bind('change, blur', function() {
+    cartFormButtons.prop('disabled', true);
+    updateDonation();
+  });
+  
+    $('.donation-btnn').click(function(event){
+ var var_id = $('.clearfix.donation_cus input.hidden.active').val();
+  var addData = {
+      quantity: 1,
+      id: var_id
+    }
+  
+
+
+  $.ajax({
+    type: 'POST',
+    url: '/cart/add.js',
+    dataType: 'json',
+    data: addData,
+    success: function(respp){
+      console.log(respp);
+   $.ajax({
+    type: 'GET',
+    url: '/cart.js',
+    async: false,
+    cache: false,
+    dataType: 'json',
+
+    success: function(res){
+      location.reload(); 
+    }
+  });
+       
+  }
+  });
+});
+    
+});
+</script>
+
+{% comment %}
+  Special font here.
+{% endcomment %}
+
+{{ '//fonts.googleapis.com/css?family=Montserrat' | stylesheet_tag }}
+
+{% comment %}
+  Variables for styles.
+{% endcomment %}
+
+{% assign donation_font = 'Montserrat, sans-serif' %}
+{% assign donation_color_inactive = '#cccccc' %}
+{% assign donation_text_color = '#ffffff' %}
+
+{% comment %}
+  Our styles.
+{% endcomment %}
+
+<style >
+.hidden {
+    display: none !important;
+}
+
+.checkout-buttons.inline .clearfix.donation_cus {
+    display: inline-flex;
+    text-align: left;
+  margin-top:15px;
+}
+
+.donation {
+    box-sizing: border-box;
+    position: relative;
+    float: left;
+    margin: 0 10px 10px 0;
+    transition: background-color .5s;
+    color: #000;
+    cursor: pointer;
+}
+
+.custom-donation-btn p {
+   color: #383838;
+    text-align: left;
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0px;
+}
+
+.donation-btnn {
+    border: 1px solid #fa0d3d;
+    height: 42px;
+    font-size: 14px;
+    line-height: 35px;
+    border-radius: 42px;
+    text-align: center;
+    margin-top: 17px;
+  cursor:pointer;
+
+}
+
+.checkout-buttons.inline .flex.row.order-total {
+    display: inline-flex;
+}
+
+.checkout-buttons.inline .cart-total-price {
+    font-size: 16px;
+}
+
+.s1.u-right.u-margin-b-sm .cart-totals-table {
+    border-top: 1px solid #ddd;
+}
+
+.input-dobate {
+    display: flex;
+    margin: 0 40px;
+}
+.s1.u-right.u-margin-b-sm {
+    margin: 30px 0 0;
+}
+  header#header .row.row-lg{
+      max-width: 1650px;
+    
+  }
+
+  .nav-standard {
+    opacity: 1 !important;
+}
+
+label.donation {
+    border: none !important;
+  color: #383838;
+  font-size:14px!important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.clearfix.donation_cus input {
+    margin: 6px 10px 0 0;
+}
+
+.cart-totals-table .flex.row.fordata {
+    margin-top: 15px;
+}
+
+.donation,
+.donation-variable-amount__input {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 8px 12px !important;
+
+    font-family: {
+            {
+            donation_font
+        }
+    }
+
+     !important;
+    letter-spacing: 1px;
+    font-weight: 400;
+    font-size: 15px !important;
+    line-height: 22px !important;
+}
+
+.custom-donation-btn {
+    background: #fdf7fa;
+    padding: 30px;
+  text-align:center!important;
+}
+
+.donation-variable-amount {
+    box-sizing: border-box;
+    float: left;
+    margin: 0 10px 10px 0;
+    padding: 0;
+}
+
+.donation-variable-amount .donation-variable-amount__input {
+    float: left;
+    margin-left: -1px;
+    border-left: none;
+}
+  .texts {
+    display: flex;
+}
+  .img {
+    text-align: right;
+    margin: 0 0 0 auto;
+}
+  .img img {
+    width: 129px!important;
+}
+
+.donation-variable-amount__label {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.donation-variable-amount__input {
+    box-sizing: border-box;
+    width: 120px !important;
+    height: 40px !important;
+    margin: 0;
+
+    border: 1px solid {
+            {
+            donation_color_inactive
+        }
+    }
+
+    ;
+    border-radius: 1px !important;
+}
+
+input:checked ~ .donation-variable-amount__input,
+input.active ~ .donation-variable-amount__input {
+    border: 1px solid {
+            {
+            donation_color_active
+        }
+    }
+
+    ;
+}
+
+.donation-variable-amount__input--disabled {
+    opacity: 0.5;
+}
+
+input:checked + .donation,
+input.active + .donation,
+.donation:hover {
+    background-color: {
+            {
+            donation_color_active
+        }
+    }
+
+    ;
+
+    border: 1px solid {
+            {
+            donation_color_active
+        }
+    }
+
+    ;
+}
+
+input:checked + .donation:after,
+input.active + .donation:after {
+    content: "\00D7";
+    position: absolute;
+    font-size: 12px;
+    top: -2px;
+    right: 4px;
+}
+
+::-webkit-input-placeholder {
+    color: #bbb;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    color: #bbb;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    color: #bbb;
+}
+
+:-ms-input-placeholder {
+    color: #bbb;
+}
+
+.cart-home.row.inline .block.cart-details {
+    position: absolute;
+    right: -51%;
+    width: 474px !important;
+    top: 0;
+
+}
+
+#your-shopping-cart .container-wrap .container .cbb-also-bought-container {
+    padding-top: 0 !important;
+}
+
+div#CartItems .cart-product-total {
+    width: 87% !important;
+}
+
+.button-holder button.cart-checkout {
+        font-size: 14px !important;
+    max-width: 453px!important;
+    height: 45px
+}
+
+.clearfix.donation_cus .hidden {
+    display: block !important;
+}
+.button-holder {
+    text-align: center;
+}
+.custom-donation-btn input[type='radio']:checked:after {
+    width: 12px;
+    height: 12px;
+    border-radius: 15px;
+    top: -3px;
+    left: -1px;
+    position: relative;
+    background-color: #fa0d3d;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid #d8d3d6;
+}
+
+#your-shopping-cart .checkout-buttons.inline.datafornew {
+    position: relative !important;
+    right: 0 !important;
+    width: 100% !important;
+}
+
+#your-shopping-cart .cart-totals-table {
+    padding-top: 20px;
+}
+
+#your-shopping-cart input:checked + .donation:after,
+input.active + .donation:after {
+
+    display: none !important;
+}
+
+#your-shopping-cart div#shopify-section-footer section.container-wrap {
+    padding: 0 !important;
+}
+
+#your-shopping-cart div#shopify-section-newsletter section.section-newsletter.container-wrap {
+    padding: 30px 0 !important;
+}
+
+#your-shopping-cart .cbb-also-bought-container.cbb-desktop-view span.cbb-also-bought-product-regular-price {
+    display: none !important;
+}
+  
+ #your-shopping-cart  .cbb-also-bought-slider {
+    overflow: hidden !important;
+}
+ 
+  .cbb-also-bought-container.cbb-mobile-view.cbb-tablet-view{
+  
+    margin:0 !important;
+  }
+  
+  ul.payment-icon-list {
+    display: none;
+}
+@media only screen and (max-width: 1785px) {
+    .cart-home.row.inline .block.cart-details {
+        right: -62%;
+
+    }
+}
+@media only screen and (max-width: 1667px) {
+    .cart-home.row.inline .block.cart-details {
+        right: -59%;
+
+    }
+  #your-shopping-cart .cart-home .lg_s35 {
+    width: 58vw !important;
+}
+  #your-shopping-cart .cbb-also-bought-container h2.cbb-also-bought-title {
+    width: 50vw !important;
+  }
+  #your-shopping-cart .cbb-also-bought-container li.cbb-also-bought-product {
+    width: 50vw !important;
+}
+}
+@media only screen and (max-width: 1441px) {
+
+    #your-shopping-cart .cart-home .lg_s35 {
+        width: 56vw !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container li.cbb-also-bought-product {
+        width: 46vw !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container h2.cbb-also-bought-title {
+        width: 46vw !important;
+    }
+  .cart-home.row.inline .block.cart-details {
+    right: -63%;
+}
+  .cart-home.row.inline .block.cart-details {
+    width: 410px !important;
+}
+  .input-dobate {
+    margin: 0 27px;
+}
+}
+
+@media only screen and (max-width: 1024px) {
+  .custom-donation-btn {
+    padding: 22px 12px;
+  }
+.cart-home.row.inline .block.cart-details {
+    width: 380px !important;
+}
+    a#accountIcon {
+        margin: 0 0 0 auto;
+        position: absolute;
+        right: 90px;
+        top: 14px;
+        left: auto;
+    }
+
+    .cart-home.row.inline .block.cart-details {
+        right: -71%;
+    }
+
+    body#your-shopping-cart header#header {
+        border-bottom: none !important;
+    }
+
+
+
+    #your-shopping-cart .cart-home .lg_s35 {
+        width: 52vw !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container li.cbb-also-bought-product {
+        width: 43vw !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container h2.cbb-also-bought-title {
+        width: 43vw !important;
+    }
+
+    .cbb-also-bought-container button.cbb-also-bought-add-to-cart-button {
+        margin-top: 10px !important;
+    }
+.input-dobate {
+    margin: 0 20px;
+}
+
+  .site-header .site-header-right {
+    display: block;
+}
+}
+
+
+
+@media only screen and (max-width: 982px) {
+form#contact_form {
+    padding-right: 33px!important;
+}
+  .js-cartToggle.js-cartToggle-close.cart-close.icon-close.diamond-outline {
+    display: none!important;
+}
+  .cart-home.row.inline .block.cart-details {
+    width: 300px !important;
+}
+    .site-header .site-header-right {
+    display: none;
+}
+      #your-shopping-cart a.closediam {
+        display: none !important;
+    }
+  a#accountIcon {
+    display: none;
+}
+    .icon-menu .icon-bar {
+    top: 15px !important;
+    right: 65px;
+}
+  .icon-menu {
+    display: block!important;
+    width: auto !important;
+    height: auto !important;
+  }
+ .texts p br {
+    display: none;
+}
+  #CartItems .cart-product-title, .cbb-also-bought-container h3.cbb-also-bought-product-name {
+    font-size: 13px !important;
+}
+  .cbb-also-bought-container select.cbb-recommendations-variant-select {
+    width: 60% !important;
+}
+  .input-dobate {
+    margin: 0 13px;
+}
+  .cart-home.row.inline .block.cart-details {
+    right: -68%;
+}
+  li.footer-link a, .med_s13 ul li a {
+    font-size: 13px;
+}
+  .med_s25 {
+    width: 50%;
+}
+  .section-newsletter h3 {
+    font-size: 25px;
+}
+  .footer-blocks p, .signUp p {
+    font-size: 13px;
+}
+}
+
+@media only screen and (max-width: 768px) {
+    .cart-home.row.inline .block.cart-details {
+        width: 614px !important;
+        position: unset;
+    }
+
+    #your-shopping-cart .cart-home .lg_s35 {
+        width: 80vw !important;
+        margin: 0 auto !important;
+        display: block;
+    }
+  .input-dobate {
+    margin: 0 55px;
+}
+  .custom-donation-btn p {
+    width: 50%;
+  }
+.img {
+    margin: 0 auto;
+}
+  .button-holder button.cart-checkout {
+    max-width: 594px!important;
+  }
+    #your-shopping-cart .cart-row {
+        width: 100% !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container h2.cbb-also-bought-title {
+        width: 80vw !important;
+        margin: 0 auto !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-slider-container {
+        width: 87% !important;
+        margin: 30px auto;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container li.cbb-also-bought-product {
+        width: 80vw !important;
+    }
+
+    a#accountIcon {
+        visibility: visible !important;
+    }
+  .med_s25 {
+    width: 100%;
+}
+}
+
+@media only screen and (max-width: 767px) {
+
+.menuToggle .diamond-bar {
+    background-color: transparent;
+}
+  .row.inline .block {
+    display: block !important;
+  }
+    #your-shopping-cart .checkout-buttons.inline {
+        width: auto;
+    }
+
+    .cart-product-#CartItems .line-item thumb.med_u-block.med_d-block.d-table-cell {
+        width: 95%;
+    }
+
+    #CartItems .line-item .cart-product-thumb {
+        width: 25%;
+    }
+
+    .cart-home.row.inline .block.cart-details {
+        width: 100% !important;
+    }
+
+  nav.nav-standard.nav-main {
+    opacity: 1;
+}
+
+    #your-shopping-cart .cbb-also-bought-slider-container {
+        width: 100% !important;
+    }
+
+    #your-shopping-cart .cbb-also-bought-container li.cbb-also-bought-product {
+        width: 100% !important;
+    }
+
+    input:checked + .donation:after,
+    input.active + .donation:after {
+        font-size: 20px;
+    }
+
+    #your-shopping-cart .cart-row {
+        margin: 0px 0 26px 0;
+    }
+}
+  @media only screen and (max-width: 618px){
+.input-dobate {
+    margin: 0 36px;
+}
+  }
+
+@media only screen and (max-width: 546px) {
+    #CartItems .line-item .cart-product-thumb {
+        width: 40%;
+    }
+
+    .checkout-buttons.inline .cart-total-price {
+        font-size: 16px;
+    }
+
+    .cart-home .cart-totals-table .order-total .cart-total-price {
+        font-size: 16px;
+    }
+  .cbb-also-bought-container select.cbb-recommendations-variant-select {
+    width: 60% !important;
+}
+  .input-dobate {
+    margin: 0 24px;
+}
+}
+
+@media only screen and (max-width: 425px) {
+    .custom-donation-btn p {
+        width: 78%;
+    }
+
+    #your-shopping-cart .cart-home .lg_s35 {
+        width: 100% !important;
+    }
+  .cbb-also-bought-container select.cbb-recommendations-variant-select {
+    width: 67% !important;
+}
+  .custom-donation-btn p {
+    width:70%;
+}
+  .input-dobate {
+    margin: 0 13px;
+}
+  #your-shopping-cart #shopify-section-newsletter, #your-shopping-cart #shopify-section-footer {
+    display: none!important;
+}
+  .container.cart-alert {
+    padding-bottom: 100px;
+}
+}
+
+@media only screen and (max-width: 375px) {
+    .clearfix.donation_cus input {
+        margin-top: 5px;
+        margin-right: 10px;
+    }
+
+    .custom-donation-btn {
+        padding: 9px;
+    }
+
+    label.donation {
+        padding: 0 !important;
+    }
+
+    .cbb-also-bought-container h3.cbb-also-bought-product-name a {
+        font-size: 14px !important;
+    }
+
+    #CartItems .cart-product-title {
+        font-size: 14px;
+    }
+  .img img {
+    width: 108px!important;
+}
+  .cbb-also-bought-container button.cbb-also-bought-add-to-cart-button {
+    width: 100% !important;
+    height: 33px;
+  }
+  .cbb-also-bought-container select.cbb-recommendations-variant-select {
+    width: 100% !important;
+    margin: 10px 0 0 0!important;
+}
+  .input-dobate {
+    margin: 0 8px;
+}
+  .custom-donation-btn p {
+    font-size: 11px;
+  }
+}
+
+</style >
+
+{% endif %}
+

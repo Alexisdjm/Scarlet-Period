@@ -1,0 +1,114 @@
+<!-- /templates/customers/account.liquid -->
+{% comment %}
+
+  For all available customer liquid tags:
+    - http://docs.shopify.com/themes/liquid-variables/customer
+
+{% endcomment %}
+{% paginate customer.orders by 10 %}
+
+<div class="account-home container">
+  <div class="row row-lg inline">
+    <div class="block s1 lg_s35">
+      <h4 class="size--small">{{ 'customer.orders.title' | t }}</h4>
+
+      {% comment %}
+        If we have past orders, loop through each one
+      {% endcomment %}
+        {% if customer.orders.size != 0 %}
+
+          <div class="block s1">
+            <div class="account-table account-home-table d-table med_d-block">
+              <div class="d-table-row-group med_d-block">
+                {% for order in customer.orders %}
+                  <div class="order d-table-row med_d-block">
+                    <div class="order-thumb c-2 d-table-cell med_d-block">
+	                    {% for line_item in order.line_items %}
+	                    	{% if forloop.first == true %}
+	                    		<img src="{{ line_item.image | img_url: '250x300' }}" alt="{{ line_item.title }}" />
+	                    	{% endif %}
+	                    {% endfor %}
+                    </div>
+                    <div class="order-number c-2 d-table-cell med_d-block">
+                      <p class="order-no">Order {{ order.name | link_to: order.customer_url }}<br />{{ order.total_price | money }}</p>
+                      <p class="order-date">{{ order.created_at | date: format: 'month_day_year' }}</p>
+                    </div>
+                    <div class="order-link d-table-cell med_d-block">
+                      <a href="{{ order.order_status_url }}" class="button">Order details</a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+        {% else %}
+
+          <p>{{ 'customer.orders.none' | t }}</p>
+
+      {% endif %}
+      
+      {% if paginate.pages > 1 %}
+        <div class="pagination">
+          {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+        </div>
+      {% endif %}
+      {% comment %}{% if paginate.next.is_link or paginate.previous.is_link %}
+        <p class="prev-next"> 
+          {% if paginate.previous.is_link %}
+          <span class="left">{{ 'blog.blog_list_view.newer_articles' | t | link_to: paginate.previous.url }}</span>
+          {% endif %}
+          {% if paginate.next.is_link %}
+          <span class="right">{{ 'blog.blog_list_view.older_articles' | t | link_to: paginate.next.url }}</span>
+          {% endif %}
+        </p>
+      {% endif %}{% endcomment %}
+    </div>
+
+    <div class="account-details block s1 lg_s14">
+      <h4 class="size--small">{{ 'customer.account.details' | t }}</h4>
+
+      <p>{{ customer.name }}<br>
+
+      {% if customer.default_address != nil %}
+      <p class="addresses">
+        {{ customer.default_address.address1 }}<br>
+
+        {% if customer.default_address.address2 != "" %}
+          {{ customer.default_address.address2 }}<br>
+        {% endif %}
+
+        {% if customer.default_address.city != "" %}
+          {{ customer.default_address.city }}
+        {% endif %}
+
+        {% if customer.default_address.province_code != "" %}
+          {{ customer.default_address.province_code | upcase }}
+        {% endif %}
+
+        {% if customer.default_address.zip != "" %}
+          {{ customer.default_address.zip | upcase }}<br>
+        {% endif %}
+
+        {% if customer.default_address.country != "" %}
+          {{ customer.default_address.country }}<br>
+        {% endif %}
+
+        {% if customer.default_address.phone != "" %}
+          {{ customer.default_address.phone }}
+        {% endif %}
+        </p>
+<!-- Begin ReCharge code -->
+<p id="rc_link_container">
+    <a href="/tools/recurring/login">Manage Subscriptions</a>
+</p>
+<!-- End ReCharge code -->
+
+      {% endif %}
+
+      <p><a class="account-addresses" href="/account/addresses">Edit addresses</a></p>
+    </div>
+  </div>
+
+</div>
+{% endpaginate %}

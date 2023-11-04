@@ -1,0 +1,355 @@
+{% comment %} Settings {% endcomment %}
+{% assign show_newsletter = section.settings.show_newsletter %}
+{% assign title = section.settings.title %}
+{% assign content = section.settings.content %}
+{% assign color = section.settings.color %}
+{% assign background = section.settings.background %}
+
+{% comment %} Section {% endcomment %}
+{% if show_newsletter %}
+<section class="section-newsletter container-wrap" data-section-type="newsletter">
+    <div class="container signUp">
+        <div class="row row-lg">
+            <div class="block s1 med_s25">
+                <h3>{{ title }}</h3>
+                {% if content != blank %}
+                    <div class="h4" class="signUp-body">{{ content }}</div>
+                {% endif %}
+
+                {% form 'customer' %}
+                    <div class="js-signUp-form signUp-form">
+                        <input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>
+                        <div class="inputGroup">
+                            <div class="email block s1 med_s45">
+                                <label for="contact-email" class="accessible-label">{{ 'general.slide_out_navigation.search_label' | t }}</label>
+                                <input class="signUp-input required email" type="email" value=""  name="contact[email]" placeholder="Email address" id="contact-email">
+                                <input type="hidden" id="newsletter-first-name" name="contact[first_name]" value="Newsletter" />
+                                <input type="hidden" id="newsletter-last-name" name="contact[last_name]" value="Subscriber" />
+                            </div>
+                            <div class="submit block s1 med_s15">
+                                <button type="submit" class="signUp-submit_btn" name="subscribe" id="subscribe">SIGN UP</button>
+                            </div>
+                        </div>
+                    </div>
+                {% if form.posted_successfully? %}
+                    <div class="signUp-confirmation p">Thanks for subscribing to our newsletter!</div>
+                {% elsif form.errors %}
+                    {{ form.errors | default_errors }}
+                {% endif %}
+                {% endform %}
+              
+              	<div class="sub-social">
+              		<div class="social">
+                      <a href="https://www.facebook.com/wearescarlet" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                      <a href="https://www.instagram.com/scarlet_period/" target="_blank"><i class="fab fa-instagram"></i></a>
+                      <a href="https://www.tiktok.com/@scarletperiod" target="_blank"><i class="fab fa-tiktok"></i></a>
+                      <a href="https://www.pinterest.nz/wearescarlet/" target="_blank"><i class="fab fa-pinterest"></i></a>
+                      {%  if section.settings.logo_1 != blank %}
+                        <img data-src="{{ section.settings.logo_1 | img_url: '220x' }}" width="70" height="80" class="logo logo-home lazyload" alt="{{ section.settings.logo.alt | escape }}" style="height:auto; margin-right:20px;">
+                      {% endif %}
+              		</div>
+              	</div>
+			
+            </div>
+          	
+            <div class="block s1 med_s15">&nbsp;</div>
+            <div class="block s1 med_s25 medium--down-hide">
+                {%- for block in section.blocks -%}
+                {%- capture column -%}{%- cycle 'footer--left', 'footer--center', 'footer--right' -%}{%- endcapture -%}
+                {%- assign mobile_hide_block = block.settings.mobile_hide_block -%}
+
+                {%- case block.type -%}
+                	{%- when 'menu' -%}
+                    <div class="footer__block footer__menus flex {{ column }} {% if mobile_hide_block %}med_hide{% endif %}" {{ block.shopify_attributes }}>
+                      {%- if block.settings.menu_primary != blank -%}
+                      <div class="footer__menu med_s13" >
+                        {%- assign menu_primary = block.settings.menu_primary -%}
+                        <h4 class="footer__header">{{ linklists[menu_primary].title }}</h4>
+                        <ul>
+                          
+                          {%- for link in linklists[menu_primary].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+
+                      {%- if block.settings.menu_secondary != blank -%}
+                      <div class="footer__menu med_s13" >
+                        {%- assign menu_secondary = block.settings.menu_secondary -%}
+                        <h4 class="footer__header">{{ linklists[menu_secondary].title }}</h4>
+                        <ul>
+                          
+                          {%- for link in linklists[menu_secondary].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+                      {%- if block.settings.menu_third != blank -%}
+                      <div class="footer__menu med_s13" >
+                        {%- assign menu_third = block.settings.menu_third -%}
+                        <h4 class="footer__header">{{ linklists[menu_third].title }}</h4>
+                        <ul>
+                          
+                          {%- for link in linklists[menu_third].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+                      
+                      
+                      {% comment %}
+                      <div class="med_s13">
+                      	<ul>
+                          <li><a href="https://scarletperiod.com/pages/help-faqs">Help & Support</a></li>
+                          <!--li>+44 (0)00 000 00</li-->
+                        </ul>
+                      </div>
+                      {% endcomment %}
+                    </div>
+              
+                {%- endcase -%}
+              {%- endfor -%}
+            </div>
+          
+          	<div class="block s1 med_s25 medium--up-hide">
+                {%- for block in section.blocks -%}
+                {%- capture column -%}{%- cycle 'footer--left', 'footer--center', 'footer--right' -%}{%- endcapture -%}
+                {%- assign mobile_hide_block = block.settings.mobile_hide_block -%}
+
+                {%- case block.type -%}
+                	{%- when 'menu' -%}
+                    <div class="footer__block footer__menus flex {{ column }} {% if mobile_hide_block %}med_hide{% endif %}" {{ block.shopify_attributes }}>
+                      
+                      {%- if block.settings.mobile_menu_primary != blank -%}
+                      <div class="footer__menu med_s13" >
+                        {%- assign menu_primary = block.settings.mobile_menu_primary -%}
+                        <h4 class="footer__header">{{ linklists[menu_primary].title }}</h4>
+                        <ul>
+                          
+                          {%- for link in linklists[menu_primary].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+
+                      {%- if block.settings.mobile_menu_secondary != blank -%}
+                      <div class="footer__menu med_s13" >
+                        {%- assign menu_secondary = block.settings.mobile_menu_secondary -%}
+                        <h4 class="footer__header">{{ linklists[menu_secondary].title }}</h4>
+                        <ul>
+                          
+                          {%- for link in linklists[menu_secondary].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+
+                      {%- if block.settings.mobile_menu_third != blank -%}
+                        <div class="footer__menu med_s13 third">
+                          {%- assign menu_third = block.settings.mobile_menu_third -%}
+                          <h4 class="footer__header">{{ linklists[menu_third].title }}</h4>
+                          <ul>
+                            
+                            {%- for link in linklists[menu_third].links -%}
+                              <li class="footer-link">
+                                <a href="{{ link.url }}">{{ link.title }}</a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        </div>
+                      {%- endif -%}
+                      
+                      
+                      
+                      
+                      <div class="footer__menu med_s13 chat__block" >
+                        <div class="section-chat__info">
+                            <h4 class="footer__header">Want to chat?</h4>
+                          	<p  style="font-size: 12px;">hello@scarletperiod.com</p>
+                        </div>
+                      </div>
+                      
+                      
+                      
+                      
+                     
+                      {% comment %}
+                      <div class="med_s13">
+                      	<ul>
+                          <li><a href="https://scarletperiod.com/pages/help-faqs">Help & Support</a></li>
+                          <!--li>+44 (0)00 000 00</li-->
+                        </ul>
+                      </div>
+                      {% endcomment %}
+                    </div>
+              
+                {%- endcase -%}
+              {%- endfor -%}
+            </div>
+          	
+        </div>
+      	<div class="row row-lg footer_socialpay">
+      		<div class="block s1  ">
+          		<div class="block social s12">
+                  <a href="https://www.facebook.com/wearescarlet" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                  <a href="https://www.instagram.com/scarlet_period/" target="_blank"><i class="fab fa-instagram"></i></a>
+                  <a href="https://www.tiktok.com/@scarletperiod" target="_blank"><i class="fab fa-tiktok"></i></a>
+                  <a href="https://www.pinterest.nz/wearescarlet/" target="_blank"><i class="fab fa-pinterest"></i></a>
+                  {%  if section.settings.logo_1 != blank %}
+                    <img data-src="{{ section.settings.logo_1 | img_url: '220x' }}" width="70" height="80" class="logo logo-home lazyload" alt="{{ section.settings.logo.alt | escape }}" style="height:auto; margin-right:20px;">
+                  {% endif %}
+              	</div> 
+              
+              	<div class="footer__payment s12 block"> 
+                	{%- include 'payment-icons' -%}
+              	</div>
+          	</div>
+      </div>
+    </div>
+</section>
+{% endif %}
+
+{% comment %} Schema {% endcomment %}
+{% schema %}
+    {
+        "name": "Newsletter",
+        "settings": [ 
+            {
+                "type": "checkbox",
+                "id": "show_newsletter",
+                "label": "Show Newsletter",
+                "default": true
+            },
+            {
+                "type": "header",
+                "content": "Colors"
+            },
+            {
+                "type": "color",
+                "id": "color",
+                "label": "Text",
+                "default": "#222"
+            },
+            {
+                "type": "color",
+                "id": "background",
+                "label": "Background",
+                "default": "#fff"
+            },
+            {
+                "type": "header",
+                "content": "Content"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Heading",
+                "default": "Newsletter"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Subheading",
+                "default":"<p>Let's keep in touch</p>"
+            },
+            {
+              "type": "image_picker",
+              "id": "logo_1",
+              "label": "Supporting logo 1",
+              "info": "220px width recommended"
+            }
+        ],
+        "blocks": [
+          {
+            "type": "menu",
+            "name": "Menu",
+            "limit": 2,
+            "settings": [
+              {
+                "type": "header",
+                "content": "Primary menu"
+              },
+              {
+                "type": "link_list",
+                "id": "menu_primary",
+                "default":"main-menu",
+                "label": "Choose Menu",
+                "info": "This menu won't show dropdown items"
+              },
+              {
+                "type": "header",
+                "content": "Secondary menu"
+              },
+              {
+                "type": "link_list",
+                "id": "menu_secondary",
+                "label": "Choose Menu",
+                "info": "This menu won't show dropdown items"
+              },
+			  {
+                "type": "header",
+                "content": "Third menu"
+              },
+              {
+                "type": "link_list",
+                "id": "menu_third",
+                "label": "Choose Menu",
+                "info": "This menu won't show dropdown items"
+              },
+              {
+                "type": "checkbox",
+                "id": "mobile_hide_block",
+                "label": "Hide block on mobile",
+                "default": true
+              },
+			  {
+                "type": "header",
+                "content": "Mobile Primary menu"
+              },
+              {
+                "type": "link_list",
+                "id": "mobile_menu_primary",
+                "default":"main-menu",
+                "label": "Choose Mobile Menu",
+                "info": "This menu won't show dropdown items"
+              },
+              {
+                "type": "header",
+                "content": "Mobile Secondary menu"
+              },
+              {
+                "type": "link_list",
+                "id": "mobile_menu_secondary",
+                "label": "Choose Mobile Menu",
+                "info": "This menu won't show dropdown items"
+              },
+              {
+                "type": "header",
+                "content": "Mobile Third menu"
+              },
+              {
+                "type": "link_list",
+                "id": "mobile_menu_third",
+                "label": "Choose Mobile Menu",
+                "info": "This menu won't show dropdown items"
+              }
+            ]
+          }
+        ]
+    }
+{% endschema %}

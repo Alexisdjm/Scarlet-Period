@@ -1,0 +1,43 @@
+
+<div id="buynow__section">
+  <ul>
+    {% if section.settings.text_1 != blank %}
+      <li>{{ section.settings.text_1 }}</li>
+    {% endif %}
+    {% if section.settings.image %}
+    <li><img src="{{ section.settings.image | img_url: '' }}" alt="{{ shop.name }}"></li>
+    {% endif %}
+    {% if section.settings.text_2 != blank %}
+    <li>{{ section.settings.text_2 }}</li>
+    {% endif %}
+  </ul>
+</div>
+{% schema %}
+  {
+    "name": "Buynow Section",
+    "settings": [
+	  {
+		"type": "text",
+		"id": "text_1",
+		"label": "Text #1"
+	  },
+	  {
+		"type": "image_picker",
+		"id": "image",
+		"label": "Logo"
+	  },
+	  {
+		"type": "text",
+		"id": "text_2",
+		"label": "Text #2"
+	  }
+	],
+	"presets": [
+      {
+        "category": "Custom",
+        "name": "BuyNow"
+      }
+    ]
+  }
+{% endschema %}
+

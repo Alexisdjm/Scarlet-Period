@@ -1,0 +1,139 @@
+{% assign id = section.id %}
+{% assign marqueetext_1 = section.settings.marqueetext_1 %}
+{% assign marqueetext_2 = section.settings.marqueetext_2 %}
+{% assign marqueetext_3 = section.settings.marqueetext_3 %}
+
+{% if section.settings.show_ticker == true %}
+<section class="container-wrap announcement-bar" id="text-module-{{ id }}">
+  {% comment %} <div class="scarlet-marquee" style="background-color: {{section.settings.background_color}}; color: {{section.settings.text_color}}">
+    <div class="scarlet-marquee-scroll">
+      <div class="scarlet-marquee-item"><span class="span-container"><span>{{ marqueetext_1 }}</span> <span>{{ marqueetext_2 }}</span> <span>{{ marqueetext_3 }}</span></span></div>
+ 
+    </div>
+  </div> {% endcomment %}
+  <div class="marquee " style="background-color: {{section.settings.background_color}}; color: {{section.settings.text_color}}">
+    <div class="marquee-content scroll">
+      <span>{{ marqueetext_1 }}</span>
+      <span>{{ marqueetext_2 }}</span> 
+      <span>{{ marqueetext_3 }}</span>
+    </div> 
+    <div class="marquee-content scroll">
+      <span>{{ marqueetext_1 }}</span>
+      <span>{{ marqueetext_2 }}</span> 
+      <span>{{ marqueetext_3 }}</span>
+    </div>
+    <div class="marquee-content scroll">
+      <span>{{ marqueetext_1 }}</span>
+      <span>{{ marqueetext_2 }}</span> 
+      <span>{{ marqueetext_3 }}</span>
+    </div>
+  </div>
+</section>
+
+<script>
+
+</script>
+
+<style>
+
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    gap: 8vw;
+    text-transform: uppercase;
+    font-size: 20px;
+    line-height: 24px;
+    font-family: "scarlet_talk-regular";
+    font-weight: 400;
+    font-style: normal;
+
+  }
+  
+  .marquee-content {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-around;
+    min-width: 100%;
+    gap: 8vw;
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - 8vw));
+    }
+  }
+  
+  .scroll {
+    animation: scroll 18s linear infinite;
+  }
+  
+  .reverse {
+    animation-direction: reverse;
+  }
+   
+  .site-header.is-hamburger.shift--alert {
+    top: 24px !important;
+    transition: top 0.1s ease;
+  }
+  
+  .site-header.is-hamburger {
+    top: 0 !important;
+    transition: top 0.2s ease;
+  }
+  
+</style>
+{% endif %}
+{% comment %} Schema {% endcomment %}
+{% schema %}
+	{
+		"name": "Marquee",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Content"
+			},
+      {
+        "type": "checkbox",
+        "id": "show_ticker",
+        "label": "Show Ticker?",
+        "default": false
+      },
+			{
+				"type": "text",
+				"id": "marqueetext_1",
+				"label": "Text Block One"
+			},
+      {
+				"type": "text",
+				"id": "marqueetext_2",
+				"label": "Text Block Two"
+			},
+      {
+				"type": "text",
+				"id": "marqueetext_3",
+				"label": "Text Block Three"
+			},
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Colour",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Colour",
+        "default": "#fa0d3d"
+      }
+		],
+		"presets": [
+			{
+				"category": "Text",
+				"name": "Announcement Ticker"
+			} 
+		]
+	}
+{% endschema %}

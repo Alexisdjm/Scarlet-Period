@@ -1,0 +1,29 @@
+{% if template == 'product' and product.vendor == 'zestard-easy-donation' %} 
+<div class='donation' id='zeSjo6oEHzFZA' page='product' productid='{{ product.id }}'>
+	<div class='donation_loader'>
+		<img width='130' height='130' src='https://zestardshop.com/shopifyapp/easy_donation/public/image/loader_new.svg'/>
+	</div>
+</div>
+{% endif %}
+{% if template == 'cart' %}
+<div class='donation' id='zeSjo6oEHzFZA' page='cart'>
+	<div class='donation_loader'>
+		<img width='130' height='130' src='https://zestardshop.com/shopifyapp/easy_donation/public/image/loader_new.svg'/>
+	</div>
+</div>
+{% endif %}
+<script src="https://zestardshop.com/shopifyapp/easy_donation/public/js/jquery_3.2.1.js"></script>
+<script src="https://zestardshop.com/shopifyapp/easy_donation/public/js/donation.js"></script>
+<style>
+  @media screen and (min-width: 767px){
+    .donation {
+      width:50%;
+    }
+  }
+  .donation #donation_amount{
+  	border: 1px solid !important;
+    border-radius: 40px;
+    text-align-last: center;
+    padding: 0px;
+  }
+</style>

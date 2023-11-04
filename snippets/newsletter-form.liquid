@@ -1,0 +1,11 @@
+{% form 'customer' %}
+  <input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>
+  {% if form.posted_successfully? %}
+    <p>Thanks for subscribing to our newsletter!</p>
+  {% elsif form.errors %}
+    {{ form.errors | default_errors }}
+  {% endif %}
+  <input type="text" name="contact[name]" id="Name" class="required name" value="{% if customer %}{{ customer.name }}{% endif %}" placeholder="Name" autocorrect="off" autocapitalize="off" required value="newsletter">
+  <input class="required email" id="Email" type="email" value="{% if customer %}{{ customer.email }}{% endif %}" name="contact[email]" placeholder="Email address" required>
+  <button type="submit" name="commit" id="Subscribe">Sign me up!</button>                                
+{% endform %}

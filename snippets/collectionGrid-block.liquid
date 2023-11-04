@@ -1,0 +1,408 @@
+{% comment %} Fill product rows if there is Featured image or product {% endcomment %}
+{% assign first_variant = product.selected_or_first_available_variant %}
+{% assign lastProduct = productLimit %}
+{% assign beforeLastProduct = productLimit | minus: 1 %}
+
+{% if featured == 'image' %}
+  {% if productsColumns == 2 or productsColumns == 3 %}
+    {% if forloop.index == lastProduct %}
+      {% assign lastElementClass = 'visually-hidden' %}
+    {% endif %}
+  {% endif %}
+{% elsif featured == 'products' %}
+  {% if productsColumns == 3 %}
+    {% if forloop.index == lastProduct %}
+      {% assign lastElementClass = 'visually-hidden' %}
+    {% endif %}
+  {% elsif productsColumns == 4 %}
+    {% if forloop.index == lastProduct or forloop.index == beforeLastProduct%}
+      {% assign lastElementClass = 'visually-hidden' %}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% if fallback %}
+  <div class="collectionBlock js-collectionBlock block s1 sm_s12 {% unless template == 'collection' %}lg_s1{{ columnsSize }} {% else %}{{ collectionBlock--size }}{% endunless %} {{ lastElementClass }} {% if settings.transition_grid_items %}will-animate{% endif %} {% if forloop.index == 1 %}is-visible{% endif %} " data-animation="fadeInUp" >
+    <div class="collectionBlock-image {{ image_size_class }} svg-placeholder">
+      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+      {{ 'product-' | append: current | placeholder_svg_tag }}
+      
+      {%- if settings.hover_image == true -%}
+        {% capture current_next %}{% cycle 5, 6, 1, 2, 3, 4 %}{% endcapture %}
+        <span class="collectionBlock-hover collectionBlock-hover--placeholder">{{ 'product-' | append: current_next | placeholder_svg_tag: 'svg-placeholder' }}</span>
+      {%- endif -%}
+
+      {% if settings.show_quick_view == true %}
+        <div class="collectionBlock-image-inner">
+          <div data-handle="{{ product.handle }}" class="quickView-button button">{{ 'collections.grid.quick_view' | t }}</div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="collectionBlock-info">
+      <div class="collectionBlock-info-text">
+        <div class="collectionBlock-info-text-title">
+          <h4>{{ 'onboarding.product_title' | t }}</h4>
+          {% comment %}<p class="{% if settings.price_hover %}price--hover{% endif %}"><span class="money">{{ '9900' | money}}</span></p>{% endcomment %}
+        </div>
+        <div class="collectionBlock-info-text-detail">
+          <p>{{ 'onboarding.product_description' | t }}</p>
+        </div>
+    </div>
+  </div>
+{% else %}
+  {% assign on_sale = false %}
+  {% if product.compare_at_price > product.price %}
+    {% assign on_sale = true %}
+    {% assign on_sale_class = ' is-sale' %}
+  {% endif %}
+
+  {% assign sold_out = true %}
+  {% if product.available %}
+    {% assign sold_out = false %}
+  {% endif %}
+  
+  {% unless product.featured_image.aspect_ratio == 0 %}
+    {% assign blockPadding = 1 | divided_by: product.featured_image.aspect_ratio | times: 100 %}
+    {% if blockPadding > 166 %}
+      {% assign blockPadding = 166 %}
+    {% endif %}
+  {% endunless %}
+
+  <div class="collectionBlock js-collectionBlock block s1 sm_s12 {% unless template == 'collection' %}lg_s1{{ columnsSize }}{% else %}{{ collectionBlock--size }}{% endunless %} {{ lastElementClass }} {% if settings.transition_grid_items %}will-animate{% endif %} {% if forloop.index == 1 %}is-visible{% endif %} {{slideClass}} " data-animation="fadeInUp" >
+    <a aria-label="{{product.title}}" href="{{ product.url | within: collection }}" title="{% if product.object_type == 'product' %}{{ product.featured_image.alt }}{%elsif product.object_type == 'article' %}{{product.title | escape}}{% endif%}" class="collectionBlock-image {{ image_size_class }} lazyload fade-in {% if product.images[1] != blank and settings.hover_image == true %}has-second-image{% endif %}"
+      style="padding-top: {{ blockPadding | append: '%' }}"
+      data-bgset="{% include 'bgset', image: product.featured_image %}"
+      data-sizes="auto"
+      data-parent-fit="cover"
+      data-aspectratio="{{ product.featured_image.aspect_ratio }}">
+      
+      <div class="product__bottom-icon">
+                              	<ul class="icons__lists">
+                                  
+                                  	{% for value in product.metafields.icon.thumbnail %} 
+                                  	<li class="icon__list {{forloop.index }}">
+                                  		<img src="{{value}}" />
+                                  	</li>
+                                	{% endfor %}  
+                              	</ul>
+                          	</div>
+{% comment %}       
+      <div class="theme__tags">
+        
+        <ul>
+          	{% comment %}
+          	{% assign date_created = product.created_at | date:'%s' %}
+            {% assign     date_now = 'now' | date:'%s' %}
+            {% assign   difference = date_now | minus: date_created %}
+
+            {% if difference < 2592000 %}
+          		<li><span>New!</span></li>
+          	{% endif %}
+          	{% endcomment %}
+          
+          	{% assign scar_new = settings.new_tag_name %}
+          	{% assign scar_top = settings.top_tag_name %}
+          	{% assign scar_best = "scar_best" %}
+          	{% assign scar_favourites = "scar_favourites" %}
+          	{% assign scar_save = "scar_save" %}
+          	{% assign scar_savep = "scar_savep" %}
+          	{% assign scar_reusable = "scar_reusable" %}
+          	{% assign selling_fast = "selling_fast" %}
+          	{% assign limited_edition = "scar_limited_edition" %}
+          	{% assign scar_limited_stock = "scar_limited_stock" %}
+          
+          	{% assign save_price = "" %}
+          	
+          
+          	{% for tag in product.tags %}
+          		{% if tag contains "scar_save$" %} 
+          
+          			  {% assign price_tag = tag | split: "$"  %}
+                      {% assign save_price = price_tag[1] %}     
+               	{% endif %}
+          	{% endfor %}
+          
+          	{% for tag in product.tags %}
+          		{% if tag contains "scar_save%" %} 
+          
+          			  {% assign price_tag = tag | split: "%"  %}
+                      {% assign save_price = price_tag[1] %}     
+               	{% endif %}
+          	{% endfor %}
+          
+          	{% for tag in product.tags %}
+               	{% if tag contains scar_new %}     
+                      <li><span title="New!">New!</span></li>      
+               	{% endif %}
+          
+          		{% if tag contains limited_edition %}     
+                      <li><span title="Limited Edition">Limited Edition</span></li>      
+               	{% endif %}
+          
+          		{% if tag contains scar_top %}     
+                      <li><span title="Top rated">Top rated</span></li>      
+               	{% endif %}
+          
+          		{% if tag contains scar_best %}     
+                      <li><span title="Best Seller">Best Seller</span></li>      
+              	{% endif %}
+          
+          		{% if tag contains scar_favourites %}     
+                      <li><span title="Favourites!">Favourite!</span></li>      
+              	{% endif %}
+          
+          		{% if tag contains scar_save %} 
+          			  {% if tag contains "scar_save%" %}
+          			  <li><span title="Save {{save_price}}%">Save {{save_price}}%</span></li>
+          			  {% else %}
+                      <li><span title="Save ${{save_price}}">Save ${{save_price}}</span></li> 
+          			  {% endif %}
+              	{% endif %}
+          
+          		{% if tag contains selling_fast %}     
+                      <li><span title="Selling Fast">Selling Fast</span></li>      
+              	{% endif %}
+          
+          		{% if tag contains scar_reusable %}     
+                      <li><span title="Reusable">Reusable</span></li>      
+              	{% endif %}
+          
+          		{% if tag contains scar_limited_stock %}     
+                      <li><span title="New!">Limited stock</span></li>      
+               	{% endif %}
+            {% endfor %}
+          
+          	
+          	
+        </ul>
+        
+      </div> {% endcomment %}
+      
+      {%- if settings.hover_image == true and product.metafields.carousel.carousel_hover_image_new != blank -%}
+      	<div class="collectionBlock-hover">
+          <span class="collectionBlock-hover lazyload fade-in" data-bgset="{% include 'bgset', image: product.metafields.carousel.carousel_hover_image_new.value %}" data-sizes="auto"></span>
+        </div>
+        {%  elsif  product.images[1] != blank and settings.hover_image == true %}
+        <div class="collectionBlock-hover">
+          <span class="collectionBlock-hover lazyload fade-in" data-bgset="{% include 'bgset', image: product.images[1] %}" data-sizes="auto"></span>
+        </div>
+      {%- endif -%}
+
+      {% if product.object_type == 'product' %}
+        {% if on_sale == true or sold_out == true %}
+          <span class="product-status-flag{%if sold_out == true %} is-sold-out{%endif%}{{on_sale_class}}">
+            {% if sold_out == true %}
+              {{ 'products.labels.sold_out' | t }}
+            {% else if on_sale == true %}
+              {{ 'products.labels.on_sale' | t }}
+            {% else if on_sale == true and sold_out == true %}
+              {{ 'products.labels.sold_out' | t }}
+            {% endif %}
+          </span>
+        {% endif %}
+      {% endif %}
+      
+      {% if product.object_type == 'product' and settings.show_quick_view == true %}
+        <div class="collectionBlock-image-inner">
+          <div data-handle="{{ product.handle }}" class="js-quickView quickView-button button">{{ 'collections.grid.quick_view' | t }}</div>
+          <div class="quickview-product-images" data-handle="{{ product.handle }}" style="display: none">
+            {% assign featured_image = product.featured_image %}
+            <div class="quickview-product-image quickView-variant-img--is-active lazyload fade-in" data-bgset="{% include 'bgset', image: featured_image %}" data-image="{{ featured_image | img_url: 'master' }}" data-sizes="auto" data-parent-fit="contain"></div>
+
+            {% for image in product.images %}
+              {% unless image == featured_image %}
+                <div class="quickview-product-image lazyload fade-in" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto" data-parent-fit="contain" data-image="{{ image | img_url: 'master' }}"></div>
+              {% endunless %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </a>
+    <noscript>
+          <a aria-label="{{product.title}}" href="{{ product.url | within: collection }}" title="{% if product.object_type == 'product' %}{{ product.featured_image.alt }}{%elsif product.object_type == 'article' %}{{product.title | escape}}{% endif%}" class="collectionBlock-image" style="background-image:url('{{ product.featured_image | img_url: '1024x' }}') !important;">
+      {%- if product.images[1] != blank and settings.hover_image -%}
+        <div class="collectionBlock-hover">
+          <span class="collectionBlock-hover lazyload fade-in" data-bgset="{% include 'bgset', image: product.images[1] %}" data-sizes="auto"></span>
+        </div>
+      {%- endif -%}
+
+      {% if product.object_type == 'product' %}
+        {% if on_sale or sold_out %}
+          <span class="product-status-flag {%if sold_out %} is-sold-out{%endif%}{{on_sale_class}}">
+            {% if sold_out %}
+              {{ 'products.labels.sold_out' | t }}
+            {% else if on_sale %}
+              {{ 'products.labels.on_sale' | t }}
+            {% else if on_sale and sold_out %}
+              {{ 'products.labels.sold_out' | t }}
+            {% endif %}
+          </span>
+        {% endif %}
+      {% endif %} 
+
+      {% if product.object_type == 'product' and settings.show_quick_view %}
+        <div class="collectionBlock-image-inner">
+          <div data-handle="{{ product.handle }}" class="js-quickView quickView-button button">{{ 'collections.grid.quick_view' | t }}</div>
+        </div>
+      {% endif %}
+    </a>
+    </noscript>
+    <div class="collectionBlock-info">
+      <h4><a tabindex="-1" href="{{ product.url | within: collection }}">{{ product.title }}</a></h4>
+      
+
+      {% unless product.metafields.price.disable %}
+       <div class="deskprice"> 
+        {% if product.price_varies %}
+          <p class="price {% comment %}{% if settings.price_hover %}price--hover{% endif %}{% endcomment %}">{{ 'products.labels.price_from' | t }} {{ product.price_min | money }}</p>
+        {% else %}
+          {% if on_sale == true %}
+            <p class= "price sale {% comment %}{% if settings.price_hover %}price--hover{% endif %}{% endcomment %}">
+              <strike>{{ product.compare_at_price | money }}</strike>&nbsp;
+              {{ product.price | money }}
+            </p>
+          {% else %}
+            <p class="price {% comment %}{% if settings.price_hover %}price--hover{% endif %}{% endcomment %}">{{ product.price | money }}</p>
+          {% endif %}
+        {% endif %}
+     </div> 
+      {% endunless %}
+      
+      <div class="swatches-fake">
+        {% if product.variants.size > 1 and color_swatches == true %}
+          {% include 'swatch' with 'Color' %}
+        {% endif %}
+      </div>
+      <div class="short-description">
+        {%- if product.metafields.carousel.short_description != blank or product.metafields.icon.blood_drops != blank -%}
+        	<p>  {%- if product.metafields.carousel.short_description != blank -%}
+              <span style="padding-right: 5px;">{{ product.metafields.carousel.short_description }}</span>
+        		{%- endif -%}
+        		{%- if product.metafields.icon.blood_drops != blank -%}
+              		{% for value in product.metafields.icon.blood_drops %}
+              			<img src="{{ value }}" width="42" height="11.61" alt="blood drop indicator" />
+            		{% endfor %} 
+        		{%- endif -%}
+        	</p>
+        {% endif %}
+        {% if product.description != blank %}
+          <p>{{product.description}}</p>
+        {% endif %}
+        <a href="{{ product.url | within: collection }}" class="discover-button button">Discover</a>
+      </div>
+      
+      <div class="product__variant-toggle ajax__cart-container" >
+        <div class="product__variant-lists">
+          
+          	{% assign form_class = "productForm" %}
+          	{% assign cart_class = "" %}
+          	{% for option in product.options %}
+          		{% if option == 'Size' %}
+          			{% assign form_class = "productForm size__toggle" %}
+          			{% assign cart_class = "size__toggle" %}
+          		{% endif %}
+          	{% endfor %}
+          
+          	{% for variant in product.variants %} 
+          
+          	{% endfor %}
+          
+          	<div class="slide__color">
+            	{% if product.variants.size > 1 and color_swatches == true %}
+              		{% include 'swatch' with 'Color' %}
+              		{% include 'swatch' with 'Colour' %}
+            	{% endif %}
+          	</div>
+          
+          	<div class="slide__size {{border}}" {{size_count}}>
+            	{% if product.variants.size > 1 and color_swatches == true %}
+               		{% include 'swatch' with 'Size' %}
+            	{% endif %}
+          	</div>
+          
+          	<div class="trigger__btn-container {{cart_class}}">
+              <a class="add-to-cart-btn-style" >
+                
+                {% unless sold_out %}
+                	{{ 'products.form.submit' | t }}
+                {% else %}
+                	{{ 'products.form.sold_out' | t }}
+				{% endunless %}
+                
+                
+                 <span class="dtaoncart">{{ product.price | money }}</span>
+                
+                
+              </a>
+          	</div>
+          	
+          
+          	{% form 'product', product, data-productid: product.id, class:form_class, data-color_swatches: color_swatches, data-product_id: product.id %}{% if content_for_header contains '.mageworx.com\/groupedproducts\/source.js?' and product.tags contains 'mw_grouped_product' %}<div class="mw-gp-container"></div>{% endif %}
+								
+      			<meta itemprop="priceCurrency" content="{{ shop.currency }}">
+                <meta itemprop="price" content="{{ product.price | money_without_currency }}">
+                <link itemprop="url" href="{{ product.url }}">
+				<link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+				<input type="hidden" name="quantity" id="quantity" value="1" min="1" max="9" />
+          
+          		
+          
+          		{% assign num = 0 %}
+          		{% assign border = "no__seperator" %}
+          		{% if product.variants.size > 1 and color_swatches == true %}
+          			{% for option in product.options %}
+                        {% if option == 'Size' %}
+                            {% assign size_count = size_count | plus: 1 %}
+                        {% endif %}
+                    {% endfor %}
+          		{% endif %}
+          
+          		{% if size_count == 2 %}
+          			{% assign border = "right__seperator" %}
+          		{% endif %}
+          
+          		
+          
+          		<select id="product-select" name="id" data-productid="{{ product.id }}" style="display: none;">
+					{% for variant in product.variants %}
+						<option{% if variant == first_variant %} selected{% endif %} value="{{ variant.id }}" data-sku="{{variant.sku}}" data-qty="{{ variant.inventory_quantity }}">
+                        	{{ variant.title }} - {{ variant.price | money | strip_html }}
+                        </option>
+					{% endfor %}
+				</select>
+          
+          		<div class="butoncustom">
+					<button class="jj productForm-submit js-productForm-submit 
+                    	{% if settings.enable_payment_button %}add-to-cart-btn-style{% endif %}" 
+                        	data-ajax="{{ settings.enable_ajax_cart }}" 
+                        type="submit" data-handle="{{product.handle}}" {% if sold_out %}disabled{% endif %}>
+                        {% unless sold_out %}{{ 'products.form.submit' | t }}{% else %}{{ 'products.form.sold_out' | t }}
+                        {% endunless %}
+                        {% unless product.metafields.product.price_disable %}
+                      <span style="display:none;">—</span> <span class="dtaoncart">{{ product.price | money }}
+                        {% endunless %}
+                        </span>
+                    </button>
+				</div>
+          
+        	{% endform %}	
+          
+        </div>
+      </div>
+      
+      
+      
+    </div>
+
+    {% if show_reviews %}
+      <div class="reviews-fake">
+        <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+      </div>
+    {% endif %}
+
+    <script type="application/json" class = "product-json">
+      {{ product | json }}
+    </script>
+    <!-- .js-quickView is appended to .js-collectionBlock here -->
+  </div>
+{% endif %}

@@ -1,0 +1,887 @@
+{% comment %} About {% endcomment %}
+{% assign webelievesubheading = section.settings.webelievesubheading %}
+<div data-section-id="{{ section.id }}" data-section-type="about-template">
+  {% if section.blocks.size > 0 %}
+    {% for block in section.blocks %}
+      {% case block.type %}
+      {% when 'banner' %}
+        {% comment %} Banner Settings {% endcomment %}
+        {% assign image = block.settings.image %}
+  		{% assign image_mobile = block.settings.image_mobile %}
+        {% assign height = block.settings.height %}
+        {% assign subheading = block.settings.subheading %}
+        {% assign heading = block.settings.title %}
+        {% assign text = block.settings.text %}
+        {% assign text_position = block.settings.text_position %}
+        {% assign heading_size = block.settings.heading_size %}
+        {% assign text_size = block.settings.text_size %}
+        {% assign color_text = block.settings.color_text %}
+        {% assign color_overlay = block.settings.color_overlay %}
+        {% assign overlay_opacity = block.settings.overlay_opacity | times: 0.01 | round: 2 %}
+
+        <style>
+          .banner--{{ block.id }} .page-title { color: {{ color_text }}; }
+          .banner--{{ block.id }} .page-title h1 { color: {{ color_text }} !important; }
+          .banner--{{ block.id }} .page-title::before { background-color: {{ color_overlay }}; opacity: {{ overlay_opacity }}; }
+        </style>
+  		
+		<div class="is__section-background">
+        <section class="banner banner--{{ block.id }} {% if forloop.index == 1 %}banner--collections{% endif %}" {{ block.shopify_attributes }} data-block="banner" data-header-style="{% if forloop.index == 1 %}index{% endif %}">
+          <div class="{% if block.settings.show_parallax %}is__parallax{% endif %} banner-inner banner-padded banner-padded--{{ height }} banner--text-{{ text_position }}" >
+            
+            <div class="parallax--img desktop--view" style="background-image:url('{{image | img_url: 'master' }}');"></div>
+            <div class="parallax--img mobile--view" style="background-image:url('{{ image_mobile | img_url: 'master' }}');"></div>
+            {% unless height == 'original-height' %}
+              {% unless image == blank %}
+                <div class="banner-img lazyload fade-in" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto" data-parent-fit="cover"></div>
+                <noscript>
+                  <div class="banner-img" style="background-image:url('{{image | img_url: '1024x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"></div>
+                </noscript>
+              {% else %}
+                <div class="banner-img banner-img--placeholder svg-placeholder">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endunless %}
+            {% else %}
+              {% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+              {% include 'theme-rias' %}
+              <img class="banner-img--original lazyload fade-in"
+                   data-src="{{ image_url_pattern }}" 
+                   data-widths="[{{ image_widths }}]"
+                   data-aspectratio="{{ image.aspect_ratio }}"
+                   data-sizes="auto"
+                   alt="{{ image.alt }}">
+              <noscript>
+                <img src="{{ image | img_url: '2048x' }}" alt="{{ image.alt | escape }}" class="banner-img--original no-js-image">
+              </noscript>
+            {% endunless %}
+            
+            {% unless heading == blank and subheading == blank and text == blank %}
+              <div class="page-title">
+                <div class="container about-title">
+                  <div class="row row-lg text-center">
+                    {% if subheading != blank %}
+                      <h4 class="page-title__subheading subheading-text">{{ subheading }}</h4>
+                    {% endif %}
+                    {% if heading != blank %}
+                      <h1 class="parallax-title page-title__heading text-center size--{{ heading_size }}">{{ heading }}</h1>
+                    {% endif %}
+                  </div>
+                  {% if text != blank %}
+                    <div class="row row-lg">
+                      <div class="page-title__text rte size--{{ text_size }}"><p>{{ text }}</p></div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endunless %}
+          </div>  
+        </section>
+  		</div>
+      {% when 'rich-text' %}
+        {% comment %} settings {% endcomment %}
+        {% assign id = block.id %}
+        {% assign layout = block.settings.layout %}
+        {% assign subheading = block.settings.subheading %}
+        {% assign title = block.settings.title %}
+        {% assign content = block.settings.content %}
+        {% assign cta = block.settings.cta %}
+        {% assign link = block.settings.link %}
+        {% assign button_position = block.settings.button_position %}
+        {% assign accent_line = block.settings.accent_line %}
+        {% assign accent_line_color = block.settings.accent_line_color %}
+
+        {% comment %} Typography {% endcomment %}
+        {% assign heading_size = block.settings.heading_font_size %}
+        {% assign heading_align = block.settings.heading_align %}
+        {% assign text_size = block.settings.text_font_size %}
+	
+  		<div class="is__inline is__section-background {% if block.settings.bg_transparent %}is_transparent{% endif %}">
+        <div {{ block.shopify_attributes }}>
+          {%- if accent_line_color != blank -%}
+          <style>
+            #text-module-{{ id }} .accent-line--straight { background-color: {{ accent_line_color }}; }
+            #text-module-{{ id }} .accent-line--curved svg path { fill: {{ accent_line_color }}; }
+          </style>
+          {%- endif -%}
+          
+          {% include 'rich-text' %}
+        </div>
+  		</div>
+  
+  	  {%- if webelievesubheading -%}
+  		<div class="is__section-background ">
+  		<div class="title-module intro">
+          <div class="container">
+            <div class="row  row-lg ">
+              <h4 class="rich__subheading align--left size--small" style="padding: 60px 0 0 0;">{{ webelievesubheading }}</h4>
+            </div>
+          </div>
+  		</div>
+  		</div>
+  	  {%- endif -%}
+  	  
+      {% when 'product-feature' %}
+        {% assign heading = block.settings.title %}
+        {% assign heading_size = block.settings.heading_font_size %}
+        {% assign text_size = block.settings.text_font_size %}
+        {% assign description = block.settings.description %}
+        {% assign image = block.settings.image %}
+        {% assign image_link = block.settings.image_link %}
+        {% assign button_text = block.settings.button_text %}
+        {% assign button_link = block.settings.button_link %}
+        {% assign blocks_alignment = block.settings.blocks_alignment %}
+        {% assign is_block_odd = block.settings.reverse_layout %}
+        
+  		<div class="is__section-background is__inline">
+        <div class="product-features--container" {{ block.shopify_attributes }}>
+          <div class="container">
+            <div class="row row-lg">
+              {% include 'product-features__item' %}
+            </div>
+          </div>
+        </div>
+  		</div>
+
+      {% when 'featured-collection' %}
+  		  {% comment %} Settings {% endcomment %}
+          {%- assign collection1 = collections[block.settings.collection1] | default: false -%}
+          {%- assign title = block.settings.title -%}
+          {%- assign layout = block.settings.products_layout -%}
+          {%- assign enable_carousel = false -%}
+          {%- if layout == 'carousel' -%}
+              {%- assign enable_carousel = true -%}
+          {%- endif -%}
+
+          {% comment %} Layout {% endcomment %}
+          {%- assign productsRows = settings.products_rows | plus: 0 -%}
+          {%- assign productsColumns = settings.products_columns | plus: 0 -%}
+          {%- assign productLimit = productsColumns | times: productsRows -%}
+          {%- assign columnsSize = productsColumns | replace: '1', '' -%}
+          {%- assign image_size_class = settings.grid_size | prepend: 'collectionBlock-image--' -%}
+          {%- assign color_swatches = settings.color_swatches -%}
+          {%- assign show_reviews = settings.show_reviews -%}
+
+          {% comment %} Section {% endcomment %}
+  	
+  		  <div class="is__section-background">
+          <section class="collectionGrid container-wrap js-collection-grid js-collectionGrid carousel" id="collection-module-{{ section.id }}" data-section-type="featured-collection" data-show-quickview="{{ settings.show_quick_view }}" data-show_reviews="{{ show_reviews }}" data-show_quantity="{{ settings.show_quantity }}" data-color_swatches="{{ color_swatches }}" data-carousel="{{ enable_carousel }}" data-slides-per-row="{{ settings.products_columns }}" data-grid-size="{{ settings.grid_size }}">
+              {%- if title != blank -%}
+                  <div class="container">
+                    <div class="title-module">
+                      <div class="row row-lg">
+                          <h3 class="rich__subheading align--center size--small">{{ title }}</h3>
+                      </div>
+                    </div>
+                  </div>
+              {%- endif -%}
+
+              {%- if enable_carousel -%}
+              <div class="collection-slider__wrapper row">
+              {%- endif -%}
+
+              <div class="collectionGrid-row row row-lg inline {% if enable_carousel %}collection-slider js-collection-slider{% endif %}">
+                  {% comment %} Collection Block, contains .js-quickView {% endcomment %}
+                  {%- if collection1 -%}
+                      {%- if enable_carousel -%}
+                          {%- for product in collection1.products -%}
+                              {%- include 'collectionGrid-block' -%}
+                          {%- endfor -%}
+                      {%- else -%}
+                          {%- for product in collection1.products limit: productLimit  -%}
+                              {%- include 'collectionGrid-block' -%}
+                          {%- endfor -%}
+                      {%- endif -%}
+                  {%- else -%}
+                      {%- for i in (1..productLimit) -%}
+                          {%- include 'collectionGrid-block', fallback: true -%}
+                      {%- endfor -%}
+                  {%- endif -%}
+
+                  {%- unless enable_carousel -%}
+                      {%- comment -%} Spacers for inline-block based collectionGrid {%- endcomment -%}
+                      {%- for i in (1..8) -%}
+                          <div class="gridSpacer item block s1 sm_s12 lg_s1{{ columnsSize }}"></div>
+                      {%- endfor -%}
+                  {%- endunless -%}
+              </div>
+
+              {%- if enable_carousel -%}
+              </div>
+              {%- endif -%}
+
+          </section>
+  		  </div>
+  
+  	{% when 'featured-blog' %}
+  		{% comment %} Settings {% endcomment %}
+        {%- assign blogArticlesDefault = blogs[block.settings.blogName].articles -%}
+        {%- assign blogArticles = blogs[block.settings.blogName].articles -%}
+        {%- assign blogLink = blogs[block.settings.blogName].url -%}
+
+        {%- assign title = block.settings.heading -%}
+        {%- assign cta = block.settings.cta -%}
+
+        {%- assign articleRows = block.settings.article_rows | plus: 0 -%}
+        {%- assign articleColumns = block.settings.article_columns | plus: 0 -%}
+        {% comment %} {%- assign articlesCount = articleColumns | times: articleRows -%} {% endcomment %}
+        {%- assign articlesCount = 8 -%}
+        {%- assign columnsSize = articleColumns | replace: '1', '' -%}
+
+        {%- comment -%} Section {%- endcomment -%}
+        <section data-section-type="featured-blog" class="blogModule container-wrap style-default" id="blog-module-{{ block.id }}">
+            <div class="carousel">
+                <div class="container">
+                  <div class="row row-lg carousel-title">
+                      {%- if title != blank -%}
+                          <h2 id="journal-heading">{{ title }}</h2>
+                          <a id="journal-slider-next"></a>
+                      {%- endif -%}
+                      {%- if section.settings.text != blank -%}
+                          <div class="row row-lg">
+                              <p>{{block.settings.text}}</p>
+                          </div>
+                      {%- endif -%}
+                  </div>
+                </div>
+
+                <div class="blogModule-posts__wrapper">
+                    <div class="blogModule-posts row collection-slider js-collection-slider">
+                        {%- if block.settings.blogName == blank -%}
+                            {%- for i in (1..articlesCount) -%}
+                                <a href="#!" title="Article title" aria-label = "{{ article.title }}" class="blogModule-posts__post block s1 med_s12 lg_s1{{ columnsSize }} onboarding-blog-content">
+                                    <div class="carousel-slide-image svg-placeholder">
+                                        {{ 'image' | placeholder_svg_tag }}
+                                    </div>
+                                    <div class="carousel-slide-info">
+                                        <p class="post-date">Feb. 15, {{ 'now' | date: '%Y' }}</p>
+                                        <p class="h6">Blog post title</p>
+
+                                        {%- comment -%}<p class="excerpt">Once you create a blog post, the content will appear here.</p>{%- endcomment -%}
+
+                                        {%- if block.settings.tags -%}
+                                            <p class="post-tags">tag, tag</p>
+                                        {%- endif -%}
+
+                                        {%- if block.settings.author -%}
+                                            <p class="post-author">Author Name</p>
+                                        {%- endif -%}
+                                    </div>
+                                </a>
+                            {%- endfor -%}
+                        {%- else -%}
+                            {%- for article in blogArticles limit: articlesCount -%}
+                                {%- include 'blog-post' -%}
+                            {%- endfor -%}
+                        {%- endif -%}
+                    </div>
+                </div>
+
+            </div>
+        </section>
+  
+  
+  	  {% endcase %}
+    {% endfor %}
+  {% endif %}
+  
+  {%-if page.content != blank -%}
+  	<div class="is__section-background">
+    <div class="container-wrap">
+      <div class="container content-about text-content row row-lg">
+        <div class="row row-sm rte">
+          {{ page.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endif %}
+</div>
+
+{% schema %}
+{
+  "name": "About page",
+  "settings": [  
+			{
+				"type": "text",
+				"id": "webelievesubheading",
+				"label": "We Believe Heading"
+			}
+		],
+		
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+		{
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile Image"
+        },
+		{
+        "type": "checkbox",
+        "id": "show_parallax",
+        "label": "Show Parallax",
+        "default": false
+      	},
+        {
+          "type": "select",
+          "id": "height",
+          "label": "Height",
+          "options": [
+              {
+                "value": "one-hundred",
+                "label": "Full screen height"
+              },
+              {
+                "value": "original-height",
+                "label": "Image height"
+              },
+              {
+                "value": "big",
+                "label": "750px"
+              },
+              {
+                "value": "normal",
+                "label": "650px"
+              },
+              {
+                "value": "small",
+                "label": "550px"
+              }
+            ],
+            "default": "normal"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Welcome to Modular"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>A unique layout with a striking design</p>"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "default": "center",
+          "options": [
+            { "label": "Left", "value": "left" },
+            { "label": "Center", "value": "center" },
+            { "label": "Right", "value": "right" },
+            { "label": "Bottom left", "value": "bottom-left" },
+            { "label": "Bottom right", "value": "bottom-right" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Typography"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Heading size",
+          "default": "normal",
+          "options": [
+            { "label": "Small", "value": "small" },
+            { "label": "Normal", "value": "normal" },
+            { "label": "Large", "value": "large" },
+            { "label": "Extra large", "value": "xlarge" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "Text size",
+          "default": "normal",
+          "options": [
+            { "label": "Small", "value": "small" },
+            { "label": "Normal", "value": "normal" },
+            { "label": "Large", "value": "large" },
+            { "label": "Extra large", "value": "xlarge" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label": "Text",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "color_overlay",
+          "label": "Overlay",
+          "default": "#222222"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "step": 1,
+          "max": 100,
+          "min": 0,
+          "unit": "%",
+          "default": 10
+        }
+      ]
+    },
+    {
+      "type": "rich-text",
+      "name": "Rich text",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Layout"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Text position",
+          "default": "default",
+          "options": [
+            { "label": "Stacked", "value": "default" },
+            { "label": "Split", "value": "split" },
+            { "label": "About page; centred", "value": "aboutcenter" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "heading_align",
+          "label": "Heading alignment",
+          "default": "left",
+          "options": [
+            { "label": "Left", "value": "left" },
+            { "label": "Center", "value": "center" },
+            { "label": "Right", "value": "right" }
+          ]
+        },
+		{
+        "type": "checkbox",
+        "id": "bg_transparent",
+        "label": "Background Transparent",
+        "default": false
+      	},
+        {
+          "type": "header",
+          "content": "Typography"
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size",
+          "label": "Heading size",
+          "unit": "px",
+          "step": 4,
+          "min": 24,
+          "max": 44,
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "label": "Text size",
+          "unit": "px",
+          "step": 2,
+          "min": 12,
+          "max": 22,
+          "default": 16
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Describe your products or brand in detail here"
+        }, {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>Modular is a powerful Shopify theme that will set you apart from the rest. It features ample space to showcase your imagery with Mosaic, Gallery, and Slideshow sections.</p>"
+        }, {
+          "type": "text",
+          "id": "cta",
+          "label": "Button label"
+        }, {
+          "type": "url",
+          "id": "link",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "button_position",
+          "label": "Button position",
+          "default": "left",
+          "options": [
+            { "label": "Under heading", "value": "left" },
+            { "label": "Under text", "value": "right" },
+            { "label": "Bottom", "value": "center" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "accent_line",
+          "label": "Accent line",
+          "default": "curved",
+          "options": [
+            { "label": "Curved", "value": "curved" },
+            { "label": "Straight", "value": "straight" },
+            { "label": "None", "value": "none" }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "accent_line_color",
+          "label": "Color",
+          "default": "#333"
+        }
+      ]
+    },
+    {
+      "type": "product-feature",
+      "name": "Product feature",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "textarea",
+          "id": "title",
+          "label": "Heading",
+          "default": "This is a heading for a Product feature block."
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Use this text to share information about the point put forth above. Describe a product, your brand, or what makes you special.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Images"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "image_link",
+          "label": "Image link"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Blocks Alignment"
+        },
+        {
+          "type": "select",
+          "id": "blocks_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "top",
+              "label": "Top"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "reverse_layout",
+          "label": "Reverse layout",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Typography"
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size",
+          "label": "Heading size",
+          "unit": "px",
+          "step": 4,
+          "min": 24,
+          "max": 44,
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "text_font_size",
+          "label": "Text size",
+          "min": 12,
+          "max": 22,
+          "step": 2,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "color",
+          "id": "background_colour",
+          "label": "Background Colour",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "featured-collection",
+      "name": "Featured Collection",
+      "settings": [
+		{
+			"type": "header",
+			"content": "Content"
+		},
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Title"
+		},
+		{
+			"type": "collection",
+			"id": "collection1",
+			"label": "Collection"
+		},
+		{ 
+			"type": "select",
+			"id": "products_layout",
+			"label": "Layout",
+			"default": "grid",
+			"options": [
+				{ "value": "grid", "label": "Grid" },
+				{ "value": "carousel", "label": "Carousel" }
+			]
+		}
+	  ]
+	},
+	{
+      "type": "featured-blog",
+      "name": "Featured Blog",
+      "settings": [
+		{
+			"type": "header",
+			"content": "Content"
+		},  {
+			"type": "blog",
+			"id": "blogName",
+			"label": "Blog"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text"
+		}, {
+			"type": "text",
+			"id": "cta",
+			"label": "Button label",
+			"info":"Links to blog"
+		},
+		{
+			"type": "header",
+			"content": "Settings"
+		},
+		{
+			"type": "checkbox",
+			"id": "tags",
+			"label": "Show tags",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "author",
+			"label": "Show author",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "article_rows",
+			"label": "Posts rows",
+			"default":1,
+			"min":1,
+			"max":4,
+			"step":1
+		},
+		{
+			"type": "range",
+			"id": "article_columns",
+			"label": "Posts per row",
+			"default":4,
+			"min":1,
+			"max":5,
+			"step":1
+		}
+	  ]
+	}
+  ]
+}
+{% endschema %}
+
+
+<style>
+  	#scroll_to_1{
+    	height:100vh;  
+    }
+  
+  	@media screen and (max-width: 767px){
+      	#scroll_to_1{
+            height:auto;  
+        }
+    }
+</style>
+
+<script>
+  	// This prevents the page from scrolling down to where it was previously.
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    // This is needed if the user scrolls down during page load and you want to make sure the page is scrolled to the top once it's fully loaded. This has Cross-browser support.
+    window.scrollTo(0,0);
+  
+  	$(document).ready(function(){
+      
+      
+      	$(document).find(".is__section-background").each(function(index){
+          
+          	var sectionId = "scroll_to_"+index;
+      		$(this).attr("id", sectionId);
+      	})
+        
+        var scrollingScreen = false;
+        var top = 0; // when not in an iframe, can be replaced by $("body").scrollTop()
+        
+      	
+        var step0 = $("#scroll_to_0"),
+            	step1 = $("#scroll_to_1"),
+                step2 = $("#scroll_to_2"),
+            	step0_start = false,
+            	step1_start = false;
+          
+      	step0.addClass("is_scroll");
+        step1.addClass("is_scroll");
+        step2.addClass("is_scroll");
+      
+      	$(".parallax--img").css("position", "fixed");
+        $(".parallax--img").css("top", "0");
+  	
+    	$(window).scroll(function(e){
+          
+          	if(step0.hasClass("is_scroll") && $(this).scrollTop() > 50 && step0_start == false){
+              	step0_start = true;
+          		var new_position = step1.offset();
+              	/*$('html, body').stop().animate({ scrollTop: new_position.top }, 500, function(){
+              		step0.removeClass("is_scroll");
+                  	$(".parallax--img").css("position", "absolute");
+              		$(".parallax--img").css("top", "100vh");
+              	});*/
+              	
+            }
+          
+          
+          	if(step1.hasClass("is_scroll") && $(this).scrollTop() > (step1.offset().top ) && step1_start == false){
+              	
+          		var new_position = step2.offset();
+              
+              	step0.removeClass("is_scroll");
+                 $(".parallax--img").css("position", "absolute");
+              	$(".parallax--img").css("top", "100vh");
+              
+              	console.log($(this).scrollTop() +">"+ new_position.top);
+              	if($(this).scrollTop() > new_position.top){
+                  	step1_start = true;
+                	step1.removeClass("is_scroll");
+              	}
+              
+              	/*$(".parallax--img").css("position", "absolute");
+              	$(".parallax--img").css("top", "100vh");
+              	$('html, body').stop().animate({ scrollTop: new_position.top }, 500, function(){
+              		step1.removeClass("is_scroll");
+                  	
+              	});*/
+              	
+            }
+          
+          	if(step1.hasClass("is_scroll") == false && $(this).scrollTop() < (step2.offset().top - 50) && step1_start == true){
+          		step1_start = false;	
+              	var new_position = step1.offset();
+              
+              	if($(this).scrollTop() >= new_position.top){
+                	step1.addClass("is_scroll");
+                  	$(".parallax--img").css("position", "fixed");
+              		$(".parallax--img").css("top", "0");
+              	}
+              
+              	/*$('html, body').stop().animate({ scrollTop: new_position.top }, 500, function(){
+              		step1.addClass("is_scroll");
+                  	$(".parallax--img").css("position", "fixed");
+              		$(".parallax--img").css("top", "0");
+              	});*/
+            }
+          
+          	if(step0.hasClass("is_scroll") == false && $(this).scrollTop() < (step1.offset().top - 50) && step0_start == true){
+          		step0_start = false;	
+              	var new_position = step0.offset();
+              
+              	$(".parallax--img").css("position", "fixed");
+              	$(".parallax--img").css("top", "0");
+              	step0.addClass("is_scroll");
+              
+              	/*$('html, body').stop().animate({ scrollTop: 0 }, 500, function(){
+              		step0.addClass("is_scroll");
+              	});*/
+            }	
+          	
+        });
+      
+      
+  	});
+  
+</script>

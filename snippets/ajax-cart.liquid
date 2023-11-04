@@ -1,0 +1,89 @@
+<script id="CartTemplate" type="text/x-handlebars-template">
+<div class="js-cartToggle js-cartToggle-close cart-close icon-close diamond-outline"><div class="diamond"></div></div>
+{% include "announcement-bar" %}
+<div class="ff cart-title block s1 u-left">
+	<h7>{{ 'cart.labels.cart_title' | t }}</h7>
+</div>
+
+<form action="/cart" method="post" data-type="ajax" class="ajax__cart-from">
+	<div class="cart-table d-table hh">
+		<div id="CartItems" class="med_d-block d-table-row-group">
+			{% raw %}
+				{{#items}}
+
+				<div class="line-item med_u-container med_u-block d-table-row" data-variant-id="{{ itemVariantId }}">
+					<div class="cart-product-thumb med_u-block med_d-block d-table-cell">
+						<a class="product-thumbnail lazyload fade-in" href="{{ url }}" data-bgset="{{ img }}" data-sizes="auto" data-parent-fit="cover"></a>
+					</div>
+					<div class="cart-product-desc med_u-block med_d-block d-table-cell">
+                    	<div class="row">
+                          <a class="cart-product-title" href="{{ url }}">{{ name }}</a>
+                          {{#if variation}}
+                                <span class="variation"> - {{ variation }}</span>
+                            {{/if}}
+                        </div>
+                        <div class="flex">
+                        	<div class="js-counter counter inputGroup">
+                            
+                                <input type="text" name="updates[]" id="updates_{{id}}" class="inputCounter" value="{{itemQty}}" />
+                                <span class="inputCounter-up"><span class="icon-plus"></span>&nbsp;</span>
+                                <span class="inputCounter-down">&nbsp;<span class="icon-minus"></span> <input type="hidden" dataval="{{itemQty}}" value="{{itemQty}}" class="forrefresh"></span>
+                            </div>
+                            <div class="cart-product-total">
+                                <div class="cart-product-total-price">{{{linePriceFormatted}}}</div>
+                                {{{discounts}}}
+                            </div>
+                            <div class="cart-product-remove">
+                                <i class="icon-close h4"></i>
+                            </div>
+  						</div>
+					</div>
+				</div>
+
+				{{/items}}
+			{% endraw %}
+
+		</div>
+	</div>
+	<span class="clear-both"></span>
+	<div class="checkout-buttons inline datafornew">
+	    <div class="s1 u-right u-margin-b-sm">
+	    	<div class="cart-totals-table">
+            	<div class="flex">
+               		<label>Subtotal</label>
+                    <div class="cart-total-price">
+			    		<span>{% raw %}{{{totalPrice}}}{% endraw %}</span>
+			    	</div>
+                </div>
+				{% raw %}{{{totalDiscounts}}}{% endraw %}
+			</div>
+
+	        {% if settings.tax_text %}
+	        	<p class="cart-tax-info">{{ settings.tax_text }}</p>
+	        {% endif %}
+
+	    </div>
+                
+      {% if settings.enable_cart_order_notes %}
+        <div class="order-notes">
+          <label class="order-notes__label" for="order-notes">{{ 'cart.labels.notes' | t }}</label>
+          <textarea id="order-notes" class="order-notes__content" name="note"></textarea>
+        </div>
+      {% endif %}
+      <div class="button-holder">
+		<a href="{% raw %}{{{ continue_shopping_url }}}{% endraw %}" class="js-continueShopping js-continueShopping--empty {% if template == 'cart' %}js-go-back{% endif %}">Continue Shopping</a>
+		
+        {% if additional_checkout_buttons %}
+            <div class="additional-checkout-buttons">
+                {{ content_for_additional_checkout_buttons }}
+            </div>
+        {% endif %}
+        
+        <a href="/cart" class="button cart__link-btn">Checkout</a>
+        
+        <button class="button cart-checkout" type="submit" name="checkout" style="display: none;">Checkout</button>
+      </div>
+      
+  </div>
+</form>
+</script>

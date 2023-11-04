@@ -1,0 +1,134 @@
+{% comment %} Settings Slide Out Navigation {% endcomment %}
+{% assign menuPrimary = section.settings.menu_1_list %}
+{% assign menuSecondary = section.settings.menu_2_list %}
+
+{% assign position = 'is-hamburger' %}
+{% if section.settings.nav_layout == 'standard' %}
+{% assign position = 'is-standard' %}
+{% endif %}
+
+{% assign logo_position = section.settings.logo_position %}
+{% assign links_position = section.settings.links_position %}
+
+{% assign logo_width = section.settings.logo_max_width | append: 'px' %}
+
+{% assign logo = section.settings.logo %}
+{% assign logo_other = section.settings.logo_other %}
+{% assign shop_name = shop.name | escape %}
+{% assign show_shop_name = section.settings.show_site_name %}
+
+<style>
+  .main-logo__image { max-width: {{ logo_width }}; }
+</style>
+
+	
+{%- if logo or logo_other or show_shop_name -%}
+	{% capture 'logo' %}
+	<a tabindex= "1" href="/" class="main-logo__image" data-width="{{ section.settings.logo_max_width }}">
+			<img src="{{ logo | img_url: '500x' }}" class="logo logo-home lazyload" data-aspectratio="{{ logo.aspect_ratio }}" alt="{{ logo.alt | escape }}">
+	</a>	
+	{% endcapture %}
+{%- endif -%}
+
+<header class="site-header container header--no-bg {{ position }} header--{{ logo_position }}_{{ links_position }} header--{{ section.settings.nav_layout }}  template-{{ template }} {% unless logo or logo_other or show_shop_name %}header--no-logo{% endunless %} showonload shift--alert" data-section-type="header" data-layout="{{ section.settings.nav_layout }}" id="header">
+
+	<div class="row row-lg">
+		<div class="v3_header--inner">
+			{{ logo }}
+
+			<div class="v3_header--nav-icons">
+				<nav role="navigation" class="nav-standard nav-main">
+					{% assign is_hamburger_nav = false %}
+					{% include 'navigation' %}
+				</nav>
+
+				<div class="v3_header--icons" >
+					
+					<div class="search-content">
+						<span class="search-icon" onclick="toggleSearch()">{% include 'icon-search' %} </span>
+						<div class="search-popup">
+							<form action="/search" method="get" class="search-page-form clearfix" role="search">
+								<input type="hidden" name="type" value="product" />
+								<input name="q" type="search" id="search-field" placeholder="Search term" value="{{ search.terms | escape }}" />
+								<input type="submit" id="search-submit" class="button" value="{{ 'search.button.text' | t }}" />
+							</form>
+							<div onclick="toggleSearch()" class="close-search">{% include 'icon-close' %}</div>
+						</div>
+					</div>
+					<a href="/account" class="" tabindex="2" title="account" aria-label="account">{% include 'icon-account' %}</a>
+					<a id="cartTotal" href="/cart" aria-label="{{ 'cart.labels.items_added' | t }}" class="js-cartToggle cartToggle diamond-outline" tabindex="2" aria-expanded="false">
+							{% include 'icon-cart' %}
+							<div id="CartToggleItemCount" class="cartToggle-items">{{cart.item_count}}</div>
+					</a>
+					<a href="#menu" class="js-menuToggle menuToggle" data-target="nav" aria-expanded="false">
+						<div id="hamburger-menu" class="icon-menu">
+								<div id="hamburger-bar" class="icon-bar"></div>
+						</div>
+					</a>	
+				</div>
+			</div>
+		</div>
+	</div>
+
+  
+</header>
+
+{% comment %} Site Navigation {% endcomment %}
+<nav role="navigation" class="nav-container nav-main style-default">
+  <div class="nav-inner">
+	<div class="nav-mobile-close js-menuToggle" aria-expanded="false">
+	  <i class="icon-close"></i>
+	</div>
+
+	{% assign is_hamburger_nav = true %}
+	{% include 'navigation' %}
+  </div>
+</nav>
+
+{% unless template == 'cart' %}
+  <div class="cartContainer">
+	{% include 'site-cart' %}
+  </div>
+{% endunless %}
+
+{% comment %} Adds room to the top of the page under the fixed header. {% endcomment %}
+{% unless template contains 'index' %}
+	  <div class="bodyWrap-spacer"></div>
+{% endunless %}
+
+<script>
+	function toggleSearch ()  {
+			var searchPopup = document.querySelector('.search-popup')
+			searchPopup.classList.toggle('active')
+	}
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+	{
+	  "type": "image_picker",
+	  "id": "logo",
+	  "label": "Custom logo (Home page)",
+	  "info": "440px width recommended"
+	},
+	{
+	  "type": "range",
+	  "id": "logo_max_width",
+	  "label": "Custom logo width (in pixels)",
+	  "info": "Max logo height is 100px",
+	  "min": 50,
+	  "max": 400,
+	  "default": 100,
+	  "step": 5,
+	  "unit": "px"
+	},
+	{
+		"type": "link_list",
+		"id": "menu_1_list",
+		"label": "Main Menu"
+	}
+  ]
+}
+{% endschema %}

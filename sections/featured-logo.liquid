@@ -1,0 +1,152 @@
+{% comment %} Logos List {% endcomment %}
+
+{% if section.blocks.size > 0 %}
+<div data-section-id="{{ section.id }}" data-section-type="logos-list">
+   
+  <div class="logos-list featured-logo-list" style="background-color: {{ section.settings.color_logos_bg }};">
+    {%- if section.settings.section_heading != blank -%}
+      <div class="row row-lg">
+        <div class="rich__heading align--{{ heading_align }}">
+			<h0 class="size--{{ heading_size }}">
+          		{{section.settings.section_heading}}
+          	</h0>		
+		</div>
+      </div>
+    {%- endif -%}
+    <div class="logos-list-wrapper">
+      <div class="featued-logos">
+        {% for block in section.blocks %}
+          {% assign logo_image = block.settings.logo_image %}
+          {% assign logo_url = block.settings.logo_url %}
+
+          {% if logo_image != blank %}
+            <div class="js-slide" data-block="item_logo" {{ block.shopify_attributes }}>
+              {%- if logo_url != blank -%}
+                <a href="{{ logo_url }}"
+                  class="logos-slider__item lazyload fade-in"
+                  data-bgset="{% include 'bgset', image: logo_image %}"
+                  data-sizes="auto"
+                  data-parent-fit="cover"
+                  data-aspectratio="{{ logo_image.aspect_ratio }}"
+                  ></a>
+                <noscript>
+                  <a href="{{ logo_url }}" class="logos-slider__item no-js-image"
+                  style="background-image: url({{ block.settings.logo_image | img_url: '180x' }});">
+                  </a>
+                </noscript>
+              {%- else -%}
+                <div
+                  class="logos-slider__item lazyload fade-in"
+                  data-bgset="{% include 'bgset', image: logo_image %}"
+                  data-sizes="auto"
+                  data-parent-fit="cover"
+                  data-aspectratio="{{ logo_image.aspect_ratio }}"
+                  ></div>
+                <noscript>
+                  <div class="logos-slider__item no-js-image"
+                  style="background-image: url({{ block.settings.logo_image | img_url: '180x' }});">
+                  </div>
+                </noscript>
+              {%- endif -%}
+            </div>
+          {% else %}
+            <div class="js-slide" data-block="item_logo" {{ block.shopify_attributes }}>
+              {%- capture current -%}{% cycle 1, 2, 3, 4, 5, 6 %}{%- endcapture -%}
+              {%- if logo_url != blank -%}
+                <a href="{{ logo_url }}" class="logos-slider__item svg-placeholder">
+                  {{- 'collection-' | append: current | placeholder_svg_tag -}}
+                </a>
+              {%- else -%}
+                <div class="logos-slider__item svg-placeholder">
+                  {{- 'collection-' | append: current | placeholder_svg_tag -}}
+                </div>
+              {%- endif -%}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<style>
+  
+.rich__heading{
+	text-align: center;
+    font-family: 'Matter';
+    font-size: 14px;
+    color: #000;
+}  
+  
+</style>
+
+
+
+{% schema %}
+{
+  "name": "Featured Logo",
+  "max_blocks": 25,
+  "settings": [
+    {
+		"type": "header",
+		"content": "Heading"
+	},
+	{
+		"type": "text",
+		"id": "section_heading",
+		"label": "Heading"
+	},
+	{
+      "type": "color",
+      "id": "color_logos_bg",
+      "label": "Background color",
+      "default": "#fafafa"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item_logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "logo_url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Logo",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "item_logo"
+        },
+        {
+          "type": "item_logo"
+        },
+        {
+          "type": "item_logo"
+        },
+        {
+          "type": "item_logo"
+        },
+        {
+          "type": "item_logo"
+        },
+        {
+          "type": "item_logo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

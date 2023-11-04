@@ -1,0 +1,153 @@
+<style>
+  	.grid-module--tiles{
+    	position: relative;  
+    }
+  
+  	.grid-tiles__wrapper{
+      	position: absolute;
+        left: 0;
+        top: 0;
+      	width: 100%;
+        height: 100%;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+        z-index: 9;
+    }
+  
+  	.grid-tiles__wrapper .grid-tile__half{
+    	-ms-flex-preferred-size: 50%;
+    	flex-basis: 50%;
+    	width: 50%;
+      
+      	position: relative;
+        background: no-repeat center;
+        background-size: cover;
+        overflow: hidden;
+        width: 100%;
+        display: block;
+    }
+  
+  	.grid-tiles__wrapper .grid-tile__half .grid-tile__link{
+    	position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 12;  
+    }
+</style>
+
+<section id="grid--{{ section.id }}" class="container-wrap grid-module--tiles tiles--row--half {{ section.settings.slide_height }}" id="grid-module-{{ section.id }}" data-section-type="grid" data-image-height="{{ section.settings.slide_height }}">
+
+ 
+    <div class="grid-tiles__wrapper">
+      	
+      	<!-- Section 1-->
+        {%- assign image = section.settings.image_1 -%}
+      	{%- assign image_link = section.settings.image_url_1 -%}
+        
+      	<div class="grid-tile__half" style="background-image: url({{ image | img_url: 'master' }})">
+          	<a href="{{ image_link }}" class="grid-tile__link" >
+          		<div class="grid-tile__title"></div>
+          	</a>
+      	</div>
+      	
+      	<!-- Section 1-->
+      	{%- assign image = section.settings.image_2 -%}
+        {%- assign image_link = section.settings.image_url_1 -%}
+      
+      	<div class="grid-tile__half" style="background-image: url({{ image | img_url: 'master' }})">
+  			<a href="" class="grid-tile__link" >
+          		<div class="grid-tile__title"></div>
+          	</a>
+      	</div>
+    </div>
+    
+  
+</section>
+
+{% schema %}
+  {
+    "name": "Featured Grid",
+	"class": "section-featured__grid header--full",
+    "settings": [
+		{
+            "type": "select",
+            "id": "slide_height",
+            "label": "Slide height",
+            "default": "one-hundred-height-hero",
+            "options": [
+                {
+                    "value": "one-hundred-height-hero",
+                    "label": "Full screen height"
+                },
+                {
+                    "value": "original-height",
+                    "label": "Image height"
+                },
+                {
+                    "value": "seven-fifty-height-hero",
+                    "label": "750px"
+                },
+                {
+                    "value": "sixty-fifty-height-hero",
+                    "label": "650px"
+                },
+                {
+                    "value": "five-fifty-height-hero ",
+                    "label": "550px"
+                },
+                {
+                    "value": "four-fifty-height-hero",
+                    "label": "450px"
+                }
+            ]
+        },
+		{
+			"type" : "header",
+			"content" : "Image Section 1"
+		},
+		{
+			"type": "image_picker",
+			"id": "image_1",
+			"label": "Image"
+		},
+		{
+			"type": "url",
+			"id": "image_url_1",
+			"label": "Link"
+		},
+		{
+			"type" : "header",
+			"content" : "Image Section 2"
+		},
+		{
+			"type": "image_picker",
+			"id": "image_2",
+			"label": "Image"
+		},
+		{
+			"type": "url",
+			"id": "image_url_2",
+			"label": "Link"
+		}
+	],
+	"presets": [
+		{
+			"name": "Featured Grid",
+			"category": "Image",
+			"settings": {
+			}
+		}
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

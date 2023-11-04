@@ -1,0 +1,137 @@
+{%- assign subheading = section.settings.subheading -%}
+{%- assign heading = section.settings.title -%}
+{%- assign html = section.settings.html -%}
+
+
+<style>
+.background-text-section{
+  	text-align: center;
+  	background-color: #f7f7f7;
+  	padding: 55px 0;
+}
+  
+.background-text-section h4.page-title__subheading{
+	color: #fa0d3d !important;  
+}
+  
+.background-text-section .background__image{
+  	margin: 10px 0 20px 0;
+}
+  
+.background-text-section h2{
+	color: #fa0d3d;  
+  	text-align: center;
+  	font-size: 28px;
+  	line-height: 38px;
+  	margin: 40px 0;
+  	text-transform: initial;
+}
+  @media only screen and (max-width: 768px) {
+    .background-text-section h2 {
+      font-size: 22px;
+    }
+  }
+.background-text-section .page-text{
+	color: #fa0d3d;
+  	font-size: 16px;
+  	line-height: 18px;
+  	margin-bottom: 10px;
+}
+  .background-text-section .custom_btn {
+    background-color: #fa0d3d;
+    border: 1px solid #fa0d3d;
+    color: #ffffff;
+  }
+</style>
+
+<section class="background-text-section" data-section-id="{{ section.id }}" data-section-type="background-text">
+  
+  
+  	<div class="background__container">
+      
+      	<div class="section__content">
+          
+          	<div class="container">
+        		<div class="row row-lg">
+                  
+                  	{%- assign image = section.settings.image -%}
+                  
+                  	{% if image != blank %}
+                      <div class="background__image">
+
+                          <img src="{{ image | img_url: 'master' }}" />
+                      </div>
+                    {% endif %}
+                  
+                    {%- if subheading != blank -%}
+                      <h4 class="page-title__subheading subheading-text">{{ subheading }}</h4>
+                    {%- endif -%}
+
+                    {%- if heading != blank -%}
+                      <h2 class="page-title__heading">{{ heading }}</h2>
+                    {%- endif -%}  
+
+                    {%- if html -%}
+                      <div class="page-text">
+                        {{ html }}
+                      </div>
+                    {%- endif -%}
+                  {% if section.settings.btn_text != blank %}
+                  <a id="intercom-trigger" class="button custom_btn">{{ section.settings.btn_text }}</a>
+                  {% endif %}
+              	</div>
+          	</div>
+      	</div>
+  	</div>
+  
+</section>
+
+
+
+
+{% schema %}
+{
+  "name": "background-with-text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subeading",
+      "default": "Custom content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "HTML code"
+    },
+    {
+      "type": "html",
+      "id": "html",
+      "label": "Custom HTML",
+      "default": "<p>Once you write some HTML, it will render right here.</p>"
+    },
+	{
+	  "type": "image_picker",
+      "id": "image",
+      "label": "Icon Image"
+    },
+	{
+	  "type": "text",
+      "id": "btn_text",
+      "label": "Button Text"
+    },
+	{
+	  "type": "url",
+      "id": "btn_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Advanced",
+      "name": "Background with Text"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,103 @@
+<div class="cart-scroll">
+<div class="theme__cart-block theme__cart-container cart-wrapper container cartContainer block__right">
+  
+  	<div class="theme__cart-row row cart-row" id="Cart">
+      	
+      	{%- if cart.item_count > 0 -%}
+          <div class="theme__cart-widget">
+              <div class="theme__cart-header">
+                  <a class ="closediam" href="{{shop.url}}" aria-label="close cart">
+                      <div class="js-cartToggle js-cartToggle-close cart-close icon-close diamond-outline">
+                          <div class="diamond"></div>
+                      </div>
+                  </a>
+				  <h6 class="theme__cart-heading">{{ 'cart.labels.cart_title' | t }}</h6>
+              </div>
+
+              <div class="theme__cart-item item__ajax">
+                  <div id="CartItems" class="med_d-block d-table-row-group">
+
+                      {%- for item in cart.items -%}
+
+                        <div class="line-item med_u-container med_u-block d-table-row" data-variant-id="{{ item.variant.id }}">
+                          <div class="cart-product-thumb med_u-block med_d-block d-table-cell">
+                            <a class="product-thumbnail lazyload fade-in" href="{{ collection_url }}{{ item.url }}" data-bgset="{% include 'bgset', image: item.image %}" data-sizes="auto" data-parent-fit="cover"></a>
+                          </div>
+                          <div class="cart-product-desc med_u-block med_d-block d-table-cell">
+                            <div class="row">
+                              <a class="cart-product-title" href="{{ collection_url }}{{ item.url }}">
+                                {{ item.product.title }}
+                              </a>
+                              {% if item.variant.title != 'Default Title' %}
+                                  <span class="variation"> - {{ item.variant.title }}</span>
+                              {% endif %}
+                              <p class="product-price u-margin-0" data-price="{{ item.price }}">
+                                {% if item.original_price > item.final_price %}
+                                  {% comment %}<s>{{ item.original_price | money }}</s>{% endcomment %}
+                                {% endif %}
+                                {% comment %}<span>{{ item.final_price | money }}</span>{% endcomment %}
+
+                                {%- if item.unit_price_measurement -%}
+                                  <span class="product-unit-price">
+                                    {{ item.unit_price | money }}
+                                    {%- if item.unit_price_measurement.reference_value != 1 -%}
+                                      {{- item.unit_price_measurement.reference_value -}}
+                                    {%- endif -%}
+                                    {{ item.unit_price_measurement.reference_unit }}
+                                  </span>
+                                {%- endif -%}
+                              </p>
+                            </div>
+                            <div class="flex">
+                                <div class="js-counter counter inputGroup">
+                                  <input type="text" name="updates[]" id="updates_{{ item.id }}" class="inputCounter" value="{{ item.quantity }}" />
+                                  <span class="inputCounter-up"><span class="icon-plus"></span>&nbsp;</span>
+                                  <span class="inputCounter-down">&nbsp;<span class="icon-minus"></span></span>
+                                </div>
+                                <div class="cart-product-total">
+                                  <div class="cart-product-total-price">
+                                    {% if item.original_line_price > item.final_line_price %}
+                                      <s>{{ item.original_line_price | money }}</s>
+                                    {% endif %}
+                                    {{ item.final_line_price | money }}
+                                  </div>
+
+                                  {% comment %}
+                                    Display the specific line item discount
+                                  {% endcomment %}
+                                  {%- if item.line_level_discount_allocations.size > 0 -%}
+                                    <div class="cart-product-discounts">
+                                      {%- for discount_allocation in item.line_level_discount_allocations -%}
+                                        <p>{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})</p>
+                                      {%- endfor -%}
+                                    </div>
+                                  {% elsif item.discount_allocations.size > 0 %}
+                                    <div class="cart-product-discounts">
+                                      {%- for discount_allocation in item.discount_allocations -%}
+                                        <p>{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})</p>
+                                      {%- endfor -%}
+                                    </div>
+                                  {% endif %}
+                                </div>
+                                <div class="cart-product-remove">
+                                  <i class="icon-close h4"></i>
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+
+                    </div>
+              </div>
+
+              <div class="theme__cart-footer">
+                  <h4>Footer</h4> 
+              </div>
+          </div>
+      	{%- else -%}
+      
+      	{% endif %}
+  	</div>
+  
+</div>
+</div>

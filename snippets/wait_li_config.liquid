@@ -1,0 +1,474 @@
+{% comment %}
+	Wait.li Config File + Variables
+	DO NOT TOUCH THIS FILE.
+{% endcomment %}
+
+{% comment %} Assign and check for old and new product metafields {% endcomment %}
+{% assign og_wait_li_product_id = product.id | downcase %}
+{% assign new_wait_li_product_id = product.selected_or_first_available_variant.id | downcase %}
+
+{% assign og_wait_li_product_metafield = product.metafields.wait_li[og_wait_li_product_id] %}
+{% assign new_wait_li_product_metafield = product.selected_or_first_available_variant.metafields.wait_li[new_wait_li_product_id] %}
+
+{% if og_wait_li_product_metafield %}
+  {% assign wait_li_product_metafield = og_wait_li_product_metafield %}
+  {% assign wait_li_product_id = og_wait_li_product_id %}
+{% else %}
+  {% assign wait_li_product_metafield = new_wait_li_product_metafield %}
+  {% assign wait_li_product_id = new_wait_li_product_id %}
+{% endif %}
+
+{% assign wait_li_customer_metafield = customer.metafields.wait_li[wait_li_product_id] %}
+
+{% assign list_count = wait_li_product_metafield.list_count %}
+
+{% if wait_li_product_metafield.status == 'active' %}
+  {% assign wait_li_active = true %}
+  {% assign atc_status = 'hide' %}
+{% else %}
+  {% assign wait_li_active = false %}
+  {% assign atc_status = 'show' %}
+{% endif %}
+
+{% assign customer_status = wait_li_customer_metafield.customer_status %}
+{% assign customer_position = wait_li_customer_metafield.customer_position %}
+
+{% comment %}
+	Display Settings 
+{% endcomment %}
+
+{% assign wait_li_settings = shop.metafields.wait_li.settings %}
+
+{% if wait_li_settings.sign_in_text != blank %}
+	{% assign sign_in_text = wait_li_settings.sign_in_text %}
+	{% assign full_sign_in_text = sign_in_text | replace: "list_count", list_count %}
+	{% if list_count == 1 %}
+		{% assign full_sign_in_text = sign_in_text | replace: "list_count", list_count | replace: "people", "person" | replace: "are", "is" %}
+	{% endif %}
+{% else %}
+	{% assign sign_in_text = "There are currently list_count people on the waiting list. Click the button below to join!" %}
+	{% assign full_sign_in_text = sign_in_text | replace: "list_count", list_count %}
+	{% if list_count == 1 %}
+		{% assign full_sign_in_text = sign_in_text | replace: "list_count", list_count | replace: "people", "person" | replace: "are", "is" %}
+	{% endif %}
+{% endif %}
+
+{% if wait_li_settings.currently_waiting_text != blank %}
+	{% assign currently_waiting_text = wait_li_settings.currently_waiting_text %}
+  {% assign full_currently_waiting_text = currently_waiting_text | replace: "current_position", customer_position | replace: "list_count", list_count %}
+{% else %}
+	{% assign currently_waiting_text = "You are currently #current_position on the waiting list. Please keep an eye on your inbox." %}
+  {% assign full_currently_waiting_text = currently_waiting_text | replace: "current_position", customer_position | replace: "list_count", list_count %}
+{% endif %}
+
+{% if wait_li_settings.join_text != blank %}
+	{% assign join_text = wait_li_settings.join_text %}
+{% else %}
+	{% assign join_text = "Join Waiting List" %}
+{% endif %}
+
+{% if wait_li_settings.success_text != blank %}
+	{% assign success_text = wait_li_settings.success_text %}
+{% else %}
+	{% assign success_text = "Congratulations! You are now on the waiting list, please check your inbox for our confirmation email!" %}
+{% endif %}
+
+{% if wait_li_settings.button_colour != blank %}
+	{% assign button_colour = wait_li_settings.button_colour %}
+{% else %}
+	{% assign button_colour = "#3d85c6" %}
+{% endif %}
+
+{% if wait_li_settings.button_text_colour != blank %}
+	{% assign button_text_colour = wait_li_settings.button_text_colour %}
+{% else %}
+	{% assign button_text_colour = "white" %}
+{% endif %}
+
+{% if wait_li_active %} 
+
+  {% if customer %}
+
+      {% assign is_customer = true %}
+
+      {% if customer_status == 'waiting' %}
+
+        {% assign show_waiting_snippet = true %}
+
+        {% assign customer_waiting = true %}
+
+      {% elsif customer_status == 'active' %}
+
+        {% assign show_waiting_snippet = false %}
+	    {% assign atc_status = 'show' %}
+
+      {% else %}
+
+        {% assign show_waiting_snippet = true %}
+
+      {% endif %}
+
+  {% else %}
+
+      {% assign is_customer = false %}
+
+      {% assign show_waiting_snippet = true %}
+
+  {% endif %}
+
+{% endif %}
+
+<div id="wait_li_modal" class="wait_li_modal">
+  <div class="wait_li_modal_content">
+    <div class="tabs">
+      <div class="tab">
+        <input type="radio" name="css-tabs" id="tab-1" checked class="tab-switch">
+        <label id="register_tab" for="tab-1" class="tab-label">Register</label>
+        <div class="tab-content">
+          <div id="tab_success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 24 24"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/></svg>
+            <br>
+            <p>{{ success_text }}</p>
+          </div>
+          <div id="register_form">
+            <div class="section-header section-header--large">
+            	<h4 class="section-header__title">Register Account</h4>
+          	</div>
+        	<form id="CustomerRegisterForm" class="wait_li_form">
+              <div class="wla_input wla_first_name">
+                <input type="text" id="wl_customer_first_name" placeholder="First Name" value="" required />
+                <span id="wl_customer_first_name_error"></span>
+              </div>
+              <div class="wla_input wla_last_name">
+                <input type="text" id="wl_customer_last_name" placeholder="Last Name" value="" required />
+                <span id="wl_customer_last_name_error"></span>
+              </div>
+              <div class="wla_input wla_email">
+                <input type="email" id="wl_customer_email" placeholder="Email" required />
+                <span id="wl_customer_email_error"></span>
+              </div>
+              <div class="wla_input wla_password">
+                <input type="password" id="wl_customer_password" placeholder="Password" required/>
+                <span id="wl_customer_password_error"></span>
+              </div>
+              <button type="submit" class="wla_button" id="wl_register_button">Register & Join Waiting List</button>
+              <span id="error_field"></span>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="tab">
+        <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+        <label id="login_tab" for="tab-2" class="tab-label">Sign In</label>
+        <div class="tab-content">
+        	<div id="CustomerLoginForm" class="wait_li_form">
+              {% form 'customer_login' %}
+
+                <div class="section-header section-header--large">
+                  <h4 id="sign_in_header" class="section-header__title">Sign In</h4>
+                </div>
+
+                {{ form.errors | default_errors }}
+
+                <input type="email" name="customer[email]" id="CustomerEmail" required placeholder="Email"{% if form.errors contains "email" %} class="error"{% endif %} autocorrect="off" autocapitalize="off" autofocus>
+
+              	<input type="password" value="" name="customer[password]" required id="CustomerPassword" placeholder="Password" {% if form.errors contains "password" %} class="error"{% endif %}>
+
+                <input type="hidden" name="checkout_url" id="redirect_url" value="" />
+
+                <button type="submit" class="wla_button">Sign In</button>
+              {% endform %}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-container{transform:none;-ms-transform:none;-webkit-transform:none}#wait_li_success,.wla_form{margin:10px 0;text-align:center;box-sizing:border-box}.wait_li_atc_status_hide{display:none !important}#wait_li_success{display:none}.wait_li_modal .tab-content .section-header__title{font-size:22px;margin-bottom:15px}.wait_li_modal{position:fixed;left:0;top:0;width:100%;height:100%;z-index:9999999;opacity:0;visibility:hidden;transform:scale(1.1);transition:visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;box-sizing:border-box}.wait_li_modal_content{-webkit-box-shadow:0 0 11px 0 rgba(0,0,0,0.75);-moz-box-shadow:0 0 11px 0 rgba(0,0,0,0.75);box-shadow:0 0 11px 0 rgba(0,0,0,0.75);background-color:white;width:450px;border-radius:1px;margin:auto;position:relative;top:25%;left:0;bottom:0;right:0;display:table;box-sizing:border-box}@media only screen and (max-width: 500px){.wait_li_modal_content{width:100%;top:15%}}.wait_li_modal_content form{margin-bottom:0}.wait_li_modal_content .section-header{margin-bottom:0;text-align:center}.wait_li_form input{width:100%;padding:15px;margin:10px 0}.wait_li_form .btn{background:{{button_colour}};color:{{button_text_colour}}}.wait_li_close_button{float:right;width:1.5rem;line-height:1.5rem;text-align:center;cursor:pointer;border-radius:0}.wait_li_close_button:hover{background-color:darkgray}.wait_li_show_modal{opacity:1;visibility:visible;transform:scale(1.0);transition:visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;background:rgba(0,0,0, 0.75);z-index:2147483647}.wla_input{float:left}.wla_first_name{width:50%;padding-right:6px}.wla_last_name{width:50%;padding-left:6px}.wla_email{width:100%}.wla_password,.wla_password_confirmation{width:100%}#wl_customer_email{width:100%}.wla_button{width:100%}.wla_login_text{text-align:center;display:block;padding:10px}.wait_li_modal .tabs{position:relative;margin:0;background:{{button_colour}}}.wait_li_modal .tabs::after,.wait_li_modal .tabs::before{content:"";display:table}.wait_li_modal .tabs input[type="radio"]{position:fixed;opacity:0}.wait_li_modal .tabs::after{clear:both}.wait_li_modal .tab{float:left;width:50%}.wait_li_modal .tab-switch{display:none}.wait_li_modal .tab-label{text-align:center;position:relative;display:block;line-height:2.75em;height:3em;padding:0 1.618em;background:{{button_colour}};border-right:0.125rem solid{{button_colour}};color:{{button_text_colour}};cursor:pointer;top:0;transition:all 0.25s;width:100%;z-index:6;margin-bottom:0}.wait_li_modal .tab-label:hover{top:-0.25rem;transition:all 0.25s}.wait_li_modal .tab-content{padding:1.618rem;background:#fff;color:#2c3e50;height:auto;width:100%;position:absolute;z-index:1;left:0;opacity:0;transition:all 0.35s;-webkit-box-shadow:0 0 11px 0 rgba(0,0,0,0.75);-moz-box-shadow:0 0 11px 0 rgba(0,0,0,0.75);box-shadow:0 0 11px 0 rgba(0,0,0,0.75)}.wait_li_modal .tab-switch:checked + .tab-label{background:#fff;color:#2c3e50;border-bottom:0;border-right:0.0625rem solid #fff;transition:all 0.35s;z-index:6}.wait_li_modal .tab-switch:checked + .tab-label:hover{top:0}.wait_li_modal .tab-switch:checked + .tab-label + .tab-content{opacity:1;transition:all 0.35s;z-index:3}@keyframes spinner{to{transform:rotate(360deg)}}.wait_li_modal .spinner:before{content:'';box-sizing:border-box;position:absolute;top:50%;left:50%;width:20px;height:20px;margin-top:-10px;margin-left:-10px;border-radius:50%;border:2px solid white;border-top-color:#333;animation:spinner 0.6s linear infinite}.wla_button{background:{{button_colour}};color:{{button_text_colour}};padding:10px 25px;min-height:47px;min-width:150px;border:none;position:relative;margin-top:10px;width:100%;display:block;cursor:pointer}.wla_button:hover{color:{{button_text_colour}}}.wait_li_modal #tab_success{display:none;text-align:center}.wait_li_modal #tab_success svg{fill:{{button_colour}}!important}.wait_li_modal #success_content{display:none}.wait_li_modal .page-container{transform:none;-ms-transform:none;-webkit-transform:none}
+</style>
+
+<script>
+ class Helper {
+  static getQueryParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)')
+    const results = regex.exec(location.search)
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '))
+  }
+}
+
+class ShopifyHelper {
+  static getSelectedVariantId() {
+    // Try to get variant id from form element with name id
+    const addToCartForm = document.querySelector('form[action^="/cart/add"]')
+    if (addToCartForm) {
+      const input = addToCartForm.querySelector('[name="id"]')
+      const submitButton = addToCartForm.querySelector('[type="submit"]')
+      // If the submit button is disabled, the input value is most likely wrong
+      // because it got autofilled on initial page load with the first available product variant id.
+      if (
+        (!submitButton || submitButton.disabled !== true) &&
+        input &&
+        input.value
+      ) {
+        return input.value
+      }
+    }
+
+    // Try to get variant id from "variant" query parameter.
+    const queryParameter = Helper.getQueryParameter('variant')
+    if (queryParameter) {
+      return queryParameter
+    }
+
+    // Try to get variant id from ShopifyAnalytics.meta object
+    if (
+      self.ShopifyAnalytics &&
+      self.ShopifyAnalytics.meta &&
+      self.ShopifyAnalytics.meta.selectedVariantId
+    ) {
+      return self.ShopifyAnalytics.meta.selectedVariantId
+    }
+
+    // No variant id found
+    return null
+  }
+
+  static getAddToCartFormElements() {
+    const foundElements = []
+    const elementTypes = ['select', 'input']
+    for (let elementType of elementTypes) {
+      let elements = document.querySelectorAll(`form[action^="/cart/add"] ${elementType}`)
+      for (let element of elements) {
+        foundElements.push(element)
+      }
+    }
+    return foundElements
+  }
+
+  static addVariantListeners(eventHandler) {
+    for (let element of ShopifyHelper.getAddToCartFormElements()) {
+      element.addEventListener('change', eventHandler)
+    }
+  }
+
+  static removeVariantListeners(eventHandler) {
+    for (let element of ShopifyHelper.getAddToCartFormElements()) {
+      element.removeEventListener('change', eventHandler)
+    }
+  }
+}
+
+const initApp = () => {
+  let selectedVariantId = ShopifyHelper.getSelectedVariantId()
+  const variantHandler = (event) => {
+    // location.reload();
+    const variantId = ShopifyHelper.getSelectedVariantId()
+  }
+  ShopifyHelper.addVariantListeners(variantHandler)
+}
+
+if (document.readyState !== 'loading') {
+  setTimeout(initApp, 0)
+} else {
+  document.addEventListener('DOMContentLoaded', initApp)
+}
+
+// Variant Hash
+const variants = {};
+{% for variant in product.variants %}
+  {% assign variant_id = variant.id | downcase %}
+  {% assign wait_li_product_mf = variant.metafields.wait_li[variant_id] %}
+  variants[{{variant.id}}] = '{{ wait_li_product_mf }}';
+{% endfor %}
+
+// Load modal and associated settings for currently selected variant/product
+document.addEventListener("DOMContentLoaded", function(event) {
+    var modal = document.getElementById("wait_li_modal");
+    var trigger = document.getElementById("wait_li_register_trigger");
+    var login_trigger = document.getElementById("wait_li_login_trigger");
+    var closeButton = document.getElementById("wait_li_close_button");
+
+    // Empty Check Function
+    function isEmpty(value) {
+        if (typeof value === 'number') return false
+        else if (typeof value === 'string') return value.trim().length === 0
+        else if (Array.isArray(value)) return value.length === 0
+        else if (typeof value === 'object') return value == null || Object.keys(value).length === 0
+        else if (typeof value === 'boolean') return false
+        else return !value
+    };
+    
+    function toggleModal(stat) {
+        modal.classList.toggle("wait_li_show_modal")
+    }
+
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    function windowOnClick(event) {
+        if (event.target === modal) {
+            toggleModal()
+        }
+    }
+    if (trigger) {
+        trigger.addEventListener("click", function() {
+            toggleModal();
+            document.getElementById("tab-1").checked = true;
+            document.getElementById("tab-2").checked = false
+        })
+    }
+    if (login_trigger) {
+        login_trigger.addEventListener("click", function() {
+            toggleModal();
+            document.getElementById("tab-1").checked = false;
+            document.getElementById("tab-2").checked = true
+        })
+    }
+    if (closeButton) {
+        closeButton.addEventListener("click", toggleModal)
+    }
+  
+    
+    if (window.location.href.indexOf('#waiting_list') > 0) {
+      toggleModal();
+      document.getElementById("tab-1").checked = false;
+      document.getElementById("tab-2").checked = true;
+      document.getElementById("sign_in_header").innerHTML = "Sign In To Purchase";
+    }
+  
+    window.addEventListener("click", windowOnClick);
+    const button = document.getElementById("wl_join_button");
+    const register_button = document.getElementById("wl_register_button");
+    if (button) {
+        const joinData = {
+            customerId: '{{ customer.id }}',
+            productId: '{{ wait_li_product_id }}',
+            productTitle: '{{ product.title | escape }}',
+            productHandle: '{{ product.handle }}',
+            shopDomain: '{{ shop.permanent_domain }}',
+            customerEmail: '{{ customer.email }}'
+        };
+        button.addEventListener("click", function() {
+            button.classList.add("spinner");
+            button.innerHTML = '';
+            document.getElementById("wl_join_button").disabled = true;
+            fetch("https://app.wait.li/list/join", {
+                method: 'POST',
+                body: JSON.stringify(joinData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status == 200) {
+                    document.getElementById('wait_li_form').style.display = 'none';
+                    document.getElementById('wait_li_success').style.display = 'block';
+                    document.getElementById('register_form').style.display = 'none';
+                    document.getElementById('register_tab').style.display = 'none';
+                    document.getElementById('login_tab').style.display = 'none';
+                    document.getElementById('tab_success').style.display = 'block';
+                    toggleModal()
+                } else {
+                    console.log('Something went wrong with Wait.li - please try again later.');
+                    document.getElementById('error_field').innerHTML = '<br><p style="text-align:center;">Uh oh! Something went wrong while joining the waiting list, please try again later.</p>'
+                }
+            }).catch(error => console.error('Error:', error))
+        })
+    }
+    if (register_button) {
+        register_button.addEventListener("click", function(e) {
+            e.preventDefault();
+            const errors = [];
+            const new_first_name = document.getElementById('wl_customer_first_name').value;
+            const new_last_name = document.getElementById('wl_customer_last_name').value;
+            const new_email = document.getElementById('wl_customer_email').value;
+            const new_password = document.getElementById('wl_customer_password').value;
+            const new_password_confirmation = document.getElementById('wl_customer_password').value;
+            if (isEmpty(new_first_name)) {
+                document.getElementById('wl_customer_first_name_error').innerHTML = 'Please enter your first name.';
+                errors.push('Please enter your first name')
+            }
+            if (isEmpty(new_last_name)) {
+                document.getElementById('wl_customer_last_name_error').innerHTML = 'Please enter your last name.';
+                errors.push('Please enter your last name')
+            }
+            if (isEmpty(new_email)) {
+                document.getElementById('wl_customer_email_error').innerHTML = 'Please enter your email.';
+                errors.push('Please enter your email')
+            }
+            if (!validateEmail(new_email)) {
+                document.getElementById('wl_customer_email_error').innerHTML = 'Please check that your email is correct.';
+                errors.push('Please check that your email is correct')
+            }
+            if (isEmpty(new_password)) {
+                document.getElementById('wl_customer_password_error').innerHTML = 'Please enter your password.';
+                errors.push('Please enter a password.');
+            }
+            if (new_password.length < 6) {
+                errors.push('Please make sure your password is over 6 characters in length');
+                document.getElementById('wl_customer_password_error').innerHTML = 'Please make sure your password is over 6 characters long.';
+            }
+            if (errors.length === 0) {
+                const createData = {
+                    first_name: new_first_name,
+                    last_name: new_last_name,
+                    customerEmail: new_email,
+                    password: new_password,
+                    password_confirmation: new_password_confirmation,
+                    productId: '{{ wait_li_product_id }}',
+                    productTitle: '{{ product.title | escape }}',
+                    productHandle: '{{ product.handle }}',
+                    shopDomain: '{{ shop.permanent_domain }}'
+                };
+                document.getElementById("wl_register_button").classList.add("spinner");
+              document.getElementById("wl_register_button").innerHTML = '';
+                document.getElementById("wl_register_button").disabled = true;
+                fetch("https://app.wait.li/list/join", {
+                    method: 'POST',
+                    body: JSON.stringify(createData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                  if (response.status == 200) {
+                    document.getElementById('register_form').style.display = 'none';
+                    document.getElementById('register_tab').style.display = 'none';
+                    document.getElementById('login_tab').style.display = 'none';
+                    document.getElementById('tab_success').style.display = 'block';
+                    document.getElementById('wait_li_success').style.display = 'block';
+                    document.getElementById('wait_li_form').style.display = 'none'
+                  } else if (response.status == 409) {
+                    document.getElementById("wl_register_button").classList.remove("spinner");
+                    document.getElementById("wl_register_button").innerHTML = 'Join Waiting List';
+                    document.getElementById("wl_register_button").disabled = true;
+                    document.getElementById('error_field').innerHTML = '<br><p style="text-align:center;">You are already on the waiting list! Please sign in to check your status on the list.</p>';
+                  } else if (response.status == 422) {
+                    document.getElementById("wl_register_button").classList.remove("spinner");
+                    document.getElementById("wl_register_button").innerHTML = 'Join Waiting List';
+                    document.getElementById("wl_register_button").disabled = false;
+                    document.getElementById('error_field').innerHTML = '<br><p style="text-align:center;">Please make sure your email and password are valid, then try again.</p>';
+                  } else {
+                    document.getElementById("wl_register_button").classList.remove("spinner");
+                    document.getElementById("wl_register_button").innerHTML = 'Join Waiting List';
+                    document.getElementById("wl_register_button").disabled = false;
+                    document.getElementById('error_field').innerHTML = '<br><p style="text-align:center;">Uh oh! Something went wrong while joining the waiting list, please try again later.</p>';
+                  }
+                }).catch(error => console.error('Error:', error))
+            }
+        }, false)
+    }
+    var login_redirect_url = document.getElementById("redirect_url");
+    var current_url = window.location.href.replace('#waiting_list','');;
+    if (login_redirect_url) {
+        login_redirect_url.value = current_url;
+    }
+});
+</script>
+
+{% comment %}
+	End of Wait.li Config Snippet 
+{% endcomment %}

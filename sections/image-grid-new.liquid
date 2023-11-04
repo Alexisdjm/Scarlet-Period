@@ -1,0 +1,165 @@
+<style>
+  	
+</style>
+
+<section id="grid--{{ section.id }}" class="featured-icons container-wrap grid-module--tiles tiles--row--half {{ section.settings.slide_height }}" id="grid-module-{{ section.id }}" data-section-type="grid" data-image-height="{{ section.settings.slide_height }}">
+	
+  	<div class="container">
+    	
+      	<div class="collectionGrid-header row row-lg">
+          <div class="text-module">
+            {%- if section.settings.title != blank -%}
+    <h2 class="rich__heading align--center size--small"  style="color: {{section.settings.heading_color}}">{{ section.settings.title }}</h2>
+            {%- endif -%}
+            {%- if section.settings.subtitle != blank -%}
+              <div class="align--center rich__subheading"  style="color: {{section.settings.sub_heading_color}}">{{ section.settings.subtitle }}</div>
+            {%- endif -%}
+          </div>
+		</div>
+      
+      	<div class="row row-lg  ">
+          	<!--grid-img__slider-->
+          	<div class="icons-row-wrapper grid-auto">
+              
+              	{% for block in section.blocks %}
+            		{% assign title = block.settings.title %}
+            		{% assign button = block.settings.button %}
+              		{% assign link = block.settings.link %}
+              		{%- assign image = block.settings.image -%}
+              
+                    <div class="icons-row__item  m-span-1 {% if section.blocks.size < 3 %}span-6{% elsif section.blocks.size < 5 %}span-3{% elsif section.blocks.size <7 %} span-2 {% endif %}">
+                        
+                      	{% if image != blank %}
+                          <div class="grid-img__container">
+								<a href="{{link}}" class="">	
+                              		 {% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+										{% include 'theme-rias' %}
+										<div class="js-slide slide-image" {{ block.shopify_attributes }} data-block="slide">
+											<img 
+												 class="lazyload fade-in"
+												 data-src="{{ image_url_pattern }}"
+												 data-widths= "[{{ image_widths }}]"
+												 data-aspectratio="{{image.aspect_ratio }}"
+												 data-sizes="auto"
+                                              height="250"
+                                              width="213"
+												 alt="{{ image.alt | escape }}">
+											 <noscript>
+												<img src="{{ image | img_url: '1024x' }}" alt="{{ image.alt | escape }}">
+											</noscript>
+										</div>
+                            	</a>
+                          </div>
+                        {% endif %}
+                      
+                      	<div class="grid-text__container">
+                            {% if title != blank %}
+                            <h3 class="icons-row__title">{{ title }}</h3>
+                            {% endif %}
+
+                            {% if button != blank %}
+                            <a href="{{link}}" class="grid-button button">{{ button }}</a>
+                            {% endif %}
+                        </div>
+                      
+                    </div>
+              
+              	{% endfor %}
+              
+              	
+          	</div>
+      	</div>
+      
+  	</div>
+ 
+ 
+    
+  
+</section>
+
+{% schema %}
+  {
+    "name": "Image Grid",
+	"max_blocks": 6,
+	"class": "section-image__grid",
+    "settings": [
+			{
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle"
+      },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "Heading Colour"
+        },
+        {
+          "type": "color",
+          "id": "sub_heading_color",
+          "label": "Subheading Colour",
+          "default": "#212121"
+        }
+	],
+	"blocks": [
+    {
+        "type": "text",
+        "name": "Item",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Icon Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Feature"
+          },
+          {
+            "type": "text",
+            "id": "button",
+            "label": "Button Title"
+          },
+          {
+			"type": "url",
+			"id": "link",
+			"label": "Button link",
+			"default":"/collections/all"
+		  }
+        ]
+      }
+    ],
+	"presets": [
+		{
+			"name": "Image Grid",
+			"category": "Image",
+			"blocks": [
+              {
+                "type": "text"
+              },
+              {
+                "type": "text"
+              },
+              {
+                "type": "text"
+              },
+              {
+                "type": "text"
+              }
+            ]
+		}
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

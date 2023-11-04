@@ -1,0 +1,37 @@
+<div data-section-id="{{ section.id }}" data-section-type="contact-template">
+  {%- if banner -%}
+    <section class="banner banner-about container-wrap">
+      <div class="container">
+        <div class="row row-lg">
+          <div class="banner-inner">
+            <img src="{{ banner | img_url: '2000x' }}" alt="{{ contact_heading | escape }}">
+          </div>
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+  
+  <div class="container-wrap">
+    <div class="contact-form-container container">
+      <div class="row row-med">
+        <div class="contact-column contact-column-form">
+          {%- if contact_heading != blank or contact_content != blank -%}
+            <div class="contact-text">
+              {%- if contact_heading != blank -%}
+                <h2>{{ contact_heading }}</h2>
+              {%- endif -%}
+              
+              {%- if contact_content != blank -%}
+                <div class="content-wrapper text-content rte">
+                  {{ contact_content }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          
+          {%- include 'contact-form' -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

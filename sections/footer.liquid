@@ -1,0 +1,125 @@
+{% assign logo = section.settings.logo %}
+
+<section class="container-wrap" data-section-type="footer" data-section-id="{{ section.id }}">
+  <footer class="site-footer">
+    <div class="container">
+
+      {% comment %} Footer top - logo, menus, social icons {% endcomment %}
+      <div class="footer-inner row row-lg inline">
+        {%- if section.blocks.size > 0 -%}
+          <div class="block med_s35 footer-text">
+            <div class="footer-blocks">
+              
+              <div class="mobile__logo-holder medium--up-hide">
+          		{%- if logo -%}
+					<img src="{{ logo | img_url: '220x' }}" width="110" class="logo logo-home lazyload" alt="{{ logo.alt | escape }}">
+				{%- endif -%}
+          	  </div>
+
+              {%- for block in section.blocks -%}
+                {%- capture column -%}{%- cycle 'footer--left', 'footer--center', 'footer--right' -%}{%- endcapture -%}
+                {%- assign mobile_hide_block = block.settings.mobile_hide_block -%}
+
+                {%- case block.type -%}
+              
+              	  {%- when 'menu' -%}
+              		{%- assign footer_text = section.settings.text -%}
+                 	{{ footer_text }}
+                      {%- if block.settings.menu_primary != blank -%}
+                      <div class="footer__menu inline pri-menu" >
+                        <ul>
+                          {%- assign menu_primary = block.settings.menu_primary -%}
+                          {%- for link in linklists[menu_primary].links -%}
+                            <li class="footer-link">
+                              <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+              
+                {%- endcase -%}
+              {%- endfor -%}
+              
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="block med_s25 row inline bottom-row">
+         {%- if section.settings.show_payment_icons -%}
+              <div class="footer__payment">
+                {%- include 'payment-icons' -%}
+              </div>
+            {%- endif -%}
+          <div class="block med_s12">
+            {%- if settings.show_multiple_currencies -%}
+              {%- include 'currency-picker' -%}
+            {%- endif -%}
+          </div>
+          <div class="block med_s12 logo-holder medium--down-hide">
+           
+          		{%- if logo -%}
+					<img src="{{ logo | img_url: '220x' }}" width="110" class="logo logo-home lazyload" alt="{{ logo.alt | escape }}">
+				{%- endif -%}
+     
+          </div>
+        </div>
+    
+      </div>
+    </div>
+
+    
+  </footer>
+</section>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default":"<p>This text block is a great place to discuss shipping policies, terms and conditions, or copyright info.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+	{
+	  "type": "image_picker",
+	  "id": "logo",
+	  "label": "Custom logo (Footer)",
+	  "info": "220px width recommended"
+	}
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Primary menu"
+        },
+        {
+          "type": "link_list",
+          "id": "menu_primary",
+          "default":"main-menu",
+          "label": "Choose Menu",
+          "info": "This menu won't show dropdown items"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile_hide_block",
+          "label": "Hide block on mobile",
+          "default": true
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1505 @@
+{% comment %} Wait.li Config Snippet - DO NOT REMOVE UNLESS UNINSTALLING WAIT.LI {% endcomment %} 
+ {% include 'wait_li_config' %} 
+ {% comment %} Finish Wait.li Config Snippet {% endcomment %} 
+ 
+{% comment %} Settings {% endcomment %}
+{% assign image_gallery = section.settings.image_gallery %}
+{% assign image_size = section.settings.image_size %}
+{% assign add_cart_position = section.settings.add_cart_position %}
+{% assign zoom = false %}
+{%- if image_gallery == 'zoom' -%}
+	{% assign zoom = true %}
+{%- endif -%}
+{% assign first_variant = product.selected_or_first_available_variant %}
+{% assign arrows = section.settings.product_slideshow_arrows %}
+{% assign dots = section.settings.product_slideshow_dots %}
+{% assign layout = 4 %}
+{% assign tab_1 = section.settings.page_tab_1 %}
+{% assign tab_2 = section.settings.page_tab_2 %}
+{% assign tab_3 = section.settings.page_tab_3 %}
+{% assign product_layout = section.settings.product_layout %}
+{% assign color_swatches = settings.color_swatches %}
+{% assign show_reviews = settings.show_reviews %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+	{% assign sold_out = false %}
+{% endif %}
+
+<!-- Mustache Templates for rendering variant popover -->
+<div data-section-id="{{ section.id }}" data-section-type="product-template">
+	<section class="product container-wrap js-product-template clearfix row row-lg js-product-template--{{section.id}} product-layout--{{ product_layout }} {% if product.type == "Kits" %}kit{% endif %}" data-show_reviews="{{ show_reviews }}">
+		<div class="container">
+			{% if settings.show_breadcrumbs %}<div class="row row-lg">
+				<div class="breadcrumbs block">
+					{% include 'site-breadcrumbs' %}
+				</div>
+			</div>{% endif %}
+
+			<div class="row row-lg row--{{ product_layout }} js-row--{{ product_layout }}">
+				<div class="product-layout-{{ layout }}--images product-layout-images product-layout-images--{{ image_size }} xxl_s12 xl_s12 lg_s12 s1">
+					{% comment %} Set the layout for the variant images {% endcomment %}
+					{% for image in product.images %}
+						{% if forloop.length <= 2 %}
+								{% assign thumbnail_width = 'product-image--100' %}
+						{% elsif forloop.length == 3 %}
+							{% assign thumbnail_width = 'product-image--50' %}
+						{% elsif forloop.length == 4 %}
+							{% assign thumbnail_width = 'product-image--33' %}
+						{% else %}
+							{% assign thumbnail_width = 'product-image--25' %}
+						{% endif %}
+						{% assign length = forloop.length %}
+					{% endfor %}
+
+					{% if product_layout == 'slideshow' %}
+						{% if product.images.size > 1 %}
+						<div class="productImgSlider-nav js-productImgSlider-nav">
+							{% for image in product.images %}
+								{% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+								{% include 'theme-rias' %}
+								<div class="js-slide {{ thumbnail_width }} product-image-thumb {% if forloop.index == 1 %}active{% endif %}" data-image="{{ image | product_img_url: 'master'}}">
+									<img
+										 class="lazyload fade-in product-image-thumb {% if forloop.index == 1 %}active{% endif %}-img"
+										 data-src="{{ image_url_pattern }}"
+										 data-widths= "[{{ image_widths }}]"
+										 data-aspectratio="{{image.aspect_ratio }}"
+										 data-sizes="auto"
+										 alt="{{ image.alt | escape }}"
+										 itemprop="image"
+										 >
+									<noscript>
+										<img src="{{ image | img_url: 'master' }}" alt="{{ image.alt | escape }}">
+									</noscript>
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+                  		<div class="productImgSlider js-productImgSlider js-productImgContainer" data-gallery="{{ image_gallery }}" data-dots="{{ dots }}" data-arrows="{{ arrows }}" data-zoom="{{ zoom }}" id="js-productImgSlider--{{ section.id }}">
+							{% for image in product.images %}
+
+								{% assign has_video = false %}
+								{% assign image_alt = image.alt | escape %}
+
+								{% if image_alt contains 'youtube' %}
+									{% assign has_video = true %}
+									{% assign video_type = 'youtube' %}
+								{% elsif image_alt contains 'vimeo' %}
+									{% assign has_video = true %}
+									{% assign video_type = 'vimeo' %}
+								{% endif %}
+
+								<div class="js-slide {{ thumbnail_width }} product-image product-image--fit {% if forloop.length == 1 %}product-image--single{% endif %} lazyload fade-in" data-image="{{ image | product_img_url: 'master'}}" data-zoom-image="{{ image | product_img_url: 'master'}}"  data-id="{{ image.id }}" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto" data-parent-fit="contain" data-aspect-ratio="{{ image.aspect_ratio }}">
+									<noscript>
+										<div class="product-image--no-js" style="background: url({{ image | img_url: '2048x' }}) no-repeat center center; background-size: contain;"></div>
+									</noscript>
+
+									{%- if has_video -%}
+										<div class="product-image__video">
+											<a href="{{ image_alt }}" class="js-video"><span class="icon-play"></span></a>
+										</div>
+									{%- else -%}
+
+										{%- if image_gallery == 'lightbox' -%}
+											<a href="{{ image | product_img_url: 'master'}}" rel="lightbox" class="product-image-lightbox"></a>
+										{%- endif -%}
+
+										{%- if image_gallery == 'zoom' -%}
+											<div class="zoom-container"></div>
+										{%- endif -%}
+
+									{%- endif -%}
+								</div>
+							{% endfor %}
+						</div>
+
+					{% else %}
+						<div class="productImgScroller js-productImgScroller js-productImgContainer" data-gallery="{{ image_gallery }}" data-dots="{{ dots }}" data-arrows="{{ arrows }}" data-zoom="{{ zoom }}">
+							{% for image in product.images %}
+
+								{% assign has_video = false %}
+								{% assign image_alt = image.alt | escape %}
+
+								{% if image_alt contains 'youtube' %}
+									{% assign has_video = true %}
+									{% assign video_type = 'youtube' %}
+								{% elsif image_alt contains 'vimeo' %}
+									{% assign has_video = true %}
+									{% assign video_type = 'vimeo' %}
+								{% endif %}
+
+								<div class="js-slide {{ thumbnail_width }} product-image product-image--fit {% if forloop.length == 1 %}product-image--single{% endif %} lazyload fade-in {% if forloop.index == 1 %} active{% endif %}"
+									{% unless has_video %}data-zoom-image="{{ image | product_img_url: 'master'}}"{% endunless %}
+									data-image="{{ image | product_img_url: 'master'}}"
+									data-aspect-ratio="{{ image.aspect_ratio }}"
+									data-id="{{ image.id }}"
+									data-bgset="{% include 'bgset', image: image %}"
+									data-sizes="auto"
+									data-parent-fit="contain"
+									data-index="{{ forloop.index }}">
+									<noscript>
+										<div class="product-image--no-js" style="background: url({{ image | img_url: '2048x' }}) no-repeat center center; background-size: contain;"></div>
+									</noscript>
+
+									{%- if has_video -%}
+										<div class="product-image__video">
+											<a href="{{ image_alt }}" class="js-video"><span class="icon-play"></span></a>
+										</div>
+									{%- else -%}
+
+										{%- if image_gallery == 'lightbox' -%}
+											<a href="{{ image | product_img_url: 'master'}}" rel="lightbox" class="product-image-lightbox"></a>
+										{%- endif -%}
+
+									{%- endif -%}
+								</div>
+							{% endfor %}
+						</div>
+
+						{% if product.images.size > 1 %}
+						<div class="productImgScroller-nav js-productImgScroller-nav">
+							{% for image in product.images %}
+								{% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+								{% include 'theme-rias' %}
+									<div class="js-slide {{ thumbnail_width }} product-image-thumb {% if forloop.index == 1 %}active{% endif %}" data-index="{{ forloop.index }}" data-image="{{ image | product_img_url: 'master'}}" >
+										<img
+											 class="lazyload fade-in product-image-thumb-img"
+											 data-src="{{ image_url_pattern }}"
+											 data-widths= "[{{ image_widths }}]"
+											 data-aspectratio="{{image.aspect_ratio }}"
+											 data-sizes="auto"
+											 alt="{{ image.alt | escape }}"
+											 itemprop="image"
+											 >
+										 <noscript>
+											<img src="{{ image | img_url: 'master' }}" alt="{{ image.alt | escape }}">
+										</noscript>
+									</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+					{% endif %}
+				</div>
+				<!-- end product-images -->
+
+				<div class="product-info js-product-info product-layout-{{ layout }}--info xxl_s12 xl_s12 lg_s12 s1 {% if product.handle contains "starter-kit" %}set{% endif %}">
+					<div class="product-info__wrapper js-product-info__wrapper">
+						<div class="product-title__wrapper block s1 ">
+							{%- if section.settings.show_vendor -%}
+								<p itemprop="brand" class="product-vendor">{{ product.vendor }}</p>
+							{%- endif -%}
+
+							<h1 itemprop="name" class="product-title">{{ product.title }}</h1>
+                          
+                          	{% comment %}{% if show_reviews %}
+								<div class="product__badge">
+					                {%- if settings.enable_yotpo and settings.yotpo_ID != '' -%}
+					                	<div class="yotpo bottomLine" data-product-id="{{ product.id }}"></div>
+					                {%- else -%}
+					                	<span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+					                {%- endif -%}
+				              	</div>
+							{% endif %}{% endcomment %}
+
+							{% if add_cart_position == 'bottom' %}
+                              <div class="product-container">
+                                  <div class="product-description rte">
+                                      {{ product.description }}
+                                  </div>
+                                  
+								  {% if product.metafields.features.text != blank %}
+								  <div class="special__features">
+                                    <h3>Special Features</h3>
+                                    <ul>
+                                      {% for value in product.metafields.features.text %} 
+                                      {% if product.metafields.features.text[forloop.index0] != blank %}
+                                      <li>
+                                        <div class="features__icon">
+                                          <img src="{{ product.metafields.features.icon[forloop.index0] }}" alt="{{ product.metafields.features.text[forloop.index0] }}">
+                                        </div>
+                                        <div class="features__text">
+                                          {{ product.metafields.features.text[forloop.index0] }}
+                                        </div>
+                                      </li>
+                                      {% endif %}
+                                      {% endfor %}
+                                    </ul>
+                                   </div>
+                                {% endif %}
+                                  {%- if product.metafields.tabs.details != blank -%}
+                                  <div class="product-details">
+                                      <div class="subtitle">Details</div>
+                                      <div class="inner">
+                                          {{ product.metafields.tabs.details }}
+                                      </div>
+                                  </div>
+                                  {% endif %}
+                              </div>
+                          	{% endif %}
+                          
+                          	{% if product.type == "Kits" %}
+                          		{% include 'product-price' %}{%- if product.metafields.set.savings != blank -%}<span class="savings"> - Save {{ product.metafields.set.savings }}</span>{% endif %}
+                          	{% endif %}
+                          	
+                          	{% if product.handle contains "period-cup" %}
+                          		<a href="{{ 'cup-size-guide.jpg' | asset_img_url: '900x' }}" id="cupsizebutton" class="lightbox">?</a>
+                          	{% endif %}	
+
+						</div>
+						<div class="product-form block s1">
+							{% comment %} Start Of Wait.li Button Config - DO NOT REMOVE UNLESS UNINSTALLING WAIT.LI {% endcomment %}
+ {% if wait_li_active == true and show_waiting_snippet == true %} 
+ {% include 'wait_li_button' %} 
+ {% else %} 
+ 
+{% form 'product', product, data-productid: product.id, class:'productForm', data-color_swatches: color_swatches, data-product_id: product.id %}{% if content_for_header contains '.mageworx.com\/groupedproducts\/source.js?' and product.tags contains 'mw_grouped_product' %}<div class="mw-gp-container"></div>{% endif %}
+								
+                          		{% if product.type == "Kits" %}
+                         			<div class="subtitle">Items Included</div>
+                          		{% endif %}
+                          
+                          		{% if first_variant.available %}
+									{% assign sold_out = false %}
+								{% else %}
+									{% assign sold_out = true %}
+								{% endif %}
+                          
+                          		{% if product.type == "Kits" %}
+                          			{%- if product.metafields.set.product_handles != blank -%}
+                                        {% for value in product.metafields.set.product_handles limit:1 %}
+                                            <div class="set-product">
+                                                <div class="mini-photo">
+                                                  {% for image in all_products[ value ].images limit:1 %}
+                                                    <img src="{{ image.src | img_url: '95x', scale: 2 }}" alt="{{all_products[ value ].title}}" /> ​
+                                                  {% endfor %}
+                                                </div>
+                                                <div class="details">
+                                                  <h5>{{all_products[ value ].title}}</h5>
+                                                  <div class="product-description">
+                                                    {%- if all_products[ value ].metafields.carousel.short_description != blank -%}
+                                                        <p>{{ all_products[ value ].metafields.carousel.short_description }}</p>
+                                                    {% else %}
+                                                    	{{all_products[ value ].description}}
+                                                    {% endif %}
+                                                  </div>
+                                         {% endfor %} <!-- Begin Normal Variations which don't work with all_products code -->
+                                                  <div class="productForm-block productForm-block--options-inline {% if color_swatches == true %}productForm-block--swatches is-loading{% endif %}">
+                                                      {% if product.variants.size > 1 and color_swatches == true %}
+                                                       {% include 'swatch' with 'Color' %}
+                                                      {% endif %}
+
+                                                      <select id="product-select" name="id" data-productid="{{ product.id }}">
+                                                      {% for variant in product.variants %}
+                                                          <option{% if variant == first_variant %} selected{% endif %} value="{{ variant.id }}" data-sku="{{variant.sku}}" data-qty="{{ variant.inventory_quantity }}">
+                                                          {{ variant.title }} - {{ variant.price | money | strip_html }}
+                                                      </option>
+                                                      {% endfor %}
+                                                      </select>
+                                                  </div>
+                                                </div>
+                                            </div>
+                          				{% for value in product.metafields.set.product_handles offset:1 %}
+                                              <div class="set-product">
+                                                  <div class="mini-photo">
+                                                    {% for image in all_products[ value ].images limit:1 %}
+                                                      <img src="{{ image.src | img_url: '95x', scale: 2 }}" alt="{{all_products[ value ].title}}" /> ​
+                                                    {% endfor %}
+                                                  </div>
+                                                  <div class="details">
+                                                    <h5>{{all_products[ value ].title}}</h5>
+                                                    <div class="product-description">{{all_products[ value ].description}}</div>
+                                                  </div>
+                                              </div>
+                          				{% endfor %} 
+                                    {% endif %}
+                          		{% else %}
+                          			<div class="productForm-block productForm-block--options-inline {% if color_swatches == true %}productForm-block--swatches is-loading{% endif %}">
+                                      {% if product.variants.size > 1 and color_swatches == true %}
+                                       {% include 'swatch' with 'Color' %}
+                                      {% endif %}
+
+                                      <select id="product-select" name="id" data-productid="{{ product.id }}">
+                                      {% for variant in product.variants %}
+                                          <option{% if variant == first_variant %} selected{% endif %} value="{{ variant.id }}" data-sku="{{variant.sku}}" data-qty="{{ variant.inventory_quantity }}">
+                                          {{ variant.title }} - {{ variant.price | money | strip_html }}
+                                      </option>
+                                      {% endfor %}
+                                      </select>
+                                  </div>
+                          		{% endif %}
+                          
+                          	
+
+								<div class="productForm-block">
+									<div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+										<meta itemprop="priceCurrency" content="{{ shop.currency }}">
+                                      	<meta itemprop="price" content="{{ product.price | money_without_currency }}">
+                                      	<link itemprop="url" href="{{ product.url }}">
+										<link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+                                      	{%- if product.metafields.sizechart.enable -%}
+                                      	<label for="product-select-option-0">Size<a href="//cdn.shopify.com/s/files/1/0049/3964/4963/t/3/assets/cup-size-guide_900x.jpg?v=17218511766363302645" id="cupsizebutton" class="lightbox">?</a></label>
+                                      	{%- endif -%}
+										{% if section.settings.show_quantity %}
+										<div class="productForm-select quantity">
+											<label for="quantity">QUANTITY</label>
+                                          	<div class="quantity-holder">
+                                          		<div class="value-button" id="decrease" value="Decrease Qty">-</div>
+                                          		<input type="number" name="quantity" id="quantity" value="1" min="1" max="9" />
+                                          		<div class="value-button" id="increase" value="Increase Qty">+</div>
+                                          	</div>
+											{% comment %}REPLACED WITH NUMBER INPUT<select name="quantity" id="quantity">
+												{% for i in (1..9) %}
+													<option value="{{ i }}">{{ i }}</option>
+												{% endfor %}
+											</select>
+											<span class="selectArrow"></span>{% endcomment %}
+										</div>
+										{% endif %} 
+                                      <div class="subscription-poupdata" style="display:none;">
+                                                                           
+                          		<span>?</span>
+                                        <div class="data" style="display:none;">
+                                   <div class="loop">
+                                     <div class="close">x</div>
+                                  
+
+                          	<p>Set delivery frequency</p>Choose your delivery frequency<br><br><p>We'll email you 3 days before next shipment</p> We'll email you a reminder before each shipment. If you're ready for more, you can adjust your delivery schedule anytime.<br><br><p>Order bills when it ships</p>We bill you only when we ship your order<br><br><p>Cancel or modify at any time</p> Log in to your dashboard to manage your subscription or shoot us an email.<br><br><p>Mix and match?</p>You sure can-let us know <a class="first" href="mailto:hello@scarletperiod.com">hello@scarletperiod.com</a> and we'll custmise your order<br><br><p class="scnd">Got It</p>
+							
+	
+									    </div>				
+                               </div>
+                                      </div>
+                                      
+                                      
+<!-- Begin ReCharge code -->
+                                {% if product.available %}{% include 'subscription-product' %}{% endif %}
+                                <!-- End ReCharge code -->
+										<div class="butoncustom">
+                                          <button class="jj productForm-submit js-productForm-submit 
+                                                         {% if settings.enable_payment_button %}add-to-cart-btn-style{% endif %}" 
+                                                  data-ajax="{{ settings.enable_ajax_cart }}" 
+                                                  type="submit" data-handle="{{product.handle}}" {% if sold_out %}disabled{% endif %}>
+                                            {% unless sold_out %}{{ 'products.form.submit' | t }}{% else %}{{ 'products.form.sold_out' | t }}
+                                            {% endunless %}
+                                            {% unless product.metafields.product.price_disable %}
+                                            — <span class="dtaoncart">{{ product.price | money }}
+                                            {% endunless %}
+                                            </span>
+                                            
+                                            
+                                            
+                                          </button>
+										</div>
+                                      
+                                      	
+                                      		<a class="stock__notification" style="display: none; " >
+                                              	Email When Available
+                                      		</a>                                                        
+                                                   
+                                       	
+										{% if template contains 'product' %}
+											{% if settings.enable_payment_button %}
+												{{ form | payment_button }}
+											{% endif %}
+										{% endif %}
+                                      
+                                      	{%- if product.metafields.set.savings != blank -%}
+                                      		<p class="savings-below">You save {{ product.metafields.set.savings }} buying these items together</p>
+                                      	{% endif %}
+
+									</div>
+								</div>
+                          	
+							{% endform %}
+{% render 'zoorix-product-main' %}
+
+					 <div id="product-price-selector"></div>
+
+
+{% endif %} 
+ {% comment %} End Of Wait.li Button Config - DO NOT REMOVE UNLESS UNINSTALLING WAIT.LI {% endcomment %} 
+ 
+							{% if section.settings.show_newsletter %}
+								<div class="notification-form {% unless sold_out %}visually-hidden{% endunless %}">
+									{% form 'customer' %}
+										{% assign text_newsletter = section.settings.text_newsletter %}
+										{% if text_newsletter != blank %}
+											<label for="contact[email]">{{ text_newsletter }}</label>
+										{% endif %}
+										<div class="js-signUp-form signUp-form">
+											<input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>
+											<div class="inputGroup mc-field-group">
+												<input class="signUp-input required email" type="email" value="" name="contact[email]" id="contact[email]" placeholder="{{ 'general.newsletter_signup.email_placeholder' | t }}">
+												<input type="hidden" id="newsletter-first-name" name="contact[first_name]" value="Newsletter" />
+												<input type="hidden" id="newsletter-last-name" name="contact[last_name]" value="Subscriber" />
+												<button type="submit" class="signUp-submit" name="subscribe" id="mc-embedded-subscribe"></button>
+											</div>
+										</div>
+										{% if form.posted_successfully? %}
+											<div class="signUp-confirmation p">{{ 'general.newsletter_signup.success_message' | t }}</div>
+										{% elsif form.errors %}
+											{{ form.errors | default_errors }}
+										{% endif %}
+									{% endform %}
+								</div>
+							{% endif %}
+
+							{% if settings.share_on_facebook or settings.share_on_twitter or settings.share_on_pinterest %}
+							<div class="product-share">
+								<span class="socialBar p">{% include 'site-shareLinks' %}</span>
+							</div>
+							{% endif %}
+
+							{% if add_cart_position == 'top' %}
+							<div class="product-container">
+								<div class="product-description rte">
+									{{ product.description }}
+								</div>
+							</div>
+							{% endif %}
+                          
+                          	{%- if product.metafields.detail_tabs.product_detail_tabs_headings != blank -%}
+                              <section class="product-detail-tabs">
+                                <div id="detail-tabs" class="">
+                                    <ul>
+                                      {% for value in product.metafields.detail_tabs.product_detail_tabs_headings %} 
+                                      	<li><a href="#tab-{{ forloop.index }}">{{ value }}</a></li>
+                                      {% endfor %} 
+                                    </ul>
+                                  	{% for value in product.metafields.detail_tabs.product_detail_tabs_copy %} 
+                                      <div id="tab-{{ forloop.index }}" class="">
+                                        {{ value }}
+                                      </div>
+                                    {% endfor %} 
+                                </div>
+                              </section>
+                            {% endif %}
+
+							{% if tab_1 != blank or tab_2 != blank or tab_3 != blank or show_reviews %}
+								<div class="product-tabs js-product-tabs">
+									{% if show_reviews %}
+										<div class="product-tab product-tab--reviews">
+											<div class="product-tab-title">{{ 'general.reviews.title' | t }} <span class="icon-toggle"></span></div>
+											<div class="product-tab-content">
+								              	{%- if settings.enable_yotpo and settings.yotpo_ID != '' -%}
+								                	{% include 'yotpo-reviews' %}
+								              	{%- else -%}
+								                	<div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+								              	{%- endif -%}
+											</div>
+										</div>
+									{% endif %}
+									{% if tab_1 != blank %}
+										<div class="product-tab">
+											<div class="product-tab-title">{{ pages[tab_1].title }} <span class="icon-toggle"></span></div>
+											<div class="product-tab-content">{{pages[tab_1].content}}</div>
+										</div>
+									{% endif %}
+									{% if tab_2 != blank %}
+										<div class="product-tab">
+											<div class="product-tab-title">{{ pages[tab_2].title }} <span class="icon-toggle"></span></div>
+											<div class="product-tab-content">{{pages[tab_2].content}}</div>
+										</div>
+									{% endif %}
+									{% if tab_3 != blank %}
+										<div class="product-tab">
+											<div class="product-tab-title">{{ pages[tab_3].title }} <span class="icon-toggle"></span></div>
+											<div class="product-tab-content">{{pages[tab_3].content}}</div>
+										</div>
+									{% endif %}
+								</div>
+							{% endif %}
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </section>
+  
+  {%- if product.metafields.banner.image != blank -%}
+  <section class="container-wrap product-banners">
+    	{% for value in product.metafields.banner.image %} 
+    		<div class="row full-width-banner">
+              	<img src="{{ value }}" />
+            </div>
+        {% endfor %} 
+  </section>
+  {% endif %}
+  
+  
+  
+  {%- if product.metafields.cupdesign != blank -%}
+  		<section class="container product-cup-features will-animate" data-animation="fadeInLeft">
+          <div class="row row-lg flex">
+            
+            <style>
+              .product-cup-features .half.text-right p{
+              	max-width: 100% !important;  
+              }
+              
+              .product-cup-features img{
+              	width: 100%;
+                height: auto;
+              }
+            </style>
+            
+            {% assign cupfeatures = product.metafields.cupdesign %}
+            {%- if cupfeatures.left != blank -%}
+              <div class="half">
+               {{ cupfeatures.left }}
+              </div>
+            {%- endif -%}
+            {%- if cupfeatures.right != blank -%}
+              <div class="half text-right {% if cupfeatures.mobile != blank %}theme-desktop__view{% endif %}">
+                {{ cupfeatures.right }}
+           	  </div>
+            {%- endif -%}
+            
+            {%- if cupfeatures.mobile != blank -%}
+              <div class="half text-right theme-mobile__view">
+                {{ cupfeatures.mobile }}
+           	  </div>
+            {%- endif -%}
+          </div>
+       	</section>
+  {%- endif -%}
+  
+  {%- if product.metafields.halfslide.copy != blank -%}
+  <section class="container product-half-slides will-animate is__media-left" data-animation="fadeInRight">
+    	{% for value in product.metafields.halfslide.copy %} 
+    		<div class="row row-lg flex">
+              <div class="half media">
+              	{% if product.metafields.halfslide.imagevideo[forloop.index0] contains "mp4" %}
+                	<video width="830" controls loop autoplay>
+                      <source src="{{ product.metafields.halfslide.imagevideo[forloop.index0] }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                  <img src="{{ product.metafields.halfslide.imagevideo[forloop.index0] }}" />
+                {% endif %}
+              </div>
+              <div class="half media__text">
+                  {{ value }}
+              </div>
+            </div>
+        {% endfor %} 
+  </section>
+  {% endif %}
+  
+  {%- if product.metafields.benefits.copy != blank -%}
+  <section class="container-wrap product-benefits">
+    <div class="container">
+    	<div class="row row-lg flex text-center">
+    	{% for value in product.metafields.benefits.copy %} 
+    		<div class="col will-animate" data-animation="fadeInUp">
+              {% if product.metafields.benefits.image[forloop.index0] != blank %}
+              	<img src="{{ product.metafields.benefits.image[forloop.index0] }}" />
+              {% endif %}
+              {{ value }}
+            </div>
+        {% endfor %} 
+    	</div>
+    </div>
+  </section>
+  {% endif %}
+  
+  {% if product.metafields.howtoblock.copy != blank %}
+  {% unless product.metafields.howtouse.enable %}
+  <section class="container-wrap product-how-to" is-enable="{{product.metafields.howtouse.enable}}">
+    <div class="title-module">
+      <div class="container">
+    	<div class="row row-lg">
+	    	<div class="inner">
+        		<h4 class="rich__subheading align--left size--small">How To Use The Cup</h4>
+				<a id="how-to-slider-next"></a>
+	    	</div>
+        </div>
+      </div>
+    </div>
+    <div class="row slider_holder">
+      <div class="block-holder row inline how-to js-how-to-slider">
+      	{% for value in product.metafields.howtoblock.copy %} 
+        	<div class="block will-animate" data-animation="fadeInUp">
+              	<div class="static__container">
+              		<img class="static__thumb" src="{{ product.metafields.howtoblock.howto_block_images[forloop.index0] }}" />
+          			<img src="{{ product.metafields.howtoblock.image[forloop.index0] }}" />
+              	</div>
+              	{{ value }}
+        	</div>
+        {% endfor %} 
+      </div>
+    </div>
+  </section>
+  {% endunless %}
+  {% endif %}
+  
+  {% if product.metafields.tabs.tab != blank %}
+  {% unless product.metafields.faq.enable %}
+  <section class="container product-info-extra will-animate" data-animation="fadeInRight" data-is-true="{{product.metafields.faq.enable}}" >
+    <div class="row row-lg align-right">
+      <div style="position: relative; padding-top: 75px;">
+        <p class="rich__subheading align--left size--small">FAQs</p>
+        <div class="tab-holder align-left">
+          <div class="inner ">
+            {% for value in product.metafields.tabs.tab %} 
+            <!--{% if forloop.first == true %}toggled{%- endif -%}-->
+                <div class="tab ">{{ value }}</div>
+            {% endfor %} 
+          </div>
+          
+          <!--
+          <div class="inner theme-mobile__view">
+            {% for value in product.metafields.tabs.tab %} 
+                <div class="tab ">{{ value }}</div>
+            {% endfor %} 
+          </div>
+		  -->
+        </div>
+        <div class="image-gallery js-tabs-slider">
+          <div class="images">
+            {% for value in product.metafields.tabs.images %} 
+              <img src="{{ value }}" />
+            {% endfor %} 
+          </div>
+          <a href="/pages/faqs" class="faq-link">Visit full FAQs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endunless %}
+  {% endif %}
+  
+  {%- if product.metafields.testimonial.quote != blank -%}
+  <section class="container-wrap scarlet-press-section product-testimonials">
+    <div class="container">
+	    <div class="row row-lg">
+		    <div class="subheading-text">Cup Reviews</div>
+		    <div class="js-collection-slider">
+			    {% for value in product.metafields.testimonial.quote %} 
+		        	<div class="quote">
+			        	<div class="content">{{ value }}</div>
+			        	{% if product.metafields.testimonial.link[forloop.index0] != blank %}
+			        		<a href="{{ product.metafields.testimonial.link[forloop.index0] }}" target="_blank">
+			        	{% endif %}
+			        	{% if product.metafields.testimonial.logo[forloop.index0] != blank %}
+			        		{% for image in product.metafields.testimonial.logo[forloop.index0] %}
+		          				<img src="{{ image.src }}" />
+		          			{% endfor %} 
+		              	{% endif %}
+		              	{% if product.metafields.testimonial.link[forloop.index0] != blank %}
+			        		</a>
+			        		<a href="{{ product.metafields.testimonial.link[forloop.index0] }}" target="_blank">
+				        {% endif %}
+				        <span>{{ product.metafields.testimonial.name[forloop.index0] }}</span>
+				        {% if product.metafields.testimonial.link[forloop.index0] != blank %}
+			        		</a>
+			        	{% endif %}
+		        	</div>
+		        {% endfor %} 
+		    </div>
+	    </div>
+    </div>
+  </section>
+  {% endif %}
+
+	{% if section.blocks.size > 0 %}
+		{% for block in section.blocks %}
+			{% case block.type %}
+			{% when 'banner' %}
+				{% comment %} Banner Settings {% endcomment %}
+				{% assign image = block.settings.image %}
+				{% assign height = block.settings.height %}
+				{% assign subheading = block.settings.subheading %}
+				{% assign heading = block.settings.title %}
+				{% assign text = block.settings.text %}
+				{% assign text_position = block.settings.text_position %}
+				{% assign heading_size = block.settings.heading_size %}
+				{% assign text_size = block.settings.text_size %}
+				{% assign color_text = block.settings.color_text %}
+				{% assign color_overlay = block.settings.color_overlay %}
+				{% assign overlay_opacity = block.settings.overlay_opacity | times: 0.01 | round: 2 %}
+
+				<style>
+					.banner--{{ block.id }} .page-title { color: {{ color_text }}; }
+					.banner--{{ block.id }} .page-title h1 { color: {{ color_text }} !important; }
+					.banner--{{ block.id }} .page-title::before { background-color: {{ color_overlay }}; opacity: {{ overlay_opacity }}; }
+				</style>
+
+				<section class="banner banner--{{ block.id }}" data-block="banner" {{ block.shopify_attributes }}>
+					<div class="banner-inner banner-padded banner-padded--{{ height }} banner--text-{{ text_position }}">
+						{% unless height == 'original-height' %}
+							{% unless image == blank %}
+								<div class="banner-img lazyload fade-in" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto" data-parent-fit="cover"></div>
+								<noscript>
+									<div class="banner-img" style="background-image:url('{{image | img_url: '1024x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"></div>
+								</noscript>
+							{% else %}
+								<div class="banner-img banner-img--placeholder svg-placeholder">
+									{{ 'image' | placeholder_svg_tag }}
+								</div>
+							{% endunless %}
+						{% else %}
+							{% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+							{% include 'theme-rias' %}
+							<img class="banner-img--original lazyload fade-in"
+								 data-src="{{ image_url_pattern }}"
+								 data-widths="[{{ image_widths }}]"
+								 data-aspectratio="{{ image.aspect_ratio }}"
+								 data-sizes="auto"
+								 alt="{{ image.alt }}">
+							<noscript>
+								<img src="{{ image | img_url: '2048x' }}" alt="{{ image.alt | escape }}" class="banner-img--original no-js-image">
+							</noscript>
+						{% endunless %}
+
+						{% unless heading == blank and subheading == blank and text == blank %}
+							<div class="page-title">
+								<div class="container">
+									<div class="row row-lg">
+										{% if subheading != blank %}
+											<h4 class="page-title__subheading subheading-text">{{ subheading }}</h4>
+										{% endif %}
+										{% if heading != blank %}
+											<h1 class="page-title__heading size--{{ heading_size }}">{{ heading }}</h1>
+<span class="stamped-product-reviews-badge stamped-main-badge" data-id="{{product.id}}" data-product-title="{{product.title}}" data-product-type="{{product.type}}" style="display: block;"></span>
+
+										{% endif %}
+									</div>
+									{% if text != blank %}
+										<div class="row row-lg">
+											<div class="page-title__text rte size--{{ text_size }}"><p>{{ text }}</p></div>
+										</div>
+									{% endif %}
+								</div>
+							</div>
+						{% endunless %}
+					</div>
+				</section>
+
+			{% when 'rich-text' %}
+				{% comment %} settings {% endcomment %}
+				{% assign id = block.id %}
+				{% assign layout = block.settings.layout %}
+				{% assign subheading = block.settings.subheading %}
+				{% assign title = block.settings.title %}
+				{% assign content = block.settings.content %}
+				{% assign cta = block.settings.cta %}
+				{% assign link = block.settings.link %}
+				{% assign button_position = block.settings.button_position %}
+				{% assign accent_line = block.settings.accent_line %}
+		        {% assign accent_line_color = block.settings.accent_line_color %}
+
+				{% comment %} Typography {% endcomment %}
+				{% assign heading_size = block.settings.heading_font_size %}
+				{% assign heading_align = block.settings.heading_align %}
+				{% assign text_size = block.settings.text_font_size %}
+
+				<div {{ block.shopify_attributes }}>
+					{%- if accent_line_color != blank -%}
+					<style>
+					  #text-module-{{ id }} .accent-line--straight { background-color: {{ accent_line_color }}; }
+					  #text-module-{{ id }} .accent-line--curved svg path { fill: {{ accent_line_color }}; }
+					</style>
+					{%- endif -%}
+
+					{% include 'rich-text' %}
+				</div>
+
+			{% when 'product-feature' %}
+				{% assign heading = block.settings.title %}
+				{% assign heading_size = block.settings.heading_font_size %}
+				{% assign text_size = block.settings.text_font_size %}
+				{% assign description = block.settings.description %}
+				{% assign image = block.settings.image %}
+				{% assign image_link = block.settings.image_link %}
+				{% assign button_text = block.settings.button_text %}
+				{% assign button_link = block.settings.button_link %}
+				{% assign blocks_alignment = block.settings.blocks_alignment %}
+				{% assign is_block_odd = block.settings.reverse_layout %}
+
+				<div class="product-features--container pad-sm" {{ block.shopify_attributes }}>
+					<div class="container">
+						<div class="row row-lg">
+							{% include 'product-features__item' %}
+						</div>
+					</div>
+				</div>
+
+			{% when 'icons-row' %}
+				<div {{ block.shopify_attributes }}>
+					{% include 'icons-row' %}
+				</div>
+
+			{% endcase %}
+		{% endfor %}
+	{% endif %}
+  
+    {% comment %} More Products Slider {% endcomment %}
+  	{% assign thisproduct = product.title %}
+  	{% if product.type != "Kits" %}
+      <section class="collectionGrid moreProducts container js-collection-grid js-collectionGrid container" id="collection-module-product" data-section-type="featured-collection" data-show-quickview="false" data-show_reviews="true" data-show_quantity="true" data-color_swatches="true" data-carousel="true" data-slides-per-row="3" data-grid-size="large">
+                <div class="title-module">
+                    <div class="row row-lg">
+                        <h4 class="rich__subheading align--left size--small">You Might Like To Add</h4>
+                    </div>
+                </div>
+
+            <div class="collection-slider__wrapper row row-lg">
+
+                <div class="collectionGrid-row large row inline collection-slider js-collection-slider">
+                  	{% assign count = 0 %}  
+                  	{% for product in collections.shop-all.products limit:4 %}
+                       {% if product.title <> thisproduct %}
+                        {%- include 'collectionGrid-block-taller' -%}
+                  		{% assign count = count | plus: 1 %}
+                       {% endif %}
+                  
+                  		{% if count == 3 %}
+                  			{% break %}
+                  		{% endif %}
+                    {% endfor %}
+                </div>
+
+            </div>
+
+      </section>
+  	{% endif %}
+  
+  	{%- if section.settings.show_cart_bar -%}
+		{% include 'add-to-cart-bar' %}
+	{%- endif -%}
+</div> <!-- end itemscope -->
+
+<script>
+  var interval = setInterval(myfunction,100);
+  
+  function myfunction(){
+  var id = $("select.rc_select.rc_select__frequency").attr("id");
+    if(id != undefined){
+    clearInterval(interval);
+      update();
+    }
+    
+  }
+  
+  function update(){
+$("select.rc_select.rc_select__frequency option").each(function(){
+console.log("DD");
+if($(this).val() == 1){
+$(this).html("Month");
+}
+else{
+$(this).html(""+$(this).val()+" Months");
+}
+});  
+
+}
+</script>
+
+<script type="text/javascript">
+  var _learnq = _learnq || [];
+
+  var item = {
+  Name: {{ product.title|json }},
+  ProductID: {{ product.id|json }},
+  Categories: {{ product.collections|map:'title'|json }},
+  ImageURL: "https:{{ product.featured_image.src|img_url:'grande' }}",
+  URL: "{{ shop.secure_url }}{{ product.url }}",
+  Brand: {{ product.vendor|json }},
+  Price: {{ product.price|money|json }},
+  CompareAtPrice: {{ product.compare_at_price_max|money|json }}
+  };
+
+  _learnq.push(['track', 'Viewed Product', item]);
+  _learnq.push(['trackViewedItem', {
+  Title: item.Name,
+  ItemId: item.ProductID,
+  Categories: item.Categories,
+  ImageUrl: item.ImageURL,
+  Url: item.URL,
+  Metadata: {
+  Brand: item.Brand,
+  Price: item.Price,
+  CompareAtPrice: item.CompareAtPrice
+  }
+  }]);
+</script>
+
+{% schema %}
+{
+	"name": "Product page",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "product_layout",
+			"label": "Image layout",
+			"options": [
+				{
+					"value": "slideshow",
+					"label": "Slideshow"
+				},
+				{
+					"value": "scrollable",
+					"label": "Scrollable"
+				}
+			],
+			"default": "slideshow"
+		},
+		{
+			"type": "select",
+			"id": "image_gallery",
+			"label": "Image gallery",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "zoom",
+					"label": "Hover to zoom"
+				},
+				{
+					"value": "lightbox",
+					"label": "Lightbox"
+				}
+			],
+			"default": "zoom"
+		},
+		{
+			"type": "select",
+			"id": "image_size",
+			"label": "Image size",
+			"options": [
+				{
+					"value": "small",
+					"label": "Small"
+				},
+				{
+					"value": "medium",
+					"label": "Medium"
+				},
+				{
+					"value": "large",
+					"label": "Large"
+				}
+			],
+			"default": "large"
+		},
+		{
+			"type": "select",
+			"id": "add_cart_position",
+			"label": "Add to Cart position",
+			"default": "top",
+			"options": [
+				{ "label": "Top", "value": "top" },
+				{ "label": "Bottom", "value": "bottom" }
+			]
+		},
+		{
+			"type": "checkbox",
+			"id": "show_vendor",
+			"label": "Show vendor",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_quantity",
+			"label": "Show quantity dropdown",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_cart_bar",
+			"label": "Show Add to Cart bar",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Newsletter"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_newsletter",
+			"label": "Show newsletter if out of stock",
+			"default": true
+		},
+		{
+			"type": "richtext",
+			"id": "text_newsletter",
+			"label": "Text",
+			"default": "<p>Notify me when this product is available:</p>"
+		},
+		{
+			"type": "header",
+			"content": "Tabs",
+			"info": "You have the option to enable three extra tabs for more information on your product."
+		},
+		{
+			"type": "page",
+			"id": "page_tab_1",
+			"label": "Tab one"
+		},
+		{
+			"type": "page",
+			"id": "page_tab_2",
+			"label": "Tab two"
+		},
+		{
+			"type": "page",
+			"id": "page_tab_3",
+			"label": "Tab three"
+		},
+		{
+			"type": "header",
+			"content": "Slideshow options",
+			"info": "On mobile, if there is more than one product image, the image grid will become a slideshow"
+		},
+		{
+			"type": "checkbox",
+			"id": "product_slideshow_dots",
+			"label": "Show slide navigation dots",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "product_slideshow_arrows",
+			"label": "Show slide navigation arrows",
+			"default": false
+		},
+{
+			"type": "html",
+			"id": "popcontent",
+			"label": "Popup Content"
+		}
+	],
+	"blocks": [
+		{
+			"type": "banner",
+			"name": "Banner",
+			"limit": 3,
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image"
+				},
+				{
+					"type": "select",
+					"id": "height",
+					"label": "Height",
+					"options": [
+							{
+								"value": "one-hundred",
+								"label": "Full screen height"
+							},
+							{
+								"value": "original-height",
+								"label": "Image height"
+							},
+							{
+								"value": "big",
+								"label": "750px"
+							},
+							{
+								"value": "normal",
+								"label": "650px"
+							},
+							{
+								"value": "small",
+								"label": "550px"
+							}
+						],
+						"default": "normal"
+				},
+				{
+					"type": "text",
+					"id": "subheading",
+					"label": "Subheading"
+				},
+				{
+					"type": "text",
+					"id": "title",
+					"label": "Heading",
+					"default": "Welcome to Modular"
+				},
+				{
+					"type": "text",
+					"id": "text",
+					"label": "Text",
+					"default": "<p>A unique layout with a striking design</p>"
+				},
+				{
+					"type": "select",
+					"id": "text_position",
+					"label": "Text position",
+					"default": "center",
+					"options": [
+						{ "label": "Left", "value": "left" },
+						{ "label": "Center", "value": "center" },
+						{ "label": "Right", "value": "right" },
+						{ "label": "Bottom left", "value": "bottom-left" },
+						{ "label": "Bottom right", "value": "bottom-right" }
+					]
+				},
+				{
+					"type": "header",
+					"content": "Typography"
+				},
+				{
+					"type": "select",
+					"id": "heading_size",
+					"label": "Heading size",
+					"default": "normal",
+					"options": [
+						{ "label": "Small", "value": "small" },
+						{ "label": "Normal", "value": "normal" },
+						{ "label": "Large", "value": "large" },
+						{ "label": "Extra large", "value": "xlarge" }
+					]
+				},
+				{
+					"type": "select",
+					"id": "text_size",
+					"label": "Text size",
+					"default": "normal",
+					"options": [
+						{ "label": "Small", "value": "small" },
+						{ "label": "Normal", "value": "normal" },
+						{ "label": "Large", "value": "large" },
+						{ "label": "Extra large", "value": "xlarge" }
+					]
+				},
+				{
+					"type": "header",
+					"content": "Colors"
+				},
+				{
+					"type": "color",
+					"id": "color_text",
+					"label": "Text",
+					"default": "#ffffff"
+				},
+				{
+					"type": "color",
+					"id": "color_overlay",
+					"label": "Overlay",
+					"default": "#222222"
+				},
+				{
+					"type": "range",
+					"id": "overlay_opacity",
+					"label": "Overlay opacity",
+					"step": 1,
+					"max": 100,
+					"min": 0,
+					"unit": "%",
+					"default": 10
+				}
+			]
+		},
+		{
+			"type": "rich-text",
+			"name": "Rich text",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Layout"
+				},
+				{
+					"type": "select",
+					"id": "layout",
+					"label": "Text position",
+					"default": "default",
+					"options": [
+						{ "label": "Stacked", "value": "default" },
+						{ "label": "Split", "value": "split" }
+					]
+				},
+				{
+					"type": "select",
+					"id": "heading_align",
+					"label": "Heading alignment",
+					"default": "left",
+					"options": [
+						{ "label": "Left", "value": "left" },
+						{ "label": "Center", "value": "center" },
+						{ "label": "Right", "value": "right" }
+					]
+				},
+				{
+					"type": "header",
+					"content": "Typography"
+				},
+				{
+					"type": "range",
+					"id": "heading_font_size",
+					"label": "Heading size",
+					"unit": "px",
+					"step": 4,
+					"min": 24,
+					"max": 44,
+					"default": 28
+				},
+				{
+					"type": "range",
+					"id": "text_font_size",
+					"label": "Text size",
+					"unit": "px",
+					"step": 2,
+					"min": 12,
+					"max": 22,
+					"default": 16
+				},
+				{
+					"type": "header",
+					"content": "Content"
+				},
+				{
+					"type": "text",
+					"id": "subheading",
+					"label": "Subheading"
+				},
+				{
+					"type": "text",
+					"id": "title",
+					"label": "Heading",
+					"default":"Describe your products or brand in detail here"
+				},
+				{
+					"type": "richtext",
+					"id": "content",
+					"label": "Text",
+					"default":"<p>Modular is a powerful Shopify theme that will set you apart from the rest. It features ample space to showcase your imagery with Mosaic, Gallery, and Slideshow sections.</p>"
+				},
+				{
+					"type": "text",
+					"id": "cta",
+					"label": "Button label"
+				},
+				{
+					"type": "url",
+					"id": "link",
+					"label": "Button link"
+				},
+				{
+					"type": "select",
+					"id": "button_position",
+					"label": "Button position",
+					"default": "left",
+					"options": [
+						{ "label": "Under heading", "value": "left" },
+						{ "label": "Under text", "value": "right" },
+						{ "label": "Bottom", "value": "center" }
+					]
+				},
+				{
+					"type": "select",
+					"id": "accent_line",
+					"label": "Accent line",
+					"default": "curved",
+					"options": [
+						{ "label": "Curved", "value": "curved" },
+						{ "label": "Straight", "value": "straight" },
+						{ "label": "None", "value": "none" }
+					]
+				},
+				{
+					"type": "color",
+					"id": "accent_line_color",
+					"label": "Color",
+					"default": "#333"
+				}
+			]
+		},
+		{
+			"type": "product-feature",
+			"name": "Product feature",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Text"
+				},
+				{
+					"type": "textarea",
+					"id": "title",
+					"label": "Heading",
+					"default": "This is a heading for a Product feature block."
+				},
+				{
+					"type": "richtext",
+					"id": "description",
+					"label": "Description",
+					"default": "<p>Use this text to share information about the point put forth above. Describe a product, your brand, or what makes you special.</p>"
+				},
+				{
+					"type": "header",
+					"content": "Images"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image"
+				},
+				{
+					"type": "url",
+					"id": "image_link",
+					"label": "Image link"
+				},
+				{
+					"type": "header",
+					"content": "Button"
+				},
+				{
+					"type": "text",
+					"id": "button_text",
+					"label": "Button text"
+				},
+				{
+					"type": "url",
+					"id": "button_link",
+					"label": "Button link"
+				},
+				{
+					"type": "header",
+					"content": "Blocks Alignment"
+				},
+				{
+					"type": "select",
+					"id": "blocks_alignment",
+					"label": "Text alignment",
+					"options": [
+						{
+							"value": "center",
+							"label": "Center"
+						},
+						{
+							"value": "top",
+							"label": "Top"
+						}
+					]
+				},
+				{
+					"type": "checkbox",
+					"id": "reverse_layout",
+					"label": "Reverse layout",
+					"default": false
+				},
+				{
+					"type": "header",
+					"content": "Typography"
+				},
+				{
+					"type": "range",
+					"id": "heading_font_size",
+					"label": "Heading size",
+					"unit": "px",
+					"step": 4,
+					"min": 24,
+					"max": 44,
+					"default": 28
+				},
+			    {
+					"type": "range",
+					"id": "text_font_size",
+					"label": "Text size",
+					"min": 12,
+					"max": 22,
+					"step": 2,
+					"unit": "px",
+					"default": 14
+			    }
+			]
+		},
+		{
+			"type": "icons-row",
+			"name": "Icons row",
+			"settings": [
+				{
+					"type": "color",
+					"id": "color_icons_bg",
+					"label": "Background color",
+					"default": "#fafafa"
+				},
+				{
+					"type": "color",
+					"id": "color_icons_text",
+					"label": "Text color",
+					"default": "#333"
+				},
+				{
+					"type": "text",
+					"id": "icon_1",
+					"label": "Icon name",
+					"default": "Shop",
+					"info": "[Click here](https://iconsmind.com/view_icons/) to view the list of available icons. Example: Shop"
+				},
+				{
+					"type": "text",
+					"id": "title_1",
+					"label": "Title",
+					"default": "Feature"
+				},
+				{
+					"type": "textarea",
+					"id": "content_1",
+					"label": "Content",
+					"default": "Modular is a powerful Shopify theme that will set you apart from the rest with Mosaic, Gallery, and Slideshow sections."
+				},
+				{
+					"type": "text",
+					"id": "icon_2",
+					"label": "Icon name",
+					"default": "Shop",
+					"info": "[Click here](https://iconsmind.com/view_icons/) to view the list of available icons. Example: Shop"
+				},
+				{
+					"type": "text",
+					"id": "title_2",
+					"label": "Title",
+					"default": "Feature"
+				},
+				{
+					"type": "textarea",
+					"id": "content_2",
+					"label": "Content",
+					"default": "Modular is a powerful Shopify theme that will set you apart from the rest with Mosaic, Gallery, and Slideshow sections."
+				},
+				{
+					"type": "text",
+					"id": "icon_3",
+					"label": "Icon name",
+					"default": "Shop",
+					"info": "[Click here](https://iconsmind.com/view_icons/) to view the list of available icons. Example: Shop"
+				},
+				{
+					"type": "text",
+					"id": "title_3",
+					"label": "Title",
+					"default": "Feature"
+				},
+				{
+					"type": "textarea",
+					"id": "content_3",
+					"label": "Content",
+					"default": "Modular is a powerful Shopify theme that will set you apart from the rest with Mosaic, Gallery, and Slideshow sections."
+				}
+			]
+		}
+	]
+}
+{% endschema %}
+<style>
+.subscription-poupdata.active span {
+right: -114px;
+}
+
+
+
+  </style>
+{% render 'zoorix-product-bottom' %}

@@ -1,0 +1,323 @@
+<!-- /snippets/popup.liquid -->
+{% assign show_popup = section.settings.show_popup %}
+
+{% if show_popup == 'enabled' %}
+	{% assign show_popup = true %}
+	{% assign testmode = false %}
+{% elsif show_popup == 'disabled' %}
+	{% assign show_popup = false %}
+	{% assign testmode = false %}
+{% else %}
+	{% assign show_popup = true %}
+	{% assign testmode = true %}
+{% endif %}
+
+<style>
+  .popup-column{
+  	min-height: 320px;  
+  }
+  
+  .popup__privacy{
+  	padding-top: 20px;  
+  }
+  
+  {% if section.settings.enable_image == false %}
+  		.popup{
+        	width: 420px;  
+        }
+  
+  		.popup-column:last-of-type{
+        	width: 100%; 
+          	text-align: left;
+    		justify-content: left;
+        }
+  {% endif %}
+  
+  	.popup__list{
+      	margin: 25px 0;
+    }
+  
+  	.popup__list li{
+      	position: relative;
+      	padding: 7px 10px 7px 30px
+    }
+  
+  	.popup__list li span{
+    	position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);  
+    }
+  
+  	.popup__list li span svg{
+    	width: 16px;
+    	height: auto;
+    	fill: #fc5778;  
+    }
+  
+  	.popup__list li .popup__btn{
+      	width: 100%;
+    	font-size: 14px !important;
+    }
+  	.popup__btn{
+    	width: 100%;
+    }
+  
+</style>
+
+<div data-section-id="{{ section.id }}" data-section-type="popup">
+	{% if show_popup or testmode %}
+		{% assign delay = section.settings.popup_delay %}
+		{% assign reappear_time = section.settings.popup_reappear_time %}
+		{% assign image = section.settings.popup_image %}
+		{% assign popup_header = section.settings.popup_header %}
+		{% assign popup_content = section.settings.popup_content %}
+
+		<section id="popup" class="modal popup text-{{ section.settings.text_alignment }} {% if image == blank%}popup--no-image{% endif %}" style="display: none;" data-enabled="{{ show_popup }}" data-testmode="{{ testmode }}" data-delay="{{ delay }}" data-reappear_time="{{ reappear_time }}">
+			<div class="popup-wrap">
+				{% if image != blank and section.settings.enable_image %}
+					<div class="popup-column popup-image lazyload fade-in" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto"></div>
+					<noscript>
+						<div class="popup-column popup-image" style="background-image: url('{{ image | img_url: '512x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"></div>
+					</noscript>
+				{% endif %}
+
+				<div class="popup-column">
+					<div class="popup-column-content">
+                      
+                      	<div class="loading__nationality">
+                        	<div class="lds-ripple"><div></div><div></div></div>
+                      	</div>
+                      
+                      	<div class="theme__home-country hide__nationality">
+                            {% if popup_content != blank or popup_header != "" %}
+                                <h2>{{ popup_header | truncatewords: 10 }}</h2>
+                                {{ popup_content | truncate: 300  }}
+                                <div class="popup__list">
+                                    <ul>
+                                        {%- for block in section.blocks -%}
+                                      	{%- if block.type == 'test' -%}
+                                      <li><span>{% include 'icon-right' %}</span>{{ block.settings.list_text}}</li>  
+                                        {%- endif -%}
+                                      	{%- endfor -%}
+                                    </ul>
+                                </div>
+
+                                {% if section.settings.btn_text != blank %}
+                                    <a href="{{section.settings.btn_link}}" class="button popup__btn">{{section.settings.btn_text}}</a>
+                                {% endif %}
+                                {% if section.settings.btn_desc != blank %}
+                                    <p>{{section.settings.btn_desc}}</p>
+                                {% endif %}
+
+                                <p class="popup__privacy">We take your privacy seriously, <a href="/pages/privacy-policy">read our privacy policy here</a></p>
+                            {% else %}
+                                {{ 'homepage.onboarding.popup_html' | t }}
+                            {% endif %}
+                          
+                      	</div>
+                      
+                      	<div class="theme__other-country hide__nationality">
+                          	{% if popup_content != blank or popup_header != "" %}
+                                <h2>{{ popup_header | truncatewords: 10 }}</h2>
+                                {{ popup_content | truncate: 300  }}
+                                <div class="popup__list">
+                                    <ul>
+                                        {%- for block in section.blocks -%}
+                                      	{%- if block.type == 'international' -%}
+                                      <li><span>{% include 'icon-right' %}</span>{{ block.settings.list_text}}</li>  
+                                        {%- endif -%}
+                                      	{%- endfor -%}
+                                    </ul>
+                                </div>
+
+                                {% if section.settings.btn_text != blank %}
+                                    <a href="{{section.settings.btn_link}}" class="button popup__btn">{{section.settings.btn_text}}</a>
+                                {% endif %}
+                                {% if section.settings.btn_desc != blank %}
+                                    <p>{{section.settings.btn_desc}}</p>
+                                {% endif %}
+
+                                <p class="popup__privacy">We take your privacy seriously, <a href="/pages/privacy-policy">read our privacy policy here</a></p>
+                            {% else %}
+                                {{ 'homepage.onboarding.popup_html' | t }}
+                            {% endif %}
+                      	</div>
+						{% if section.settings.show_popup_newsletter %}
+							{% form 'customer' %}
+								<div class="js-signUp-form signUp-form">
+									<input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>
+									<div class="inputGroup mc-field-group">
+										<label for="mce-EMAIL" class="accessible-label">{{ 'general.slide_out_navigation.search_label' | t }}</label>
+										<input class="signUp-input required email" type="email" value="" placeholder="Your email address" name="contact[email]" id="mce-EMAIL">
+										<input type="hidden" id="newsletter-first-name" name="contact[first_name]" value="Newsletter" />
+										<input type="hidden" id="newsletter-last-name" name="contact[last_name]" value="Subscriber" />
+										<button type="submit" class="signUp-submit icon-arrow-right" name="subscribe" id="mc-embedded-subscribe"></button>
+                                      	<p class="small terms">We take your privacy seriously, <a href="/pages/privacy-policy">read our privacy policy here</a></p>
+									</div>
+								</div>
+								{% if form.posted_successfully? %}
+									
+                      				<!--<div class="signUp-confirmation p">{{ 'general.newsletter_signup.success_message' | t }}</div>-->
+                      				<div class="signUp-confirmation p">Thanks for subscribing to your newsletter!</div>
+								{% elsif form.errors %}
+									{{ form.errors | default_errors }}
+								{% endif %}
+							{% endform %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</section>
+	{% endif %}
+</div>
+
+
+{% schema %}
+{
+	"name": "Popup",
+	"max_blocks": 6,
+	"settings": [
+		{
+			"type": "select",
+			"id": "show_popup",
+			"label": "Display mode",
+			"default": "disabled",
+			"options": [
+				{
+					"value": "enabled",
+					"label": "Enabled"
+				},
+				{
+					"value": "disabled",
+					"label": "Disabled"
+				},
+				{
+					"value": "testmode",
+					"label": "Test mode"
+				}
+			]
+		},
+		{
+			"label": "Heading",
+			"type": "text",
+			"id": "popup_header",
+			"default":"Use the popup to catch emails and showcase promotions"
+		},
+		{
+			"label": "Text",
+			"type": "richtext",
+			"id": "popup_content",
+			"default":"<p>Popups can detract from a user's experience, so try to limit how often they appear.</p>"
+		},
+		{
+			"type": "select",
+			"id": "text_alignment",
+			"label": "Text alignment",
+			"default": "center",
+			"options": [
+				{ "value": "left", "label": "Left" },
+				{ "value": "center", "label": "Center" }
+			]
+		},
+		{
+			"label": "Show newsletter form",
+			"type": "checkbox",
+			"id": "show_popup_newsletter",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "popup_delay",
+			"label": "Delay until the popup appears",
+			"unit": "sec",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"default": 5
+		},
+		{
+			"type": "select",
+			"id": "popup_reappear_time",
+			"label": "Number of weeks before the popup re-appears",
+			"default": "7",
+			"options": [
+				{
+					"value": "0",
+					"label": "None"
+				},
+				{
+					"value": "7",
+					"label": "1 week"
+				},
+				{
+					"value": "14",
+					"label": "2 weeks"
+				},
+				{
+					"value": "21",
+					"label": "3 weeks"
+				}
+			]
+		},
+		{
+			"type": "header",
+			"content": "Image Section"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_image",
+			"label": "Enable Image",
+			"default": true
+		},
+		{
+			"type": "image_picker",
+			"id": "popup_image",
+			"label": "Image"
+		},
+		{
+			"type": "header",
+			"content": "Button Section"
+		},
+		{
+			"type": "text",
+			"id": "btn_text",
+			"label": "Button Text"
+		},
+		{
+			"type": "url",
+			"id": "btn_link",
+			"label": "Button link"
+		},
+		{
+			"type": "text",
+			"id": "btn_desc",
+			"label": "Text"
+		}
+	],
+	"blocks": [
+	{
+		"type": "test",
+		"name": "list",
+		"settings": [
+			{
+				"type": "text",
+				"id": "list_text",
+				"label": "List Text"
+			}
+		]
+	},
+	{
+		"type": "international",
+		"name": "int_list",
+		"settings": [
+			{
+				"type": "text",
+				"id": "list_text",
+				"label": "List Text"
+			}
+		]
+	}
+	]
+}
+{% endschema %}

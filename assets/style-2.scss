@@ -1,0 +1,589 @@
+@font-face {
+  font-family: 'scarlet_talk-regular';
+  src: url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.eot'); /* IE9 Compat Modes */
+  src: url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.woff2') format('woff2'), /* Super Modern Browsers */
+       url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.woff') format('woff'), /* Pretty Modern Browsers */
+       url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('Scarlet_Talk-Regular_ss03_ss04-web-ss03-ss04.svg#svgFontName') format('svg'); /* Legacy iOS */
+  font-display: swap;
+}
+
+/* INDEX PAGE */
+/* 27/09/20 */
+
+.index-splace__content{
+  	h1{
+ 		font-family: 'scarlet_talk-regular';
+      	letter-spacing: 0 !important;
+    }
+}
+
+.scarlet-marquee{
+  
+  	.scarlet-marquee-scroll{
+      	
+      	.scarlet-marquee-item{
+          
+          	font-family: 'scarlet_talk-regular';
+          
+          	span{
+         		font-family: 'scarlet_talk-regular';
+            }
+        }
+    }
+}
+
+/* Index - Blog Post*/
+/* 01/08/20 */
+.featurd__slider-container{
+  
+  	.blogModule-posts__wrapper{
+    	margin: 0 !important;
+    	width: 100%;
+    	max-width: 100% !important;  
+      
+      	.featured__blog-post{
+          	width: 100%;
+            padding-bottom: 20px;
+            margin-right: 60px;
+            padding-right: 60px;
+        }
+    }
+  
+    .featured__blog-post{
+
+        .swiper-slide{
+          
+          	//@media screen and (min-width: 767px){
+              
+              	&:nth-of-type(4n){
+                	margin-top: 4%; 
+              	}
+              
+              	&:nth-of-type(4n - 1){
+                  	margin-top: 10%;  
+              	}
+              
+              	&:nth-of-type(4n - 2){
+             		margin-top: 0;  
+              	}
+              
+              	&:nth-of-type(4n - 3){
+                  	margin-top: 7%;  
+              	}
+              
+              	&:nth-of-type(2n){
+                	.carousel-slide-info{
+                      	padding: 0 25px;
+                    }
+              	}
+            }
+
+            .blogModule-posts__post{
+                width:100%;
+                opacity: 1 !important;
+            }
+        //}
+    }
+  	
+  	@media screen and (max-width: 767px){
+  		.carousel-slide-image:before {
+          	padding-top: 66%;
+     	}
+    }
+  
+  	.blogModule-posts__post-block{
+      	opacity: 1;
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -ms-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+}
+
+
+
+/** Settings for Artical Pages **/
+
+$artical_font_color: #000;
+
+.template-article{
+  
+  	h1, h2, h3, h4, h5, h6{
+      	color: $artical_font_color;
+    }
+ 
+  	.article-content{
+      	
+      	.text-content{
+          	
+          	ul{
+              	font-family: 'libre_baskerville';
+            }
+          
+          	li{
+          		font-family: 'libre_baskerville'; 
+              	padding-bottom: 10px;
+            }
+        }
+    }
+}
+
+/* Collection Page  */
+
+/* 22/09/20 */
+@media screen and (max-width: 640px){
+    .collectionBlock-image {
+        padding-top: 130% !important;
+    }
+}
+
+
+/* Product Page */
+
+/* 24/09/20 */
+
+.template-product{
+  
+  
+}
+
+@media screen and (min-width: 768px){
+	.product.row.row-lg {
+	    width: 100% !important;
+	}
+}
+
+
+/* Cart Page  */
+
+/* 24/09/20 */
+.cart-home{
+  	
+  	h7{
+ 		@media screen and (max-width: 767px){
+			letter-spacing: 0.4px;
+        }
+    }
+  
+  	.cart-details{
+    	
+      	h7{
+          	
+                                                                                                             
+        	@media screen and (max-width: 767px){
+            	display: none;
+              	letter-spacing: 0.4px;
+            }
+        }
+    }
+}
+
+#your-shopping-cart{
+
+	.cart__tempate-section{
+	  	.closediam{
+	    	height: 0;
+	    	width: 0;
+	    	display: none !important;
+	    	margin: 0;  
+	    }
+	}
+}
+
+
+.cbb-also-bought-container{
+    	
+	.cbb-also-bought-title{
+		letter-spacing: 0.4px !important;	  
+	}
+}
+
+/* FAQ */
+.scroll-buttons{
+  	.button{
+    	margin: 10px 0px !important;
+    }
+}
+
+
+.blogModule-posts__post{
+
+  	.carousel-slide-info{
+    	padding: 0px 0px;  
+  	}
+  
+}
+
+/* Product : how to use Block 09/10/20 */
+
+.static__container {
+    position: relative;
+  	
+  
+  	img.static__thumb {
+        position: absolute;
+        z-index: 1;
+      	opacity:1;
+      	cursor: wait;
+      
+      	&:hover{
+        	opacity: 0; 
+          	cursor: pointer;
+        }
+    }
+}
+
+/* Product : Mobile Slider Thumb */
+
+@media only screen and (max-width: 767px){
+  	.product-layout-4--images .productImgSlider-nav {
+    	display:none;
+  	}
+  
+  	.productImgSlider{
+    	max-width: 100%;
+  	}
+}
+
+
+
+body select{
+	-moz-appearance: none;
+ 	-webkit-appearance: none;
+ 	appearance: none;
+}
+
+.cart-details{
+  	.custom-donation-btn{
+      	//display:none;
+  	}
+}
+
+
+
+
+
+.binding__easy-donation{
+  
+  	border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  	width: 100%;
+  	
+  
+  	.custom__text{
+		display: flex;
+    	flex-wrap: wrap;
+    	justify-content: center;
+    	align-items: center;
+    	margin: 0 0 20px 0;
+      
+      	p{
+        	color: #383838;
+            text-align: left;
+            margin: 0;
+            font-size: 12px;
+            letter-spacing: 0px;
+            flex: 1 1 65%;  
+        }
+      
+      	.custom__image{
+        	flex: 1 1 30%;
+          
+          	img{
+              	padding-left: 20px;
+            }
+        }
+    }
+  
+  	.custom__input-wrapper{
+      	display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+      	
+      
+      	.custom__input{
+        	width: 33.333%;
+    		text-align: center;  
+          
+          	input{
+              	display: inline;
+            }
+          
+          	label{
+            	display: inline;  
+              	padding-left: 5px;
+            }
+        }
+    }
+  
+  	.custom__button-trigger{
+      	text-align: center;
+    	margin: 25px 0;
+    	width: 100%;
+      
+      	#trigger__app-form{
+       		width: 100%;
+          	display:none;
+        }
+    }
+  	
+  	
+}
+
+.easy__donation-app__trigger{
+  	#donation_amount{
+    	display: none;  
+    }
+  
+  	
+  
+  	#preview_container{
+      	margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+    }
+}
+
+.custom__form-enable{
+  
+  	.donation_button{
+    	display: none;  
+    }
+  
+  	#trigger__app-form{
+    	display:inline-block !important;  
+    }
+}
+
+
+.custom-donation-btn{
+  
+  	/*background-color: #FEF6FA;
+    padding: 10px 20px;*/
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  
+  	.custom__container{
+      	padding: 10px 20px;
+    	margin-bottom: 30px;
+    	background-color: #FEF6FA;
+      
+      	@media screen and (max-width: 767px){
+          	margin-bottom: 10px;
+        }
+    }
+  
+  	#preview_container{
+      	background: #FDF8F7; // FEF6FA
+    }
+  
+  	.binding__easy-donation{
+      	border-bottom: none;
+      	margin-bottom: 0;
+    }
+  
+ 	input[type='radio']:after {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        /*background-color: #d1d3d1;*/
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        /*border: 2px solid white;*/
+    }
+
+    input[type='radio']:checked:after {
+        box-shadow: 0px 0px 0px 1px #656565;
+        width: 10px;
+        height: 10px;
+        border-radius: 15px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        background-color: #fa0d3d;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid #ffffff;
+    }
+}
+
+#donate-popup{
+	pointer-events: all !important;
+}
+
+.donation__main-form{
+    .donation_content{
+		display: flex;
+    	flex-wrap: wrap;
+    	justify-content: center;
+    	align-items: center;
+    }
+    .product-image{
+		width: 30%;
+    	flex: 1 1 30%;
+    	order: 1;
+      
+      	img{
+          	max-width: 100%;
+    		height: auto;
+        }
+    }
+  	.display_description{
+    	width: 70%;
+    	flex: 1 1 65%;
+    	font-size: 12px;
+    	margin-top: 0px;
+      
+      	p{
+      	    font-size: 12px;
+    		color: grey;
+    		order: 1;
+      	}
+    }
+  
+  	.display_title{
+    	display: none;
+    }
+ 
+  	.easy_donation_title{
+    	display: none;
+    }
+}
+
+#your-shopping-cart{
+  	.bodyWrap{
+        #shopify-section-footer{
+            .container-wrap{
+                padding: 0 !important;
+            }
+        }
+    }
+}
+
+
+#your-shopping-cart{
+  
+  	.cart-row{
+      	@media screen and (max-width: 767px){
+      	    width: 100% !important     
+        }
+    }
+  	
+  	.bodyWrap{
+      
+      	.container-wrap{
+          
+      		@media screen and (max-width: 767px){
+      	    	padding: 60px 0 !important;   
+        	}
+        }
+    }
+}
+
+
+/* Nationality Popup */
+
+.popup-column-content{
+	width: 100%;  
+}
+
+.loading__nationality{
+	display: inline-block; 
+    text-align: center;
+    width: 100%;
+}
+
+.hide__nationality{
+	display: none !important;  
+}
+
+
+.lds-ripple {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ripple div {
+  position: absolute;
+  border: 4px solid #fa0d3d;
+  opacity: 1;
+  border-radius: 50%;
+  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.lds-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+@keyframes lds-ripple {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
+}
+
+
+
+
+/** ABC Edits **/
+
+
+	/** Homepage Products Sold Out **/
+
+		
+		#scarlet-the-new-period-brand-for-a-new-kind-of-period .swatch .swatch-element.soldout label {
+            filter: alpha(opacity=100);
+            -khtml-opacity: 1;
+            -moz-opacity: 1;
+            opacity: 1;
+            color: #a0a0a0!important
+        }
+
+		#scarlet-the-new-period-brand-for-a-new-kind-of-period .swatch .swatch-element.available label {
+            color: #000000 !important;
+        }
+
+		#scarlet-the-new-period-brand-for-a-new-kind-of-period .swatch .swatch-element.soldout label {
+            
+        }
+
+
+		
+
+/**
+
+		#scarlet-the-new-period-brand-for-a-new-kind-of-period .swatch .swatch-element.soldout label:before {
+          position: absolute;
+          content: "";
+          left: 5px;
+          top: 50%;
+          right: 5px;
+          border-top: 1px solid;
+          border-color: inherit;
+          -webkit-transform: rotate(-5deg);
+          -moz-transform: rotate(-5deg);
+          -ms-transform: rotate(-5deg);
+          -o-transform: rotate(-5deg);
+          transform: rotate(315deg);
+          
+          
+      } **/

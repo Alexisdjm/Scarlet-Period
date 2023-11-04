@@ -1,0 +1,126 @@
+{% if section.blocks.size > 0 %}
+<div class="newsletter-overlay dispnone" id = 'newsletter-overlay'>
+  <div class="newsletter-popup" id="newsletter-popup">
+    <a href="javascript:void(0);" class="popup-close icon__close"><svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="svg-inline--fa fa-times fa-w-10 fa-2x"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z" class=""></path></svg></a>
+    
+    {% for block in section.blocks %}
+      {% case block.type %}
+    	{% when 'style_1' %}
+          <div class="form___newsletter">
+            {% form 'customer' %}
+              <input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>              
+  			  {% if form.posted_successfully? %}
+            	<div class="form--head form__thanks text-center">
+                  <h2>{{ section.settings.thankyou_title }}</h2>
+                  {{ section.settings.thankyou_text }}
+                </div>
+              {% else %}           
+                <div class="form--head__icon{% if block.settings.icon %} icon-with__space{% endif %}">
+                  {% if block.settings.icon %}
+                  <div class="icon__form">
+                    <img src="{{ block.settings.icon | img_url: '200x' }}" alt="Icon">
+                  </div>
+                  {% endif %}
+                  <h2>{{ block.settings.title }}</h2>
+                  {{ section.settings.text }}
+                  {{ form.errors | default_errors }}
+                </div>
+                <input type="text" name="contact[name]" id="Name" class="required name" value="{% if customer %}{{ customer.name }}{% endif %}" placeholder="Name" autocorrect="off" autocapitalize="off" required value="newsletter">
+                <input class="required email" id="Email" type="email" value="{% if customer %}{{ customer.email }}{% endif %}" name="contact[email]" placeholder="Email address">
+                <button type="submit" name="commit" id="Subscribe">Sign me up!</button>    
+            	<div class="text-center">
+                  <a href="javascript:void(0);" class="popup-close text__close">Hm, maybe later.</a>
+                </div>
+              {% endif %}
+            {% endform %}
+          </div>
+    	{% when 'style_2' %}
+    	<div class="form___newsletter">
+          {% form 'customer' %}
+            <input type="hidden" id="contact_tags" name="contact[tags]" value="newsletter"/>            
+  			{% if form.posted_successfully? %}
+          	  <div class="form--head form__thanks text-center">
+                <h2>{{ section.settings.thankyou_title }}</h2>
+                {{ section.settings.thankyou_text }}
+              </div>
+            {% else %}    
+              <div class="form--head">
+                <h2>{{ block.settings.title }}</h2>
+                {{ section.settings.text }}
+                {{ form.errors | default_errors }}
+              </div>
+              <input type="text" name="contact[name]" id="Name" class="required name" value="{% if customer %}{{ customer.name }}{% endif %}" placeholder="Name" autocorrect="off" autocapitalize="off" required value="newsletter">
+              <input class="required email" id="Email" type="email" value="{% if customer %}{{ customer.email }}{% endif %}" name="contact[email]" placeholder="Email address" required>
+              <button type="submit" name="commit" id="Subscribe">Sign me up!</button>
+              <div class="text-center">
+                <a href="javascript:void(0);" class="popup-close text__close">Hm, maybe later.</a>
+              </div>
+            {% endif %}
+          {% endform %}
+    	</div>
+      {% endcase %}
+    {% endfor %}    
+  </div>
+</div>
+{% endif %}
+{% schema %}
+  {
+    "name": "Newsletter Popup",
+    "max_blocks": 1,
+    "settings": [
+	  {
+	    "type": "richtext",
+		"id": "text",
+		"label": "Text",
+		"default": "<p>Be the first to hear about new product launches, tips & Tricks and juciy sales.</p>"
+	  },
+	  {
+	    "type": "header",
+		"content": "Thanky you"
+	  },
+	  {
+	    "type": "text",
+		"id": "thankyou_title",
+		"label": "Title",
+		"default": "Thanks for<br>Signing Up!"
+	  },
+	  {
+	    "type": "richtext",
+		"id": "thankyou_text",
+		"label": "Text",
+		"default": "<p>We'll only send you the good stuff.</p><p>We Promise.</p>"
+	  }
+	],
+	"blocks": [
+	  {
+		"type": "style_1",
+		"name": "Style 1",
+		"settings": [
+		  {
+			"type": "text",
+			"id": "title",
+			"label": "Heading",
+			"default": "Get 10% off your no fear period gear."
+		  },
+		  {
+			"type": "image_picker",
+			"id": "icon",
+			"label": "Icon"
+		  }
+		]
+	  },
+	  {
+		"type": "style_2",
+		"name": "Style 2",
+		"settings": [
+		  {
+			"type": "text",
+			"id": "title",
+			"label": "Heading",
+			"default": "Join the self-care movement and get 10% off."
+		  }		  
+		]
+	  }
+	]
+  }
+{% endschema %}

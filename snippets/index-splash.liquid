@@ -1,0 +1,162 @@
+<style>
+  	body.js-splash .site-header{
+  		position:absolute ;
+    }
+  
+  	body.js-splash .site-header.alert--is-visible{
+      	/*height: 95px;*/
+    }
+  
+  	body.js-splash .site-header.alert--is-visible .siteAlert{
+      	height: 0 !important;
+    }
+  
+  	.index__splash.theme-full__width{
+    	/*position: fixed;
+        z-index: 99999;
+        top: 0;
+        left: 0;*/
+        width: 100%;
+        height: 100vh;
+        background: #fbfbfb; 
+      
+      	background-size: cover;
+      	background-position: center;
+        overflow: hidden;
+        display: none;
+    }
+  
+  	.index-splace__content{
+      	position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      	width: 100%;
+    	text-align: center;
+      	padding: 0 50px;
+    }
+  
+  	.index-splace__content h1{
+    	text-transform: uppercase;
+    	font-size: 4.5em;
+    	color: #fff; 
+      	letter-spacing: 3px;
+    	padding-top: 25px;
+    }
+  
+  	@media screen and (max-width: 767px) {
+      	.index-splace__content h1{
+      		font-size: 2em;
+        }
+      
+      	body.js-splash .site-header.alert--is-visible .siteAlert{
+          	height: 25px !important;
+        }
+      
+      	.site-header.is-hamburger{
+          	position:fixed !important;
+        }
+    }
+  
+  	.blink_me {
+      animation: blinker 1s linear infinite;
+    }
+
+    @keyframes blinker {  
+      50% { opacity: 0; }
+    }
+  
+  	.scroll_arrow{
+      	top: 90%;
+        left: 50%;
+        position: absolute;
+        color: #fff;
+        transform: translateX(-50%);
+      	display:none;
+    }
+      
+</style>
+
+<div id="is_window--splash" class="index__splash theme-full__width js-hidden" style="background-image:url({{ settings.home_splash_image | img_url: 'master' }})">
+  
+  	<div class="index-splace__content">
+      	<h1>{{ settings.heading_text }}</h1>
+  	</div>
+  
+</div>
+
+<script>
+	var show_splace = {{settings.show_home_splash}};
+    
+  	// This prevents the page from scrolling down to where it was previously.
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    // This is needed if the user scrolls down during page load and you want to make sure the page is scrolled to the top once it's fully loaded. This has Cross-browser support.
+    window.scrollTo(0,0);
+  
+  	var splace_show = Cookies.get('show_splash');
+      	
+    if(typeof splace_show === "undefined"){
+      	if(show_splace == true){
+			$('.index__splash').css('display', 'block');
+      	
+      		Cookies.set('show_splash', true, { expires: 1 });
+        }
+	}
+  
+$(document).ready(function(){ 
+  
+  	var headeroffset = $("#header").offset();
+  	var show_notify = true;
+  	
+  
+  	if(typeof splace_show === "undefined" && show_splace == true){
+        $(window).scroll(function(e) {
+            if($(this).scrollTop() > headeroffset.top){
+
+
+                $("#is_window--splash").remove();
+                $("body").removeClass("js-splash");
+
+                if(show_notify){
+                    $("body .site-header.alert--is-visible .siteAlert").css("height", "35px");
+                    show_notify = false;
+                }
+                //$("#header").addClass("shift--alert alert--is-visible");
+            }
+
+            if($(this).scrollTop() > 0 && $(this).scrollTop() < 150 && show_notify == false){
+                $("body .site-header.alert--is-visible .siteAlert").css("height", "35px");
+            }
+
+            if($(this).scrollTop() > 150 && show_notify == false){
+                $("body .site-header.alert--is-visible .siteAlert").css("height", "0px");
+            }
+        });
+    }else{
+      	$("body").removeClass("js-splash");
+      	$("body .site-header.alert--is-visible .siteAlert").css("height", "35px");
+      
+      	$(window).scroll(function(e) {
+            if($(this).scrollTop() > headeroffset.top){
+
+                if(show_notify){
+                    $("body .site-header.alert--is-visible .siteAlert").css("height", "35px");
+                    show_notify = false;
+                }
+                //$("#header").addClass("shift--alert alert--is-visible");
+            }
+
+            if($(this).scrollTop() > 0 && $(this).scrollTop() < 150 && show_notify == false){
+                $("body .site-header.alert--is-visible .siteAlert").css("height", "35px");
+            }
+
+            if($(this).scrollTop() > 150 && show_notify == false){
+                $("body .site-header.alert--is-visible .siteAlert").css("height", "0px");
+            }
+        });
+    }
+  	
+})
+</script>

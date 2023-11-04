@@ -1,0 +1,206 @@
+{%- if section.settings.show_page_title -%}
+  <section class="page-title container-wrap">
+    <div class="container">
+      <div class="row row-lg inline u-center">
+        <h1>{{ page.title }}</h1>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.quiz-toggle').addEventListener('click', () => {
+      document.querySelector('.quiz-wrapper').classList.add('active')
+      console.log('toggle intro')
+    })
+  })
+</script>
+
+<div class="container-wrap">
+  <div class="container text-content rte">
+    <div class="row row-sm quiz-wrapper">
+      <div class="intro-container">
+        <div class="copy">
+          {% if section.settings.header != blank %}
+            <h1>{{section.settings.header}}</h1>
+          {% endif %}
+
+          {% if section.settings.text != blank %}
+            <h4>{{section.settings.text}}</h4>
+          {% endif %}
+ 
+          <button class="quiz-toggle">
+            START<br/>QUIZ
+          </button>
+        </div>
+        <div class="image">
+          <div class="image-holder" {{ block.shopify_attributes }}>
+            {%  assign image =  section.settings.image  %}
+      <img
+                  srcset="{% if image.width >= 350 %}{{ image | img_url: '350x' }} 350w,{% endif %}
+                    {% if image.width >= 750 %}{{ image | img_url: '750x' }} 750w,{% endif %}
+                    {% if image.width >= 1100 %}{{ image | img_url: '1100x' }} 1100w,{% endif %}
+                    {% if image.width >= 1500 %}{{ image | img_url: '1500x' }} 1500w,{% endif %}
+                    {% if image.width >= 2200 %}{{ image | img_url: '2200x' }} 2200w,{% endif %}
+                    {% if image.width >= 3000 %}{{ image | img_url: '3000x' }} 3000w,{% endif %}
+                    {{ image | img_url: 'master' }} {{ image.width }}w"
+                  sizes="(min-width: 1440px) 1340px, (min-width: 750px) calc(100vw - 10rem), 100vw"
+                  src="{{ image | img_url: '1100x' }}"
+                  loading="lazy"
+                  width="{{ image.width }}"
+                  height="{{ image.height }}"
+                  alt="{{ image.alt | escape }}">
+            </div>
+        </div>
+      </div>
+      {% if section.settings.quiz != blank %}
+        <div class="quiz-container">
+      {{section.settings.quiz}}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .intro-container { display: block; }
+  .quiz-container { display: none; }
+  .quiz-wrapper.active .intro-container { display: none; }
+  .quiz-wrapper.active .quiz-container { display: block; }
+
+  .intro-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .intro-container .copy {
+    background: #fff;
+    padding: 20px 40px 80px 20px;
+  }
+
+  .intro-container .copy h1 {
+    font-size: 4.5vw;
+    text-transform: uppercase;
+  }
+
+
+  .intro-container .copy h4 {
+    font-size:  2.5vw;
+    text-transform: uppercase;
+  }
+
+  .intro-container .image .image-holder {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  .intro-container .image .image-holder img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover; 
+    height: 100%;
+    width: 100%;
+  }
+
+  .intro-container .quiz-toggle {
+    position: absolute;
+    bottom: 40px;
+    left: calc(50% - 60px);
+    width: 120px;
+    padding: 20px 20px 0 20px !important;
+    z-index: 10;
+    background-image: url("data:image/svg+xml,%3Csvg width='689' height='978' viewBox='0 0 689 978' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M344.65 977.44C155 977.44 0.709991 831.64 0.709991 652.42C0.709991 479.84 313.99 42.66 327.33 24.13L344.65 0.0700073L361.97 24.14C375.31 42.66 688.58 479.84 688.58 652.42C688.58 831.64 534.29 977.44 344.65 977.44Z' fill='%23F32735'/%3E%3C/svg%3E%0A");
+    color: #fff;
+    background-size: cover;
+    background-color: transparent;
+    border: none;
+    height: 170px;
+    font-size: 20px !important;
+  }
+
+  @media(max-width: 767px){
+    .intro-container {
+      display: grid;
+      grid-template-columns: 1fr ;
+    }
+
+    .intro-container .quiz-toggle {
+      position: relative;
+      bottom: unset;
+      left: unset;
+      width: 120px; 
+      padding: 20px !important;
+      z-index: 10;
+      height: 170px;
+      margin-top: 20px;
+    }
+
+    .intro-container .image .image-holder {
+      padding-top: 100%;
+      width: 100%;
+      position: relative;
+    }
+
+
+  .intro-container .copy h1 {
+    font-size: 40px;
+    text-transform: uppercase;
+  }
+
+
+  .intro-container .copy h4 {
+    font-size:  24px;
+    text-transform: uppercase;
+  }
+
+  .intro-container .copy {
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  } 
+
+</style>
+
+
+
+{% schema %}
+{
+  "name": "Quiz",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "Show page title",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "quiz",
+      "label": "Quiz Embed"
+    },
+    {
+      "type": "text",
+      "id": "header",
+      "label": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Intro Text"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quiz"
+    }
+  ]
+}
+{% endschema %}

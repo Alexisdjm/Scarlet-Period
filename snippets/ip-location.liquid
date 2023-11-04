@@ -1,0 +1,106 @@
+<script>
+  
+county_code = Cookies.get('user_country'); 
+total_cartprice = parseInt("{{cart.total_price}}");
+  
+ 
+function check_nationality(county_code){
+    
+ 	
+  	if(county_code == 0 || county_code == ""){
+    	$(document).find(".theme__home-country").each(function(){
+            $(this).removeClass("hide__nationality");
+
+        });
+
+        $(document).find(".theme__other-country").each(function(){
+            $(this).remove();
+        });
+      
+      	if(total_cartprice >= 5000){
+        	$(".grater-pirce").css("display", "block");
+          	$(".less-price").css("display", "none");
+        }else{
+          	$(".grater-pirce").css("display", "none");
+          	$(".less-price").css("display", "block");
+        }
+    }
+    else{
+        if(county_code == "{{settings.homecountry_code}}"){
+
+            $(document).find(".theme__home-country").each(function(){
+                $(this).removeClass("hide__nationality");
+
+            });
+
+            $(document).find(".theme__other-country").each(function(){
+                $(this).remove();
+            });
+      
+      		if(total_cartprice >= 5000){
+                $(".grater-pirce").css("display", "block");
+                $(".less-price").css("display", "none");
+            }else{
+                $(".grater-pirce").css("display", "none");
+                $(".less-price").css("display", "block");
+            }
+
+        }else{
+            $(document).find(".theme__other-country").each(function(){
+                $(this).removeClass("hide__nationality");
+            });
+
+            $(document).find(".theme__home-country").each(function(){
+                $(this).remove();
+            });
+          
+          	if(total_cartprice >= 10000){
+        		$(".grater-pirce").css("display", "block");
+              	$(".less-price").css("display", "none");
+            }else{
+                $(".grater-pirce").css("display", "none");
+              	$(".less-price").css("display", "block");
+            }
+        }
+    }
+}
+  
+if(typeof county_code === "undefined"){  
+  
+    fetch('https://api.ipify.org/?format=json')
+        .then(res => res.json())
+        .then((out) => {
+            getCountryCode(out['ip'])
+    }).catch(err => console.error(err)); 
+
+
+    function getCountryCode(ip){
+        fetch('https://ipapi.co/'+ip+'/json/')
+        .then(res => res.json())
+        .then((out) => {
+
+            $(".loading__nationality").css("display", "none");
+
+            var county_code = out['country_code'];
+          	
+         	if(out['error'] != undefined){
+         	   	Cookies.set('user_country', 0, { expires: 10 });
+              	check_nationality(county_code);
+          	}else{
+              	Cookies.set('user_country', county_code, { expires: 10 });
+          	  	check_nationality(county_code);
+          	}
+          
+          	
+          
+        }).catch(err => console.error(err));
+    }  
+  
+}else{
+  	$(".loading__nationality").css("display", "none");
+
+          
+    check_nationality(county_code);
+}
+  
+</script>

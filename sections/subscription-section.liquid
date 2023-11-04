@@ -1,0 +1,71 @@
+{% comment %} Settings {% endcomment %}
+{%- assign heading = section.settings.title -%}
+{%- assign html = section.settings.html -%}
+
+<section class="scarlet-subscription-section will-animate" data-section-id="{{ section.id }}" data-section-type="subscription-section" data-animation="fadeInRight">
+    <div class="container">
+      <div class="row row-lg">
+        <div style="position: relative;">
+          <div class="content-side">
+              <div class="inner">
+                {%- if heading != blank -%}
+                    <h2 class="">{{ heading }}</h2>
+                  {%- endif -%}
+                {%- if html -%}
+                  {{ html }}
+                {%- endif -%}
+              </div>
+          </div>
+        </div>
+        {% for block in section.blocks %}
+		  <div class="image-holder" {{ block.shopify_attributes }}>
+		    {% case block.type %}
+		    {% when 'image' %}
+		      <img src="{{ block.settings.image_left | img_url: '424x' }}">
+		    {% endcase %}
+		  </div>
+		{% endfor %}
+      </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Subscription",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Better for you and the planet"
+    },
+    {
+      "type": "html",
+      "id": "html",
+      "label": "Copy",
+      "default": "<p>All our products are made using the highest quality materials and sustainable methods. Atemporem quoditi orepro to quas molendi odicat dicilit, nis nes illuptata doluptat lam auda plita sequas dolupti orestiae rernam.</p>"
+    }
+  ],
+  "blocks": [
+      {
+        "name": "image",
+        "type": "image",
+		"limit": 1,
+        "settings": [
+          {
+            "id": "image_left",
+            "type": "image_picker",
+	    	"label": "Image", 
+	    	"info": "Upload an image to be added to the the left of this spot"
+          }
+        ]
+      }
+  ],
+  "presets": [
+    {
+      "category": "Advanced",
+      "name": "Subscription"
+    }
+  ]
+}
+{% endschema %}

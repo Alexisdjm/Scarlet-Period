@@ -1,0 +1,303 @@
+
+
+<style>
+  
+  	.swiper-container {
+      width: 100%;
+      height: 100%;
+      padding-bottom: 20px;
+      margin-right: 60px;
+      padding-right: 60px;
+    }
+  
+  	.swiper-wrapper{
+        margin-left: 60px !important;
+    	margin-right: 60px !important;
+    }
+  
+  	.swiper-wrapper .collectionBlock-info{
+      	padding: 20px 0 10px;
+    }
+  
+  	.swiper-wrapper .collectionBlock-info h4{
+      	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+      	max-width: 80%;
+    }
+  
+  	.swiper-wrapper .collectionBlock{
+      	margin-bottom: 0;
+    }
+  
+  	.swiper-container-horizontal>.swiper-scrollbar{
+      /*margin: 0 60px;	
+      max-width: 1200px;
+      width:1200px;*/
+      width: calc(95.5% - 60px);
+      margin: 0px auto 0px;
+      height: 4px;
+      background-color: #f5f5f5;
+      position: relative;
+      left: inherit;
+      bottom: inherit;
+      opacity:0;  
+    }
+  
+  	.swiper-scrollbar-drag{
+      width: calc(100% - 60px);
+      background: rgba(177, 177, 177);
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+
+      /* Center slide text vertically */
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+  
+  	.swiper-container:hover .swiper-scrollbar{
+    	opacity:1;
+    }
+  
+  	.swiper-container:hover .scroll-container{
+    	opacity:1;
+    }
+  
+  	.scroll-container{
+      	display: inline-block;
+        width: 100%;
+        padding-left: 60px;
+        padding-right: 60px;
+        margin: 0 auto;
+      	opacity:0;
+      	position: absolute;
+      	bottom: 0px;
+    }
+  
+  	.scroll-container .swiper-scrollbar{
+    	height: 4px;  
+    }
+  
+  
+  	@media only screen and (max-width: 767px) {
+      	.swiper-wrapper .collectionBlock-info h4{
+          	max-width: 100%;
+        }
+      
+      	.swiper-container{
+          	padding-bottom: 15px;
+        }
+      
+      	.swiper-wrapper{
+          	padding-bottom: 0px;
+          	margin-left: 7% !important;
+    		margin-right: 7% !important;
+    	}
+      
+      	.swiper-scrollbar{
+        	display:none;
+        }
+      
+      	.row.inline .block{
+        	margin-bottom: 0;  
+        }
+      
+      	.bottom__header{
+          	padding-bottom: 0px;
+          	padding-top:15px;
+        }
+    }
+  
+  	@media screen and (max-width: 399px){
+      	.swiper-wrapper{
+          	padding-bottom: 0px;
+          	margin-left: 7% !important;
+    		margin-right: 7% !important;
+    	}
+    }
+  
+  	@media only screen and (min-width: 1420px) {
+      	.swiper-wrapper{
+					padding-left: 30px;
+            max-width: 2500px !important;
+            margin: 0 auto !important;
+        }
+      
+      	.swiper-scrollbar{
+          	max-width: calc(1400px - 75px) !important;
+            margin: 0 auto !important;
+        }
+    }
+  </style>
+
+
+
+{% comment %} Settings {% endcomment %}
+{%- assign collection1 = collections[section.settings.collection1] | default: false -%}
+{%- assign title = section.settings.title -%}
+{%- assign subtitle = section.settings.subtitle -%}
+{%- assign layout = section.settings.products_layout -%}
+{%- assign enable_carousel = false -%}
+{%- if layout == 'carousel' -%}
+	{%- assign enable_carousel = true -%}
+{%- endif -%}
+
+{% comment %} Layout {% endcomment %}
+{%- assign productsRows = settings.products_rows | plus: 0 -%}
+{%- assign productsColumns = settings.products_columns | plus: 0 -%}
+{%- assign productLimit = productsColumns | times: productsRows -%}
+{%- assign columnsSize = productsColumns | replace: '1', '' -%}
+{%- assign image_size_class = settings.grid_size | prepend: 'collectionBlock-image--' -%}
+{%- assign color_swatches = settings.color_swatches -%}
+{%- assign show_reviews = settings.show_reviews -%}
+
+{% comment %} Section {% endcomment %}
+<section class="collectionGrid js-collection-grid js-collectionGrid pad-med carousel" id="collection-module-{{ section.id }}" data-section-type="featured-collection" data-show-quickview="{{ settings.show_quick_view }}" data-show_reviews="{{ show_reviews }}" data-show_quantity="{{ settings.show_quantity }}" data-color_swatches="{{ color_swatches }}" data-carousel="{{ enable_carousel }}" data-slides-per-row="{{ settings.products_columns }}" data-grid-size="{{ settings.grid_size }}">
+
+  	{%- if title != blank or subtitle != blank -%}
+  	  <div class="container">
+		<div class="collectionGrid-header row row-lg">
+			<div class="text-module">
+              	{%- if title != blank -%}
+				<h2 class="rich__heading align--center size--small"  style="color: {{section.settings.heading_color}}">{{ title }}</h2>
+              	{%- endif -%}
+              	<div class="align--center rich__subheading"  style="color: {{section.settings.sub_heading_color}}">{{ subtitle }}</div>
+			</div>
+          	<div class=" theme-desktop__view full-width">
+            	<a href="/collections/shop-all" class="button shop__link-btn" style="color: {{section.settings.sub_heading_color}}">Shop all {% include 'icon-right-arrow' %}</a>
+          	</div>
+		</div>
+      </div>
+	{%- endif -%}
+	
+	{%- if enable_carousel -%}
+	<div class="collection-slider__wrapper row">
+	{%- endif -%}
+	
+	<div class="collectionGrid-row row inline  mcs-horizontal">
+      
+      	
+      
+		{% comment %} Collection Block, contains .js-quickView {% endcomment %}
+		{%- if collection1 -%}
+			{%- if enable_carousel -%}
+      			<div class="swiper-container">
+          			<div class="swiper-wrapper">
+            			{%- for product in collection1.products -%}
+							{%- include 'collectionGrid-block', slideClass:"swiper-slide" -%}
+						{%- endfor -%}
+            		</div>
+                	<!-- Add Scrollbar -->
+                  	<div class="scroll-container">
+                		<div class="swiper-scrollbar"></div>
+      				</div>
+              	</div>
+			{%- else -%}
+				{%- for product in collection1.products limit: productLimit  -%}
+					{%- include 'collectionGrid-block' -%}
+				{%- endfor -%}
+			{%- endif -%}
+		{%- else -%}
+			{%- for i in (1..productLimit) -%}
+				{%- include 'collectionGrid-block', fallback: true -%}
+			{%- endfor -%}
+		{%- endif -%}
+		
+		{%- unless enable_carousel -%}
+			{%- comment -%} Spacers for inline-block based collectionGrid {%- endcomment -%}
+			{%- for i in (1..8) -%}
+				<div class="gridSpacer item block s1 sm_s12 lg_s1{{ columnsSize }}"></div>
+			{%- endfor -%}
+		{%- endunless -%}
+	</div>
+
+	{%- if enable_carousel -%}
+	</div>
+	{%- endif -%}
+  
+  	{%- if title != blank -%}
+  	  <div class="container theme-mobile__view">
+		<div class="collectionGrid-header row row-lg bottom__header">
+			
+          	<div class="theme-mobile__view">
+            	<a href="/collections/shop-all" class="button">Shop all products</a>
+          	</div>
+		</div>
+      </div>
+	{%- endif -%}
+
+</section>
+
+
+{% comment %} Schema {% endcomment %}
+{% schema %}
+{
+	"name": "Collection Slider",
+	"class": "featured__collection-slider",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Content"
+		},
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Title"
+		},
+		{
+			"type": "richtext",
+			"id": "subtitle",
+			"label": "Subtitle"
+		},
+		{
+			"type": "collection",
+			"id": "collection1",
+			"label": "Collection"
+		},
+		{ 
+			"type": "select",
+			"id": "products_layout",
+			"label": "Layout",
+			"default": "grid",
+			"options": [
+				{ "value": "grid", "label": "Grid" },
+				{ "value": "carousel", "label": "Carousel" }
+			]
+		},
+		{
+			"type": "color",
+			"id": "heading_color",
+			"label": "Heading Colour"
+		},
+		{
+			"type": "color",
+			"id": "sub_heading_color",
+			"label": "Subheading Colour",
+			"default": "#212121"
+		}
+	],
+	"presets": [
+		{
+			"category": "Collection",
+			"name": "Collection Slider",
+			"settings": {
+				"collection1": "frontpage"
+			}
+		}
+	]
+}
+{% endschema %}

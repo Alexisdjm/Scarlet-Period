@@ -1,0 +1,241 @@
+{% comment %} Site Navigation {% endcomment %}
+
+    {% assign index = 2 %}
+
+    {%- assign image = section.settings.meganav_image -%}
+    {%- assign image_heading = section.settings.meganav_image_heading -%}
+    {%- assign image_link = section.settings.meganav_image_link -%}
+    
+    {%- assign has_meganav = false -%}
+    {%- if linklists[menuPrimary].levels == 3 and is_hamburger_nav == false -%}
+      {%- assign has_meganav = true -%}
+    {%- endif -%}
+    
+
+    <ul class="menu {% if has_meganav %}menu--has-meganav{% endif %}">
+      {% comment %}
+        Loop through the first link list.
+      {% endcomment %}
+      {% if menuPrimary != blank %}
+        {% for link in linklists[menuPrimary].links %}
+          {% assign has_sub_menu = false %}
+
+          {% for sublink in link.links %}
+              {% if link.levels > 0 %}
+                {% assign has_sub_menu = true %}
+              {% endif %}
+          {% endfor %}
+
+          {% assign is_meganav = false %}
+          {% if link.levels == 2 and is_hamburger_nav == false %}
+            {% assign is_meganav = true %}
+          {% endif %}
+          
+          <li class="menu-item{% if has_sub_menu == true %} has-submenu{% endif %} {% if is_meganav %}menu-item--meganav{% endif %}">
+            <!-- LINKS -->
+            <a {% if has_sub_menu %}aria-haspopup="true"{% endif %} {% if forloop.first and section.settings.show_search == false %}id="firstFocus"{% endif %} class = "visible-nav-link" tabindex= "{{ index }}" href="{{ link.url }}" aria-expanded="false" data-dropdown-rel="{{ link.handle }}">{{ link.title | escape }}</a>
+
+            {% if link.levels > 0 %}
+              {% if is_meganav %}
+                <div class="megamenu-wrapper">
+                  <div class="row row-lg">
+                    <div class="megamenu-inner">
+              {% endif %}
+              
+              {%- capture submenuClass -%}
+                {%- if is_meganav -%}
+                  submenu--items-{{ link.links.size }}
+                {%- endif -%}
+              {%- endcapture -%}
+
+              <!-- MEGANAV IMAGE AND TEXT -->
+              {%- if is_meganav -%}
+                {%- if image != blank or image_heading != blank -%}
+                  <div class="megamenu__image">
+                    {%- if image -%}
+                      {%- capture meganav_image -%}
+                        {%- assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' -%}
+                        {%- include 'theme-rias' -%}
+                        <img class="lazyload fade-in"
+                          data-src="{{ image_url_pattern }}"
+                          data-widths="[{{ image_widths }}]"
+                          data-aspectratio="{{ image.aspect_ratio }}"
+                          data-sizes="auto"
+                          alt="{{ image.alt }}">
+                        <noscript>
+                          <img src="{{ image.alt | img_url: '1024x' }}" alt="{{ image.alt }}">
+                        </noscript>
+                      {%- endcapture -%}
+
+                      {%- unless image_link == blank -%}
+                        <a href="{{ image_link }}" tabindex="{{ index | plus: 1 }}">{{ meganav_image }}</a>
+                      {%- else -%}
+                        {{ meganav_image }}
+                      {%- endunless -%}
+                    {%- endif -%}
+
+                    {%- unless image_heading == blank -%}
+                      <h4><span>{{ image_heading }}</span></h4>
+                    {%- endunless -%}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+              <!-- END MEGANAV IMAGE AND TEXT -->
+
+              <ul class="submenu {{ submenuClass }}">
+                {% if is_hamburger_nav %}
+                <!-- BACK LINK -->
+                <li class="submenu-back">
+                  <a class="submenu-back--link first-back--link" data-sub-links="{{ link.levels }}" tabindex= "{{ index | plus: 1 }}" href="#0">{{ link.title | escape }}</a>
+                </li>
+                {% endif %}
+
+                <!-- SUBMENU LINKS -->
+                {% for sublink in link.links %}
+                  <li data-levels = "{{ sublink.levels }}" class="submenu-item {% if sublink.levels > 0 %}has-submenu{% endif %}">
+                    <!-- SUBLINK TITLE -->
+                      {% if is_hamburger_nav %}
+                  
+                    <a {% if has_sub_menu %}aria-haspopup="true"{% endif %} {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link {% if is_meganav %}submenu-item__title{% endif %}" tabindex= "{{ index | plus: 1 }}" href="{{ sublink.url }}" aria-expanded="false">{{ sublink.title }}</a>
+{%  elsif sublink.links != blank  %}
+                                            <span {% if has_sub_menu %}aria-haspopup="true"{% endif %} {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link {% if is_meganav %}submenu-item__title{% endif %}" tabindex= "{{ index | plus: 1 }}" aria-expanded="false" style="margin-bottom: 10px; display: inline-block;">{{ sublink.title }}</span>
+{%  else  %} 
+                                            <a {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link {% if is_meganav %}submenu-item__title{% endif %}" tabindex= "{{ index | plus: 1 }}" href="{{ sublink.url }}"  style="font-weight: normal;   padding-top: 0!important;  font-family: Mattermed;font-size: 14px;letter-spacing: .4px;">{{ sublink.title }}</a>
+
+{%  endif %}
+                    {% if sublink.levels > 0 %}
+                    <!-- BEGIN SUB SUB LINK -->
+                    <ul class="submenu">
+                      {% if is_hamburger_nav %}
+                      <!-- BACK LINK -->
+                      <li class="submenu-back">
+                        <a class="submenu-back--link" data-sub-links="{{ link.levels }}" tabindex= "{{ index | plus: 1 }}" href="#0">{{ sublink.title | escape }}</a>
+                      </li>
+                      {% endif %}
+                      <!-- SUBMENU LINKS -->
+                      {% for subsublink in sublink.links %}
+                        <li class="submenu-item">
+                          <a {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link" tabindex= "{{ index | plus: 1 }}" href="{{ subsublink.url }}">{{ subsublink.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                   </li>
+                  <!-- END SUBSUBLINK -->
+                {% endfor %}
+
+              </ul>
+
+              {% if is_meganav %}
+                    </div>
+                  </div>
+                </div>
+                <!-- END MEGAMENU WRAPPER -->
+              {% endif %}
+           {% endif %}
+
+          </li>
+        {% endfor %}
+      {% endif %}
+
+      {% comment %}
+        Loop through the second link list.
+      {% endcomment %}
+      {% if menuSecondary != blank %}
+        <span class="menu-divider menu-item"></span>
+
+        {% for link in linklists[menuSecondary].links %}
+          {% assign has_sub_menu = false %}
+
+          {% for sublink in link.links %}
+            {% if forloop.first %}
+              {% if sublink.levels > 0 %}
+                {% assign has_sub_menu = true %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          <li class="menu-item{% if has_sub_menu == true %} has-submenu{% endif %}">
+            <!-- LINKS -->
+            <a {% if has_sub_menu %}aria-haspopup="true"{% endif %} {% if forloop.first and section.settings.show_search == false %}id="firstFocus"{% endif %} class = "visible-nav-link" tabindex= "{{ index }}" href="{{ link.url }}">{{ link.title | escape }}</a>
+
+            {% if link.levels %}
+              <ul class="submenu">
+                <!-- BACK LINK -->
+                <li class="submenu-back">
+                  <a class="submenu-back--link first-back--link" data-sub-links="{{ link.levels }}" tabindex= "{{ index }}" href="#0">{{ link.title | escape }}</a>
+                </li>
+                <!-- SUBMENU LINKS -->
+                {% for sublink in link.links %}
+                  <li data-levels = "{{ sublink.levels }}" class="submenu-item {% if sublink.levels > 0 %}has-submenu{% endif %}">
+                    <!-- SUBLINK TITLE -->
+                    <a {% if has_sub_menu %}aria-haspopup="true"{% endif %} {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link" tabindex= "{{ index }}" href="{{ sublink.url }}">{{ sublink.title }}</a>
+                  <!-- BEGIN SUB SUB LINK -->
+                  <ul class="submenu">
+                    <!-- BACK LINK -->
+                    <li class="submenu-back">
+                      <a class="submenu-back--link" data-sub-links="{{ link.levels }}" tabindex= "{{ index }}" href="#0">{{ sublink.title | escape }}</a>
+                    </li>
+                    <!-- SUBMENU LINKS -->
+                    {% for subsublink in sublink.links %}
+                      <li class="submenu-item">
+                        <a {% if forloop.last == true  %} data-last="true" {% endif %} class = "submenu-item--link" tabindex= "{{ index }}" href="{{ subsublink.url }}">{{ subsublink.title }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                   </li>
+                  <!-- END SUBSUBLINK -->
+                {% endfor %}
+
+              </ul>
+           {% endif %}
+
+          </li>          
+        {% endfor %}
+    
+  {% endif %}
+  {% if is_hamburger_nav %}
+    <li class="menu-item">
+        <a  href="/search">Search </a>
+        </li>
+  {% endif %}
+    </ul>
+
+
+    
+    {% if is_hamburger_nav %}
+      {% if settings.twitter_url != '' or settings.facebook_url != '' or settings.instagram_url != '' or settings.pinterest_url != '' or settings.youtube_url != '' or settings.tumblr_url != '' or settings.rss_url != '' %}
+      <div class="nav-footer">
+          <div class="nav-social">
+            {% if settings.twitter_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.twitter' | t }}" href="{{settings.twitter_url}}" target="_blank" class="visible-nav-link nav-social-link icon-twitter"></a>
+            {% endif %}
+
+            {% if settings.facebook_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.facebook' | t }}" href="{{settings.facebook_url}}" target="_blank" class="visible-nav-link nav-social-link icon-facebook"></a>
+            {% endif %}
+
+            {% if settings.instagram_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.instagram' | t }}" href="{{settings.instagram_url}}" target="_blank" class="visible-nav-link nav-social-link icon-instagram"></a>
+            {% endif %}
+
+            {% if settings.pinterest_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.pinterest' | t }}"  href="{{settings.pinterest_url}}" target="_blank" class="visible-nav-link nav-social-link icon-pinterest"></a>
+            {% endif %}
+
+            {% if settings.youtube_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.youtube' | t }}" href="{{settings.youtube_url}}" target="_blank" class="visible-nav-link nav-social-link icon-youtube"></a>
+            {% endif %}
+
+            {% if settings.tumblr_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.tumblr' | t }}" href="{{settings.tumblr_url}}" target="_blank" class="visible-nav-link nav-social-link icon-tumblr"></a>
+            {% endif %}
+
+            {% if settings.rss_url != '' %}
+              <a tabindex= "{{ index }}" aria-label = "{{ 'general.footer.rss' | t }}" href="{{settings.rss_url}}" target="_blank" class="visible-nav-link nav-social-link icon-rss"></a>
+            {% endif %}
+            <span tabindex="-1" class="last-focusable-element"></span>
+          </div>
+      </div>
+      {% endif %}
+    {% endif %}

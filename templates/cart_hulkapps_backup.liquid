@@ -1,0 +1,23 @@
+<!-- Begin ReCharge code -->
+{% include 'subscription-cart-footer' %}
+<!-- End ReCharge code -->
+<section class="container-wrap">
+	<div class="container cart-alert cart__tempate-section">
+		{% include 'site-cart' %}
+	</div>
+
+{% include 'ajax-cart' %}{% include 'wiser_trending' %}{% include 'wiser_recentview' %}{% include 'wiser_newarrivals' %}{% include 'wiser_featured' %}{% include 'wiser_topselling' %}{% include 'wiser_recent_related' %}
+      
+
+</section>      
+
+<style>
+  
+  .cart__tempate-section .ajax__cart-from .checkout-buttons .cart-totals-table{
+    	display: none;
+  }
+  
+  .template-cart .flex.row.fordata.active{
+  	margin-bottom: 15px !important;  
+  }
+</style>

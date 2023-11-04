@@ -1,0 +1,30 @@
+{% assign id = section.id %}
+{% assign marqueetext = section.settings.marqueetext %}
+
+<section class="container-wrap" id="text-module-{{ id }}" data-section-type="marquee">
+	{% include 'marqueetext' %}
+</section>
+
+{% comment %} Schema {% endcomment %}
+{% schema %}
+	{
+		"name": "Marquee",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Content"
+			},
+			{
+				"type": "text",
+				"id": "marqueetext",
+				"label": "Text"
+			}
+		],
+		"presets": [
+			{
+				"category": "Text",
+				"name": "Marquee"
+			} 
+		]
+	}
+{% endschema %}

@@ -1,0 +1,331 @@
+<form action="/cart" method="post">
+  <div class="cart-donate">
+{% if template != 'cart' %}
+    <div class="cart-scroll"> 
+      <div class="cart-wrapper container">
+{% else %}
+	<div class="row row-lg inline cart-home">
+    	<div class="block s1 lg_s35">
+{% endif %}
+
+<div id="Cart" class="row cart-row">
+  
+  
+  {% if template == 'cart' %}
+  {% endif %}
+  
+  <a class ="closediam" style="display:none;width: 30px;height: 30px;margin-bottom: 20px;"href="{{shop.url}}"><div class="js-cartToggle js-cartToggle-close cart-close icon-close diamond-outline"><div class="diamond"></div></div></a>
+  
+  {% include 'announcement-bar' %}
+  
+  
+  <div class="gg cart-title block s1 u-left">
+    
+
+  {%- if cart.item_count > 0 -%}
+    <h7>{{ 'cart.labels.cart_title' | t }}</h7>
+  </div>
+	{% comment %}
+    <form action="/cart" method="post">
+    {% endcomment %}
+      <div class="cart-table d-table kk">
+        <div id="CartItems" class="med_d-block d-table-row-group">
+
+          {%- for item in cart.items -%}
+
+            <div class="line-item med_u-container med_u-block d-table-row" data-variant-id="{{ item.variant.id }}">
+              <div class="cart-product-thumb med_u-block med_d-block d-table-cell">
+                <a class="product-thumbnail lazyload fade-in" href="{{ collection_url }}{{ item.url }}" data-bgset="{% include 'bgset', image: item.image %}" data-sizes="auto" data-parent-fit="cover"></a>
+              </div>
+              <div class="cart-product-desc med_u-block med_d-block d-table-cell">
+                <div class="row">
+                  <a class="cart-product-title" href="{{ collection_url }}{{ item.url }}">
+                    {{ item.product.title }}
+                  </a>
+                  {% if item.variant.title != 'Default Title' %}
+                      <span class="variation"> - {{ item.variant.title }}</span>
+                  {% endif %}
+                  <p class="product-price u-margin-0" data-price="{{ item.price }}">
+                    {% if item.original_price > item.final_price %}
+                      {% comment %}<s>{{ item.original_price | money }}</s>{% endcomment %}
+                    {% endif %}
+                    {% comment %}<span>{{ item.final_price | money }}</span>{% endcomment %}
+
+                    {%- if item.unit_price_measurement -%}
+                      <span class="product-unit-price">
+                        {{ item.unit_price | money }}
+                        {%- if item.unit_price_measurement.reference_value != 1 -%}
+                          {{- item.unit_price_measurement.reference_value -}}
+                        {%- endif -%}
+                        {{ item.unit_price_measurement.reference_unit }}
+                      </span>
+                    {%- endif -%}
+                  </p>
+                </div>
+                <div class="flex">
+                	<div class="js-counter counter inputGroup">
+                      <input type="text" name="updates[]" id="updates_{{ item.id }}" class="inputCounter" value="{{ item.quantity }}" />
+                      <span class="inputCounter-up"><span class="icon-plus"></span>&nbsp;</span>
+                      <span class="inputCounter-down">&nbsp;<span class="icon-minus"></span></span>
+                    </div>
+                  	<div class="cart-product-total">
+                      <div class="cart-product-total-price">
+                        {% if item.original_line_price > item.final_line_price %}
+                          <s>{{ item.original_line_price | money }}</s>
+                        {% endif %}
+                        {{ item.final_line_price | money }}
+                      </div>
+
+                      {% comment %}
+                        Display the specific line item discount
+                      {% endcomment %}
+                      {%- if item.line_level_discount_allocations.size > 0 -%}
+                        <div class="cart-product-discounts">
+                          {%- for discount_allocation in item.line_level_discount_allocations -%}
+                            <p>{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})</p>
+                          {%- endfor -%}
+                        </div>
+                      {% elsif item.discount_allocations.size > 0 %}
+                        <div class="cart-product-discounts">
+                          {%- for discount_allocation in item.discount_allocations -%}
+                            <p>{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})</p>
+                          {%- endfor -%}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="cart-product-remove">
+                      <i class="icon-close h4"></i>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          {%- endfor -%}
+			
+        </div>
+        
+        
+      </div>
+	
+   
+
+	  {%- if template != 'cart' -%}
+	      <div class="checkout-buttons inline">
+	        <div class="s1 u-right u-margin-b-sm">
+	          <div class="cart-totals-table">
+	            {% comment %} Cart level discounts {% endcomment %}
+                
+                <!--h6 class='themr__cart-title'>Order summary</h6-->
+	            <div class="flex">
+	               		<label>Estimated Total</label>
+	                    <div class="cart-total-price">
+				    		<span>{{ cart.total_price | money }}</span>
+				    	</div>
+	            </div>
+                <!--div class="flex row">
+		               		<label>Shipping (calculated at checkout)</label>
+		                    <div class="cart-total-price">
+					    		<span>-</span>
+					    	</div>
+		            </div-->
+	
+	            {%- if cart.cart_level_discount_applications != blank -%}
+	            	<div class="flex row">
+	                  <label>Discounts</label>
+	                  <div class="cart-discounts">
+	                    {%- for discount_application in cart.cart_level_discount_applications -%}
+	                      <span>{{ discount_application.title }}: </span>
+	                      <span class="cart-discount-price">{{ discount_application.total_allocated_amount | money | prepend: '-' }}</span>
+	                    {%- endfor -%}
+	                  </div>
+	            	</div>
+	            {%- endif -%}
+	          </div>
+	
+	          {%- if settings.tax_text -%}
+	            <p class="cart-tax-info">{{ settings.tax_text }}</p>
+	          {%- endif -%}
+	        </div>
+	
+	        {%- if settings.enable_cart_order_notes -%}
+	          <div class="order-notes">
+	            <label class="order-notes__label" for="order-notes">{{ 'cart.labels.add_a_note' | t }}</label>
+	            <textarea id="order-notes" class="order-notes__content" name="note"></textarea>
+	          </div>
+	        {%- endif -%}
+	
+	        <div class="button-holder">
+	          <a {% if settings.continue_shopping_link %}href="{{ settings.continue_shopping_link }}"{% endif %} class="js-continueShopping {% if template == 'cart' %}js-go-back{% endif %}">Continue Shopping</a>
+	
+	          {%- if additional_checkout_buttons -%}
+	            <div class="additional-checkout-buttons">
+	              {{ content_for_additional_checkout_buttons }}
+	            </div>
+	          {%- endif -%}
+	          
+	          <!--button class="cart-checkout" type="submit" name="checkout">Checkout</button-->
+              
+              	<a href="/cart" class="button cart__link-btn">Checkout</a>
+        
+        		<button class="button cart-checkout" type="submit" name="checkout" style="display: none;">Checkout</button>
+              
+	        </div>
+            <div class="payment__wrapper-icon">
+	        	{%- include 'payment-icons' -%}
+            </div>
+            
+	      </div>
+	    {% endif %}
+	{% comment %}
+    </form>
+  	{% endcomment %}
+  
+  	{%- if template != 'cart' -%}
+  	{% include 'wiser_trending' %}
+  	{% include 'wiser_recentview' %}
+  	{% include 'wiser_newarrivals' %}
+  	{% include 'wiser_featured' %}
+  	{% include 'wiser_topselling' %}
+  	{% include 'wiser_recent_related' %}
+  	{%- endif -%}
+  </div> <!-- close .cart-row -->
+  
+{%- else -%}
+     <div class="empty_cart">
+      <p style="margin-bottom: 0.0em !important;font-weight:700 !important;">Your cart is empty</p>
+       <p style="font-size:14px;margin-bottom: 25px;margin-top: 2px;">Let's change that!</p>
+      <a {% if settings.continue_shopping_link %}href="{{ settings.continue_shopping_link }}"{% endif %} tabindex="-1" class="button js-continueShopping js-continueShopping--empty {% if template == 'cart' %}js-go-back{% endif %}">Shop All Products</a>
+      </div>
+     </div> <!-- closing tag for title row -->
+  </div> <!-- close .cart-row -->
+{%- endif -%}
+
+        <!-- ABC Edits -->
+  <div data-app="eastsideco_cartOffers"></div>
+       <!-- ABC Edits -->
+        
+ </div>    
+{%- if template != 'cart' -%}
+  </div>
+</div>
+{% else %}
+    	<div class="cart-details block s1 lg_s13 easy__donation-app__trigger">
+	    	<h7>Order summary</h7>
+			<div class="checkout-buttons inline">
+              {% comment %} <div class="custom-donation-btn">
+                div class="custom__container">
+                <div class="donation__main-form" >
+                  {% include 'donation' %}
+                  <style>
+                    .donation {
+                        width: 100%;
+                    }
+                  </style>
+                </div>
+                
+                <div class="custom__button-trigger binding__easy-donation app__trigger"  style="display:inline-block">
+                	<!--div class="custom__text">
+                      	<p>
+                          	1 in 9 people with periods have
+                          	Endometriosis. Donate &amp; support
+                          	initiatives to raise as much needed
+                          	awareness, diagnosis and treatment.
+                      	</p>
+
+						<div class="custom__image">
+  							<img src="//cdn.shopify.com/s/files/1/0049/3964/4963/files/aefbed_c47d6a4267914c3fa8d545bad5553a2b_copy_2_1.png?v=1607488011">
+  						</div>
+
+					</div-->
+                  
+                  	<div class="custom__input-wrapper ">
+                    	<!--div class="custom__input">
+      						<input type="radio" class="custom_input" name="custom__input" value="37739853381827" id="input_37739853381827">
+                          	<label class="" for="input_37739853381827" >5</label>
+                      	</div>
+                      	<div class="custom__input">
+      						<input type="radio" class="custom_input" name="custom__input" value="37739853414595" id="input_37739853414595">
+                          	<label class="" for="input_37739853414595" >10</label>
+                      	</div>
+                      	<div class="custom__input">
+      						<input type="radio" class="custom_input" name="custom__input" value="37739853447363" id="input_37739853447363">
+                          	<label class="" for="input_37739853447363" >15</label>
+                      	</div-->
+                  	</div>
+                  
+                  	<div class="custom__button-trigger">
+                      	<a href="#" class="button" name="trigger__orignal-form" id="trigger__app-form">Donate now</a>  
+                    </div>
+                </div>
+                </div>
+                
+              </div> {% endcomment %}
+		        <div class="s1 u-right u-margin-b-sm">
+		          <div class="cart-totals-table">
+                     <input type="hidden" val="{{ cart.item_count }}">
+                 
+		            <div class="flex row fordata ajax-load-price">
+		               		<label>Subtotal</label>
+                       
+		                    <div class="cart-total-price">
+					    		<span>{{ cart.total_price | money }}</span>
+					    	</div>
+		            </div>
+		             <div class="flex row">
+		               		<label>Shipping (calculated at check out)</label>
+		                    <div class="cart-total-price">
+					    		<span>-</span>
+					    	</div>
+		            </div>
+		
+		            {%- if cart.cart_level_discount_applications != blank -%}
+		            	<div class="flex row">
+		                  <label>Discounts</label>
+		                  <div class="cart-discounts">
+		                    {%- for discount_application in cart.cart_level_discount_applications -%}
+		                      <span>{{ discount_application.title }}: </span>
+		                      <span class="cart-discount-price">{{ discount_application.total_allocated_amount | money | prepend: '-' }}</span>
+		                    {%- endfor -%}
+		                  </div>
+		            	</div>
+		            {%- endif -%}
+		            
+		            {%- if settings.tax_text -%}
+			            <p class="cart-tax-info">{{ settings.tax_text }}</p>
+			          {%- endif -%}
+			          
+			          <div class="flex row order-total">
+					  	<label>Order total</label>
+			            	<div class="cart-total-price">
+								<span>{{ cart.total_price | money }}</span>
+			            	</div>
+						</div>
+			          </div>
+			          </div>
+		          
+		        </div>
+		
+		        {%- if settings.enable_cart_order_notes -%}
+		          <div class="order-notes">
+		            <label class="order-notes__label" for="order-notes">{{ 'cart.labels.add_a_note' | t }}</label>
+		            <textarea id="order-notes" class="order-notes__content" name="note"></textarea>
+		          </div>
+		        {%- endif -%}
+          
+		        <div class="button-holder">
+		          
+		          <button class="cart-checkout" type="submit" name="checkout">Continue to check out</button>
+		          
+		          {%- if additional_checkout_buttons -%}
+		            <div class="additional-checkout-buttons">
+		              {{ content_for_additional_checkout_buttons }}
+		            </div>
+		          {%- endif -%}
+		          
+		        </div>
+		        
+		</div>
+
+{% endif %}
+      </div>
+</form>
+

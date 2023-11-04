@@ -1,0 +1,413 @@
+{% comment %} Settings {% endcomment %}
+{% assign showBlogName = section.settings.show_blog_name %}
+{% assign showRSS = section.settings.show_rss %}
+{% assign showComments = section.settings.show_comments %}
+{% assign showFeatured = section.settings.show_featured_post %}
+{% assign articleColumns = section.settings.article_columns | plus: 0 %}
+{% assign articleRows = section.settings.article_rows %}
+{% assign articleLimit = articleColumns | times: articleRows | plus: 1 %}
+{% assign columnsSize = articleColumns | replace: '1', '' %}
+{% assign accent_line = section.settings.accent_line %}
+{% assign accent_line_color = section.settings.accent_line_color %}
+
+{%- if accent_line_color != blank -%}
+<style>
+  .article .accent-line--straight { background-color: {{ accent_line_color }}; }
+  .article .accent-line--curved svg path { fill: {{ accent_line_color }}; }
+</style>
+{%- endif -%}
+
+<div id="blog-template" data-section-id="{{ section.id }}" data-section-type="blog-template" class="blogModule container-wrap" data-featured="{{ showFeatured }}">
+   
+  <div class="container blog-listing">
+    {% paginate blog.articles by 13 %}
+      <div id="MainContent">
+        {% if section.settings.show_banner %}
+          {% comment %} Banner Settings {% endcomment %}
+          {% assign image = section.settings.image %}
+          {% assign height = section.settings.height %}
+          {% assign subheading = section.settings.subheading %}
+          {% assign heading = section.settings.title %}
+          {% assign text = section.settings.text %}
+          {% assign text_position = section.settings.text_position %}
+          {% assign heading_size = section.settings.heading_size %}
+          {% assign text_size = section.settings.text_size %}
+          {% assign color_text = section.settings.color_text %}
+          {% assign color_overlay = section.settings.color_overlay %}
+          {% assign overlay_opacity = section.settings.overlay_opacity | times: 0.01 | round: 2 %}
+      
+          <style>
+            .banner--{{ section.id }} .page-title { color: {{ color_text }}; }
+            .banner--{{ section.id }} .page-title h1 { color: {{ color_text }} !important; }
+            .banner--{{ section.id }} .page-title::before { background-color: {{ color_overlay }}; opacity: {{ overlay_opacity }}; }
+          </style>
+      
+          <section class="banner banner--{{ section.id }} {% if forloop.index == 1 %}banner--collections{% endif %}" {{ block.shopify_attributes }} data-block="banner" data-header-style="{% if forloop.index == 1 %}index{% endif %}">
+            <div class="banner-inner banner-padded banner-padded--{{ height }} banner--text-{{ text_position }}">
+              {% unless height == 'original-height' %}
+                {% unless image == blank %}
+                  <div class="banner-img lazyload fade-in" data-bgset="{% include 'bgset', image: image %}" data-sizes="auto" data-parent-fit="cover"></div>
+                  <noscript>
+                    <div class="banner-img" style="background-image:url('{{image | img_url: '1024x' }}'); background-size: cover; background-position: center center; background-repeat: no-repeat;"></div>
+                  </noscript>
+                {% else %}
+                  <div class="banner-img banner-img--placeholder svg-placeholder">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                {% endunless %}
+              {% else %}
+                {% assign image_widths = '295,394,590,700,800,1000,1200,1500,1800,2000,2400' %}
+                {% include 'theme-rias' %}
+                <img class="banner-img--original lazyload fade-in"
+                     data-src="{{ image_url_pattern }}" 
+                     data-widths="[{{ image_widths }}]"
+                     data-aspectratio="{{ image.aspect_ratio }}"
+                     data-sizes="auto"
+                     alt="{{ image.alt }}">
+                <noscript>
+                  <img src="{{ image | img_url: '2048x' }}" alt="{{ image.alt | escape }}" class="banner-img--original no-js-image">
+                </noscript>
+              {% endunless %}
+              
+              {% unless heading == blank and subheading == blank and text == blank %}
+                <div class="page-title">
+                  <div class="container">
+                    <div class="row row-lg">
+                      {% if subheading != blank %}
+                        <h4 class="page-title__subheading subheading-text">{{ subheading }}</h4>
+                      {% endif %}
+                      {% if heading != blank %}
+                        <h1 class="page-title__heading size--{{ heading_size }}">{{ heading }}</h1>
+                      {% endif %}
+                    </div>
+                    {% if text != blank %}
+                      <div class="row row-lg">
+                        <div class="page-title__text rte size--{{ text_size }}"><p>{{ text }}</p></div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endunless %}
+            </div>  
+          </section>
+        {% endif %}
+      <div class="blogModule-posts row row-lg pad-lg ">
+        <div class="row filters">
+   
+          <div class="  ">
+            {% if section.settings.heading != blank or section.settings.sub_heading != blank %}
+            <div class="title-module">
+              <div class="">
+                  <h1 class="rich__heading  size--small" style="color: {{section.settings.heading_color}}">{{section.settings.heading}}</h1>
+                  <div class=" rich__subheading" style="color: {{section.settings.sub_heading_color}}">
+                    {{section.settings.sub_heading}}
+                  </div>
+              </div>
+            </div>
+          {% endif %}
+          </div>
+      
+      
+
+		 </div>
+          <div class="grid-auto blog-content-container">
+            {% assign first_article = blog.articles[0].id %}
+            <div class="span-12 featured-blog-post">
+             {% include 'blog-post-featured' article: blog.articles[0] %}
+            </div>
+            <div class="blog-filter span-12">
+              <ul>
+              {% capture tags %}{% for tag in blog.all_tags %}{{ tag }} {% endfor %}{% endcapture %}
+                    <li><a href="{{ blog.url }}" class="tag-filter-block {%  if current_tags == blank %} active {% endif %}"  >All</a></li>
+                {% for tag in blog.all_tags %}
+                  {% assign check = tag | downcase | split:' ' %}
+                    <li><a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="tag-filter-block {%  if current_tags contains tag %} active {% endif %}"  >{{ tag }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+    
+    
+            {% for article in blog.articles %}
+              {% unless article.id == first_article %}
+                <div class=" span-4 ">
+                  {% include 'blog-post' %} 
+                </div> 
+              {% endunless %}
+            {% endfor %}
+            <div class="start-1 span-12 pagination">
+            {{ paginate | default_pagination: next: '->', previous: '<-' }}
+          </div>
+        </div>
+          
+        </div>
+      </div>
+
+    
+
+    {% endpaginate %}
+        
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .featured-blog-post .blogModule-posts__post  {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .featured-blog-post {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-blog-post .blogModule-posts__post-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 7%;
+  }
+
+  @media(max-width: 767px) {
+    .featured-blog-post .blogModule-posts__post-block {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-blog-post {
+      flex-direction: column-reversed;
+    }
+  }
+
+  .featured-blog-post .carousel-slide-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-blog-post .carousel-slide-image {
+    order: 2;
+  }
+
+  .featured-blog-post .blogModule-posts__post p.h6 {
+    font-size: 44px;
+  }
+
+  .featured-blog-post  .carousel-slide-image:before {
+    padding-top: 0% !important;
+  }
+
+  .post-readmore {
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    color: #000;
+    
+  }
+
+  .post-readmore:hover {
+    opacity: 0.6;
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Blog pages",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading ",
+        "default": "Latest Stories"
+      },
+      {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Heading Colour",
+        "default": "#FA0D3D"
+      },
+      {
+        "type": "richtext",
+        "id": "sub_heading",
+        "label": "Sub Heading"
+      },
+      {
+        "type": "color",
+        "id": "sub_heading_color",
+        "label": "Sub Heading Colour",
+        "default": "#212121"
+      },
+      {
+        "type": "header",
+        "content": "Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_blog_name",
+        "label": "Show blog name",
+        "default": false
+      }, 
+      {
+        "type": "checkbox",
+        "id": "show_rss",
+        "label": "Show RSS follow links",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_featured_post",
+        "label": "Show featured post",
+        "default": true
+      }, 
+      {
+        "type": "checkbox",
+        "id": "tags",
+        "label": "Show tags",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "author",
+        "label": "Show author",
+        "default": true
+      }, 
+      {
+        "type": "checkbox",
+        "id": "show_comments",
+        "label": "Show comment count",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "accent_line",
+        "label": "Accent line",
+        "default": "curved",
+        "options": [
+          { "label": "Curved", "value": "curved" },
+          { "label": "Straight", "value": "straight" },
+          { "label": "None", "value": "none" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "accent_line_color",
+        "label": "Color",
+        "default": "#333"
+      },
+      {
+        "type": "header",
+        "content": "Banner"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_banner",
+        "label": "Show Banner?",
+        "default": false
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "select",
+        "id": "height",
+        "label": "Height",
+        "options": [
+            {
+              "value": "one-hundred",
+              "label": "Full screen height"
+            },
+            {
+              "value": "original-height",
+              "label": "Image height"
+            },
+            {
+              "value": "big",
+              "label": "750px"
+            },
+            {
+              "value": "normal",
+              "label": "650px"
+            },
+            {
+              "value": "small",
+              "label": "550px"
+            }
+          ],
+          "default": "normal"
+      },
+      {
+        "type": "text",
+        "id": "subheading",
+        "label": "Subheading"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Welcome to Modular"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>A unique layout with a striking design</p>"
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "select",
+        "id": "heading_size",
+        "label": "Heading size",
+        "default": "normal",
+        "options": [
+          { "label": "Small", "value": "small" },
+          { "label": "Normal", "value": "normal" },
+          { "label": "Large", "value": "large" },
+          { "label": "Extra large", "value": "xlarge" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "text_size",
+        "label": "Text size",
+        "default": "normal",
+        "options": [
+          { "label": "Small", "value": "small" },
+          { "label": "Normal", "value": "normal" },
+          { "label": "Large", "value": "large" },
+          { "label": "Extra large", "value": "xlarge" }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_overlay",
+        "label": "Overlay",
+        "default": "#222222"
+      },
+      {
+        "type": "range",
+        "id": "overlay_opacity",
+        "label": "Overlay opacity",
+        "step": 1,
+        "max": 100,
+        "min": 0,
+        "unit": "%",
+        "default": 10
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,17 @@
+<div class="product-price" data-price="{{ product.price }}">
+	<div class="sale" {% unless on_sale %}style="display: none;"{% endunless %}>
+		<strike class="product-compare-price">{{ product.compare_at_price | money }}</strike>&nbsp;
+		<span class="product-sale-price">{{ product.price | money }}</span>
+	</div>
+	<div class="product-normal-price" {% if on_sale %}style="display: none;"{% endif %}>{{ product.price | money }}</div>
+
+	<div class="product-unit-price">
+		{%- if first_variant.unit_price_measurement -%}
+			{{ first_variant.unit_price | money }}
+			{%- if first_variant.unit_price_measurement.reference_value != 1 -%}
+				{{- first_variant.unit_price_measurement.reference_value -}}
+			{%- endif -%}
+			{{ first_variant.unit_price_measurement.reference_unit }}
+		{%- endif -%}
+	</div>
+</div>

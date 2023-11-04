@@ -1,0 +1,18 @@
+<div id="wait_li_form" class="wla_form" >
+  {% if is_customer == true %}
+    {% if customer_waiting %}
+  		<p class="wla_text">{{ full_currently_waiting_text }}</p>  
+    {% else %}
+      <p class="wla_text">{{ full_sign_in_text }}</p>
+      <a class="wla_button" id="wl_join_button" href="#">{{ join_text }}</a>
+      <p id="wla_text"></p>
+    {% endif %}
+  {% else %}
+	<p class="wla_text">{{ full_sign_in_text }}</p>
+  	<a class="wla_button" id="wait_li_register_trigger">{{ join_text }}</a>
+  	<a id="wait_li_login_trigger" class="wla_login_text">or Sign In To Check Status</a>
+  {% endif %}
+</div>
+<div id="wait_li_success">
+  <p id="join_success_text">{{ success_text }}</p>
+</div>
